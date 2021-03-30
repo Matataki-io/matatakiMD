@@ -1,65 +1,105 @@
 <template>
   <div class="container">
     <div class="header">
-      <el-button type="primary" size="small">
-        同步到Matataki
-      </el-button>
-      <el-button type="primary" size="small">
-        同步到IPFS
-      </el-button>
-      <el-button type="primary" size="small" @click="dialogVisible = !dialogVisible">
-        同步到GitHub
-      </el-button>
+      <a v-if="!token" href="https://github.com/login/oauth/authorize?client_id=07025561030e5b006396&scope=repo">
+        <el-button type="primary" size="small">Github Login</el-button>
+      </a>
+      <div v-else class="user">
+        <el-button type="primary" size="small">
+          同步到 Matataki
+        </el-button>
+        <el-button type="primary" size="small">
+          同步到 IPFS
+        </el-button>
+        <el-button type="primary" size="small" @click="dialogVisible = !dialogVisible">
+          同步到 GitHub
+        </el-button>
+        <a :href="usersData.url" target="_blank" class="user-info">
+          <el-avatar :src="usersData.avatar_url" :size="30" />
+          <span>{{ usersData.login }}</span>
+        </a>
+      </div>
       <el-dialog
-        title="提示"
+        title="同步到 GitHub"
         :visible.sync="dialogVisible"
-        width="400px"
+        width="600px"
       >
         <div>
-          <a
-            href="https://github.com/login/oauth/authorize?client_id=07025561030e5b006396&scope=repo"
-          >
+          <a v-if="!token" href="https://github.com/login/oauth/authorize?client_id=07025561030e5b006396&scope=repo">
             <el-button size="small">Github Login</el-button>
           </a>
-          <el-button size="small" @click="handPushEvent">
-            Push
-          </el-button>
-          <el-button size="small" @click="handPullEvent">
-            Pull
-          </el-button>
+          <div v-else>
+            <el-button size="small" @click="toggleMode('push')">
+              推送至 GitHub
+            </el-button>
+            <el-button size="small" @click="toggleMode('pull')">
+              从 GitHub 拉取
+            </el-button>
+            <a class="more" href="https://matataki.io/" target="_blank">了解更多</a>
+          </div>
         </div>
-        <form action="" style="margin: 20px 0 0 0;">
-          <div>
-            <label for="repo">Repo</label>
-            <el-select id="repo" v-model="repos[0].name" name="repo">
-              <!-- <option value="">--Please choose a repo--</option> -->
-              <el-option v-for="(item, idx) of repos" :key="idx" :value="item.name">
-                {{ item.name }}
-              </el-option>
+        <el-form
+          v-if="asyncGithubFormMode === 'push'"
+          ref="asyncGithubFormPush"
+          :model="asyncGithubFormPush"
+          :rules="asyncGithubFormRules"
+          label-width="80px"
+          class="async-github-form"
+        >
+          <el-form-item label="Repo" prop="repos">
+            <el-select v-model="asyncGithubFormPush.repos" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
+              <el-option v-for="(item, idx) of repos" :key="idx" :value="item.full_name" :label="`${item.full_name}${item.private ? '(private)' : ''}`" />
             </el-select>
-          </div>
-          <div>
-            <label for="branch">Branch</label>
-            <el-select id="branch" v-model="branches[0].name" name="branch">
-              <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name">
-                {{ item.name }}
-              </el-option>
+          </el-form-item>
+          <el-form-item label="Branch" prop="branches">
+            <el-select v-model="asyncGithubFormPush.branches" style="width: 100%" placeholder="请选择 Branches">
+              <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
             </el-select>
-          </div>
-          <div>
-            <label for="file">File</label>
-            <el-select id="file" v-model="contents[0].name" name="file">
-              <el-option v-for="(item, idx) of contents" :key="idx" :value="item.name">
-                {{ item.name }}
-              </el-option>
+          </el-form-item>
+          <el-form-item label="Path" prop="path">
+            <el-select v-model="asyncGithubFormPush.path" style="width: 100%" placeholder="请选择 Path">
+              <el-option v-for="(item, idx) of path" :key="idx" :value="item.name" :label="item.name" />
             </el-select>
-          </div>
-        </form>
+          </el-form-item>
+          <el-form-item label="Commit" prop="commit">
+            <el-input v-model="asyncGithubFormPush.commit" type="textarea" placeholder="请输入 Commit(可选)" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitAsyncGithubForm('asyncGithubFormPush')">
+              确定
+            </el-button>
+          </el-form-item>
+        </el-form>
 
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-        </span>
+        <el-form
+          v-if="asyncGithubFormMode === 'pull'"
+          ref="asyncGithubFormPull"
+          :model="asyncGithubFormPull"
+          :rules="asyncGithubFormRules"
+          label-width="80px"
+          class="async-github-form"
+        >
+          <el-form-item label="Repo" prop="repos">
+            <el-select v-model="asyncGithubFormPull.repos" style="width: 100%" placeholder="请选择 Repo">
+              <el-option v-for="(item, idx) of repos" :key="idx" :value="item.full_name" :label="`${item.full_name}${item.private ? '(private)' : ''}`" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Branch" prop="branches">
+            <el-select v-model="asyncGithubFormPull.branches" style="width: 100%" placeholder="请选择 Branches">
+              <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Path" prop="path">
+            <el-select v-model="asyncGithubFormPull.path" style="width: 100%" placeholder="请选择 Path">
+              <el-option v-for="(item, idx) of path" :key="idx" :value="item.name" :label="item.name" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitAsyncGithubForm('asyncGithubFormPull')">
+              确定
+            </el-button>
+          </el-form-item>
+        </el-form>
       </el-dialog>
     </div>
     <client-only>
@@ -81,15 +121,21 @@
 import { throttle, debounce } from 'lodash'
 import {
   Component,
-  Inject,
-  Model,
-  Prop,
-  Provide,
   Vue,
   Watch
 } from 'nuxt-property-decorator'
-import { push, pull, usersRepos, reposBranches, reposContentsList } from '../api/index'
+import { push, pull, users, usersRepos, reposBranches, reposContentsList } from '../api/index'
 import '@matataki/editor/dist/css/index.css'
+import { getCookie, setCookie } from '../utils/cookie'
+
+interface reposBranchesFnProps {
+  owner: string
+  repo: string
+}
+interface reposContentsListProps {
+  owner: string
+  repo: string
+}
 
 let mavonEditor: any = {
   mavonEditor: null
@@ -105,127 +151,58 @@ if (process.client) {
 })
 export default class Edidtor extends Vue {
   resizeEvent: any = null
-  editorStyle = {}
-  markdownData = ''
+  editorStyle: object = {}
+  markdownData: string = ''
+  dialogVisible: boolean = false
+  token: string = ''
+  usersData: object = {}
+  asyncGithubFormMode: string = '' // push pull
+  repos: Array<object> = []
+  branches= []
+  path= []
 
-  dialogVisible = false
+  asyncGithubFormPush = {
+    repos: '',
+    branches: '',
+    path: '',
+    commit: ''
+  }
 
-  repos= [
-    {
-      name: 'xiaotiandada/HackMD'
-    },
-    {
-      name: 'xiaotiandada/cli-ant'
-    },
-    {
-      name: 'xiaotiandada/cli-ant-temp'
-    },
-    {
-      name: 'xiaotiandada/codimd'
-    },
-    {
-      name: 'xiaotiandada/takeaway'
-    },
-    {
-      name: 'xiaotiandada/uniscam-interface-1'
-    },
-    {
-      name: 'xiaotiandada/copy-animation'
-    },
-    {
-      name: 'xiaotiandada/docker'
-    },
-    {
-      name: 'xiaotiandada/ant-design'
-    },
-    {
-      name: 'xiaotiandada/xiaotiandada'
-    },
-    {
-      name: 'xiaotiandada/react-roadmap'
-    },
-    {
-      name: 'xiaotiandada/Case'
-    },
-    {
-      name: 'xiaotiandada/chrome-extension'
-    },
-    {
-      name: 'xiaotiandada/egg-ratelimiter'
-    },
-    {
-      name: 'xiaotiandada/blog'
-    },
-    {
-      name: 'xiaotiandada/xiaotiandada.github.io'
-    },
-    {
-      name: 'xiaotiandada/vue-notes'
-    },
-    {
-      name: 'xiaotiandada/Matataki-Token-AirDropper'
-    },
-    {
-      name: 'xiaotiandada/moon-apollo'
-    },
-    {
-      name: 'xiaotiandada/monorepo'
-    },
-    {
-      name: 'xiaotiandada/tool-ant'
-    },
-    {
-      name: 'xiaotiandada/lodash-1'
-    },
-    {
-      name: 'xiaotiandada/vue'
-    },
-    {
-      name: 'xiaotiandada/ast'
-    },
-    {
-      name: 'xiaotiandada/vue-1'
-    },
-    {
-      name: 'xiaotiandada/mvvm'
-    },
-    {
-      name: 'xiaotiandada/codebird-js'
-    },
-    {
-      name: 'xiaotiandada/swerve-tron'
-    },
-    {
-      name: 'xiaotiandada/bestswap-pools-interface'
-    },
-    {
-      name: 'xiaotiandada/uniswap-interface'
+  asyncGithubFormPull = {
+    repos: '',
+    branches: '',
+    path: ''
+  }
+
+  get asyncGithubFormRules () {
+    if (this.asyncGithubFormMode === 'push') {
+      return {
+        repos: [
+          { required: true, message: '请选择 Repo', trigger: 'change' }
+        ],
+        branches: [
+          { required: true, message: '请选择 Branches', trigger: 'change' }
+        ],
+        path: [
+          { required: true, message: '请选择 Path', trigger: 'change' }
+        ]
+      }
+    } else if (this.asyncGithubFormMode === 'pull') {
+      return {
+        repos: [
+          { required: true, message: '请选择 Repo', trigger: 'change' }
+        ],
+        branches: [
+          { required: true, message: '请选择 Branches', trigger: 'change' }
+        ],
+        path: [
+          { required: true, message: '请选择 Path', trigger: 'change' }
+        ]
+      }
+    } else {
+      return {}
     }
-  ]
-
-  branches= [{
-    name: 'main',
-    commit: {
-      sha: 'd40ea65b62acf268fcf9158ed18b70859a13e437',
-      url: 'https://api.github.com/repos/xiaotiandada/HackMD/commits/d40ea65b62acf268fcf9158ed18b70859a13e437'
-    },
-    protected: false
-  }]
-
-  contents= [
-    {
-      name: 'README.md'
-    },
-    {
-      name: 'README1.md'
-    },
-    {
-      name: 'async.md'
-    },
-    {
-      name: 'hello.md'
-    }
-  ]
+  }
 
   mounted () {
     // 编辑文章不会自动保存
@@ -235,23 +212,49 @@ export default class Edidtor extends Vue {
       this.handleResizeEditor()
       this.resizeEvent = throttle(this.handleResizeEditor, 300)
       window.addEventListener('resize', this.resizeEvent)
+
+      this.token = getCookie('token') || ''
+      try {
+        const usersDataStore = getCookie('users-github') || ''
+        if (usersDataStore) {
+          this.usersData = JSON.parse(usersDataStore)
+        } else {
+          this.usersFn()
+        }
+      } catch (e) {
+        console.log('e', e)
+      }
+    }
+  }
+
+  @Watch('dialogVisible')
+  onDialogVisibleChangeed (val: boolean) {
+    if (!val) {
+      if (this.asyncGithubFormMode === 'push') {
+        this.resetAsyncGithubForm('asyncGithubFormPush')
+      } else if (this.asyncGithubFormMode === 'pull') {
+        this.resetAsyncGithubForm('asyncGithubFormPull')
+      }
+
+      this.asyncGithubFormMode = ''
     }
   }
 
   @Watch('markdownData')
-  onMdChangeed (val: string, oldVal: string) {
-    console.log('val', val, oldVal)
+  // oldVal: string
+  onMdChangeed (val: string) {
+    // console.log('val', val, oldVal)
     // window.localStorage.setItem('md', val)
     this.asyncContent(val)
   }
 
   async getContent (): Promise<void> {
-    const res = await this.$localForage.getItem(this.$route.params.id)
+    const res = await (this as any).$localForage.getItem(this.$route.params.id)
     this.markdownData = res.content
   }
 
   asyncContent = debounce(async (val: string) => {
-    await this.$localForage.setItem(this.$route.params.id, {
+    await (this as any).$localForage.setItem(this.$route.params.id, {
       title: 'Features',
       content: val,
       create_time: Date.now()
@@ -268,19 +271,161 @@ export default class Edidtor extends Vue {
   }
 
   async handPushEvent (): Promise<void> {
-    await push({ contents: this.markdownData })
+    try {
+      console.log(this.asyncGithubFormPush)
+      const [owner, repo] = this.asyncGithubFormPush.repos.split('/')
+      const res: any = await push({
+        contents: this.markdownData,
+        owner,
+        path: this.asyncGithubFormPush.path,
+        branch: this.asyncGithubFormPush.branches,
+        repo,
+        commit: this.asyncGithubFormPush.commit,
+        token: this.token
+      })
+      if (res.code === 0) {
+        this.$message.success('推送成功')
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e: any) {
+      this.$message.error(`推送失败: ${e.toString()}`)
+    }
   }
 
   async handPullEvent (): Promise<void> {
-    const res: any = await pull()
-    if (res.code === 0) {
-      this.markdownData = res.data.content
+    try {
+      const [owner, repo] = this.asyncGithubFormPull.repos.split('/')
+
+      const res: any = await pull({
+        owner,
+        path: this.asyncGithubFormPull.path,
+        branch: this.asyncGithubFormPull.branches,
+        repo,
+        token: this.token
+      })
+      if (res.code === 0) {
+        this.$message.success('拉取成功')
+        this.markdownData = res.data.content
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e: any) {
+      this.$message.error(`拉取失败: ${e.toString()}`)
     }
+  }
+
+  async usersFn (): Promise<void> {
+    const res: any = await users({
+      token: this.token
+    })
+    if (res.code === 0) {
+      setCookie('users-github', JSON.stringify(res.data))
+      this.usersData = res.data
+    }
+  }
+
+  async usersReposFn (): Promise<void> {
+    try {
+      const res: any = await usersRepos({
+        username: (this as any).usersData.login,
+        token: this.token
+      })
+      if (res.code === 0) {
+        this.repos = res.data
+        this.asyncGithubFormPush.repos = res.data[0].full_name
+        this.asyncGithubFormPull.repos = res.data[0].full_name
+
+        const [owner, repo] = (res.data[0].full_name).split('/')
+        this.reposBranchesFn({
+          owner,
+          repo
+        })
+      }
+    } catch (e) {
+      console.warn(e)
+    }
+  }
+
+  async reposBranchesFn ({ owner, repo }: reposBranchesFnProps): Promise<void> {
+    try {
+      const res: any = await reposBranches({
+        owner,
+        repo,
+        token: this.token
+      })
+      if (res.code === 0) {
+        this.branches = res.data
+        this.asyncGithubFormPush.branches = res.data[0].name
+        this.asyncGithubFormPull.branches = res.data[0].name
+
+        this.reposContentsListFn({
+          owner,
+          repo
+        })
+      }
+    } catch (e) {
+      console.warn(e)
+    }
+  }
+
+  async reposContentsListFn ({ owner, repo }: reposContentsListProps): Promise<void> {
+    try {
+      const res: any = await reposContentsList({
+        owner,
+        repo,
+        token: this.token
+      })
+      if (res.code === 0) {
+        this.path = res.data
+        this.asyncGithubFormPush.path = res.data[0].name
+        this.asyncGithubFormPull.path = res.data[0].name
+      }
+    } catch (e) {
+      console.warn(e)
+    }
+  }
+
+  handleChangeRepos (e: any) {
+    console.log('item', e)
+    const [owner, repo] = e.split('/')
+    this.reposBranchesFn({
+      owner,
+      repo
+    })
+  }
+
+  toggleMode (mode: string) {
+    this.asyncGithubFormMode = mode
+    if (!this.repos.length) { // 暂时减少请求
+      this.usersReposFn()
+    }
+  }
+
+  submitAsyncGithubForm (formName: string) {
+    (this as any).$refs[formName].validate((valid: boolean) => {
+      if (valid) {
+        if (this.asyncGithubFormMode === 'push') {
+          this.handPushEvent()
+        } else if (this.asyncGithubFormMode === 'pull') {
+          this.handPullEvent()
+        } else {
+          this.$message('other submit')
+        }
+      } else {
+        console.log('error submit!!')
+        return false
+      }
+    })
+  }
+
+  resetAsyncGithubForm (formName: string) {
+    (this as any).$refs[formName].resetFields()
   }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .container {
   margin: 0 auto;
   min-height: 100vh;
@@ -299,5 +444,33 @@ export default class Edidtor extends Vue {
   box-shadow: 0 2px 10px  rgba(0, 0, 0, .05);
   box-sizing: border-box;
   border-bottom: 1px solid #f1f1f1;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  span {
+    color: #333;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+}
+
+.async-github-form {
+  margin-top: 20px;
+}
+
+.more {
+  margin-left: 10px;
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
 }
 </style>
