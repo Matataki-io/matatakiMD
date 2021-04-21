@@ -6,12 +6,15 @@
       </a>
       <div v-else class="user">
         <el-button type="primary" size="small">
+          导出 Markdown
+        </el-button>
+        <el-button type="primary" size="small">
           同步到 Matataki
         </el-button>
         <el-button type="primary" size="small">
           同步到 IPFS
         </el-button>
-        <el-button type="primary" size="small" @click="dialogVisible = !dialogVisible">
+        <el-button type="primary" size="small" @click="dialogAsyncGithub = !dialogAsyncGithub">
           同步到 GitHub
         </el-button>
         <a :href="usersData.url" target="_blank" class="user-info">
@@ -21,7 +24,7 @@
       </div>
       <el-dialog
         title="同步到 GitHub"
-        :visible.sync="dialogVisible"
+        :visible.sync="dialogAsyncGithub"
         width="600px"
       >
         <div>
@@ -110,6 +113,8 @@
         :autofocus="false"
         placeholder="请输入内容"
         :style="editorStyle"
+        :encryption="encryption"
+        :image-upload-fn="imageUploadFn"
         class="editor"
         image-upload-action="customize"
       />
@@ -124,7 +129,7 @@ import {
   Vue,
   Watch
 } from 'nuxt-property-decorator'
-import { push, pull, users, usersRepos, reposBranches, reposContentsList } from '../api/index'
+import { push, pull, users, usersRepos, reposBranches, reposContentsList, upload } from '../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie } from '../utils/cookie'
 
@@ -153,13 +158,15 @@ export default class Edidtor extends Vue {
   resizeEvent: any = null
   editorStyle: object = {}
   markdownData: string = ''
-  dialogVisible: boolean = false
+  dialogAsyncGithub: boolean = false
   token: string = ''
   usersData: object = {}
   asyncGithubFormMode: string = '' // push pull
   repos: Array<object> = []
   branches= []
   path= []
+  // 加密语法
+  encryption= '\n\n[read hold="SYMBOL amount"]\n\n隐藏内容\n> [📔使用说明](https://www.yuque.com/matataki/matataki/giw9u4)\n\n[else]\n\n预览内容\n\n[/read]\n'
 
   asyncGithubFormPush = {
     repos: '',
@@ -227,8 +234,8 @@ export default class Edidtor extends Vue {
     }
   }
 
-  @Watch('dialogVisible')
-  onDialogVisibleChangeed (val: boolean) {
+  @Watch('dialogAsyncGithub')
+  onDialogAsyncGithubChangeed (val: boolean) {
     if (!val) {
       if (this.asyncGithubFormMode === 'push') {
         this.resetAsyncGithubForm('asyncGithubFormPush')
@@ -421,6 +428,22 @@ export default class Edidtor extends Vue {
 
   resetAsyncGithubForm (formName: string) {
     (this as any).$refs[formName].resetFields()
+  }
+
+  // 图片上传的回调方法
+  async imageUploadFn (file: File) {
+    try {
+      const res: any = await upload(file)
+      if (res.code === 0) {
+        return `https://ssimg.frontenduse.top/${res.data}`
+      } else {
+        console.log(res.message)
+        throw new Error('fail...')
+      }
+    } catch (e) {
+      console.log(e)
+      return 'fail...'
+    }
   }
 }
 </script>

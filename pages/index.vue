@@ -16,10 +16,6 @@
 <script lang="ts">
 import {
   Component,
-  Inject,
-  Model,
-  Prop,
-  Provide,
   Vue,
   Watch
 } from 'nuxt-property-decorator'
@@ -44,14 +40,14 @@ export default class Home extends Vue {
   }
 
   async getAll () :Promise<void> {
-    const keys = await this.$localForage.keys()
+    const keys = await (this as any).$localForage.keys()
     console.log('keys', keys)
     this.item = keys
   }
 
   async handleSubmit () :Promise<void> {
     const time = Date.now()
-    await this.$localForage.setItem(time, {
+    await (this as any).$localForage.setItem(time, {
       title: '',
       content: this.content,
       create_time: time,

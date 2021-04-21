@@ -1,11 +1,11 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 // import { getCookie } from "../utils/cookie";
 // axios.defaults.withCredentials = true
 
-interface ApiResult {
-  code: number,
-  data: any
-}
+// interface ApiResult {
+//   code: number,
+//   data: any
+// }
 
 const client = axios.create({
   baseURL: 'http://127.0.0.1:7001',

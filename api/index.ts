@@ -37,3 +37,13 @@ export function reposContentsList (params: any) {
 export function oauthLoginAccessToken (params: any) {
   return client.get('/api/oauth/login/access_token', { params })
 }
+// image upload
+export function upload (file: File) {
+  const formdata = new FormData()
+  formdata.append('file', file)
+  return client({
+    url: '/api/upload',
+    method: 'POST',
+    data: formdata
+  })
+}
