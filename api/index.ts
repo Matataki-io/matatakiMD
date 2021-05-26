@@ -15,8 +15,8 @@ export function fetchPosts (params: any) {
 export function signIn (data: any) {
   return client.post('/signIn', data)
 }
-export function users (params: any) {
-  return client.get('/api/users', { params })
+export function users () {
+  return client.get('/api/users')
 }
 export function push (data: any) {
   return client.put('/api/push', data)
@@ -45,5 +45,13 @@ export function upload (file: File) {
     url: '/api/upload',
     method: 'POST',
     data: formdata
+  })
+}
+// ipfs upload
+export function ipfsUpload (data: { title: string, content: string }) {
+  return client({
+    url: '/api/ipfs/upload',
+    method: 'POST',
+    data
   })
 }

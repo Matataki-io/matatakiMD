@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import { getCookie } from "../utils/cookie";
+import { getCookie } from '../utils/cookie'
 // axios.defaults.withCredentials = true
 
 // interface ApiResult {
@@ -18,8 +18,8 @@ const client = axios.create({
 // Just copy from matataki-fe
 client.interceptors.request.use(
   (config) => {
-    // if (getCookie("x-access-token"))
-    //   config.headers["x-access-token"] = getCookie("x-access-token");
+    const token = getCookie('token')
+    if (token) { config.headers['access-token'] = token }
     // console.warn('request config:',config)
     return config
   },

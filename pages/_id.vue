@@ -5,19 +5,19 @@
         <el-button type="primary" size="small">Github Login</el-button>
       </a>
       <div v-else class="user">
-        <el-button type="primary" size="small">
+        <el-button type="primary" size="small" @click="downloadMd">
           导出 Markdown
         </el-button>
-        <el-button type="primary" size="small">
+        <el-button type="primary" size="small" disabled>
           同步到 Matataki
         </el-button>
-        <el-button type="primary" size="small">
+        <el-button v-loading="ipfsUploadLoading" type="primary" size="small" @click="ipfsUploadFn">
           同步到 IPFS
         </el-button>
         <el-button type="primary" size="small" @click="dialogAsyncGithub = !dialogAsyncGithub">
           同步到 GitHub
         </el-button>
-        <a :href="usersData.url" target="_blank" class="user-info">
+        <a :href="usersData.html_url" target="_blank" class="user-info">
           <el-avatar :src="usersData.avatar_url" :size="30" />
           <span>{{ usersData.login }}</span>
         </a>
@@ -71,6 +71,11 @@
             <el-button type="primary" @click="submitAsyncGithubForm('asyncGithubFormPush')">
               确定
             </el-button>
+            <a v-if="asyncGithubFormPush.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPush.repos}`">
+              <el-button>
+                View Repo
+              </el-button>
+            </a>
           </el-form-item>
         </el-form>
 
@@ -101,6 +106,11 @@
             <el-button type="primary" @click="submitAsyncGithubForm('asyncGithubFormPull')">
               确定
             </el-button>
+            <a v-if="asyncGithubFormPull.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPull.repos}`">
+              <el-button>
+                View Repo
+              </el-button>
+            </a>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -123,13 +133,13 @@
 </template>
 
 <script lang="ts">
-import { throttle, debounce } from 'lodash'
+import { throttle, debounce, isEmpty, isArray } from 'lodash'
 import {
   Component,
   Vue,
   Watch
 } from 'nuxt-property-decorator'
-import { push, pull, users, usersRepos, reposBranches, reposContentsList, upload } from '../api/index'
+import { push, pull, users, usersRepos, reposBranches, reposContentsList, upload, ipfsUpload } from '../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie } from '../utils/cookie'
 
@@ -180,6 +190,8 @@ export default class Edidtor extends Vue {
     branches: '',
     path: ''
   }
+
+  ipfsUploadLoading = false
 
   get asyncGithubFormRules () {
     if (this.asyncGithubFormMode === 'push') {
@@ -261,11 +273,15 @@ export default class Edidtor extends Vue {
   }
 
   asyncContent = debounce(async (val: string) => {
-    await (this as any).$localForage.setItem(this.$route.params.id, {
-      title: 'Features',
+    const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
+    const res = await (this as any).$localForage.getItem(this.$route.params.id)
+    const data = Object.assign({
+      title,
       content: val,
       create_time: Date.now()
-    })
+    }, res)
+
+    await (this as any).$localForage.setItem(this.$route.params.id, data)
   }, 1000)
 
   handleResizeEditor (): void {
@@ -287,8 +303,7 @@ export default class Edidtor extends Vue {
         path: this.asyncGithubFormPush.path,
         branch: this.asyncGithubFormPush.branches,
         repo,
-        commit: this.asyncGithubFormPush.commit,
-        token: this.token
+        commit: this.asyncGithubFormPush.commit
       })
       if (res.code === 0) {
         this.$message.success('推送成功')
@@ -308,8 +323,7 @@ export default class Edidtor extends Vue {
         owner,
         path: this.asyncGithubFormPull.path,
         branch: this.asyncGithubFormPull.branches,
-        repo,
-        token: this.token
+        repo
       })
       if (res.code === 0) {
         this.$message.success('拉取成功')
@@ -323,9 +337,7 @@ export default class Edidtor extends Vue {
   }
 
   async usersFn (): Promise<void> {
-    const res: any = await users({
-      token: this.token
-    })
+    const res: any = await users()
     if (res.code === 0) {
       setCookie('users-github', JSON.stringify(res.data))
       this.usersData = res.data
@@ -335,8 +347,7 @@ export default class Edidtor extends Vue {
   async usersReposFn (): Promise<void> {
     try {
       const res: any = await usersRepos({
-        username: (this as any).usersData.login,
-        token: this.token
+        username: (this as any).usersData.login
       })
       if (res.code === 0) {
         this.repos = res.data
@@ -358,8 +369,7 @@ export default class Edidtor extends Vue {
     try {
       const res: any = await reposBranches({
         owner,
-        repo,
-        token: this.token
+        repo
       })
       if (res.code === 0) {
         this.branches = res.data
@@ -380,8 +390,7 @@ export default class Edidtor extends Vue {
     try {
       const res: any = await reposContentsList({
         owner,
-        repo,
-        token: this.token
+        repo
       })
       if (res.code === 0) {
         this.path = res.data
@@ -444,6 +453,137 @@ export default class Edidtor extends Vue {
       console.log(e)
       return 'fail...'
     }
+  }
+
+  ipfsHtmlTemp ({ title, content }: { title: string, content: string }) {
+    const htmlTemp =
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta name="copyright" property="copyright" content="Copyright © 2018-2021 ANDOROMEDA TECH.ltd">
+    <meta name="description" content="Matataki Editor">
+    <meta name="keywords" content="Matataki Editor,仙女座科技,瞬MATATAKI,Fan票">
+
+    <meta name="twitter:card" property="twitter:card" content="summary">
+    <meta name="twitter:site" property="twitter:site" content="Matataki Editor">
+    <meta name="twitter:title" property="twitter:title" content="Matataki Editor">
+    <meta name="twitter:image" property="twitter:image" content="https://ssimg.frontenduse.top/material/matataki_logo.png">
+    <meta name="twitter:description" property="twitter:description" content="Matataki Editor">
+
+    <meta name="og:type" property="og:type" content="website">
+    <meta name="og:site_name" property="og:site_name" content="Matataki Editor">
+    <meta name="og:title" property="og:title" content="Matataki Editor">
+    <meta name="og:image" property="og:image" content="https://ssimg.frontenduse.top/material/matataki_logo.png">
+    <meta name="og:site_name" property="og:site_name" content="Matataki Editor">
+    <meta name="og:description" property="og:description" content="Matataki Editor">
+
+  <title>${title}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
+  <style>
+    .markdown-body {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <article class="markdown-body">
+    ${content}
+  </article>
+</body>
+</html>`
+    return htmlTemp
+  }
+
+  async ipfsUploadFn () {
+    try {
+      const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
+      const content = (document as any).querySelector('#previewContent').innerHTML
+
+      this.ipfsUploadLoading = true
+
+      const res: any = await ipfsUpload({
+        title,
+        content: this.ipfsHtmlTemp({ title, content })
+      })
+
+      if (res.code === 0) {
+        this.$notify({
+          title: '发布成功',
+          message: res.data.publicUrl
+        })
+
+        const mdData = await (this as any).$localForage.getItem(this.$route.params.id)
+        let ipfs = []
+
+        if (!isEmpty(mdData.ipfs)) {
+          ipfs = isArray(mdData.ipfs) ? mdData.ipfs : [mdData.ipfs]
+        }
+
+        ipfs.push(res.data)
+
+        await (this as any).$localForage.setItem(this.$route.params.id, {
+          title,
+          content: this.markdownData,
+          create_time: Date.now(),
+          ipfs
+        })
+      } else {
+        throw new Error('发布失败')
+      }
+    } catch (e) {
+      console.log(e.toString())
+    } finally {
+      this.ipfsUploadLoading = false
+    }
+  }
+
+  downloadMd () {
+    function downloadBlob (blob: any, name = 'file.txt') {
+      // Convert your blob into a Blob URL (a special url that points to an object in the browser's memory)
+      const blobUrl = URL.createObjectURL(blob)
+
+      // Create a link element
+      const link = document.createElement('a')
+
+      // Set link's href to point to the Blob URL
+      link.href = blobUrl
+      link.download = name
+
+      // Append link to the body
+      document.body.appendChild(link)
+
+      // Dispatch click event on the link
+      // This is necessary as link.click() does not work on the latest firefox
+      link.dispatchEvent(
+        new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        })
+      )
+
+      // Remove link from body
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(blobUrl)
+    }
+
+    // Usage
+    const jsonBlob = new Blob([this.markdownData])
+    const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
+    downloadBlob(jsonBlob, `${title}.md`)
   }
 }
 </script>
