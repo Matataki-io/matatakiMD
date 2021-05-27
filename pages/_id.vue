@@ -121,7 +121,7 @@
         v-model="markdownData"
         :box-shadow="false"
         :autofocus="false"
-        placeholder="请输入内容"
+        :placeholder="placeholder"
         :style="editorStyle"
         :encryption="encryption"
         :image-upload-fn="imageUploadFn"
@@ -142,6 +142,7 @@ import {
 import { push, pull, users, usersRepos, reposBranches, reposContentsList, upload, ipfsUpload } from '../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie } from '../utils/cookie'
+import markdownDownload from '../utils/markdown-download'
 
 interface reposBranchesFnProps {
   owner: string
@@ -175,8 +176,9 @@ export default class Edidtor extends Vue {
   repos: Array<object> = []
   branches= []
   path= []
+  placeholder= '# 在此输入标题\n\n请在笔记标题前方输入 #，空格后输入笔记标题\n\n现在就开始编辑笔记吧！'
   // 加密语法
-  encryption= '\n\n[read hold="SYMBOL amount"]\n\n隐藏内容\n> [📔使用说明](https://www.yuque.com/matataki/matataki/giw9u4)\n\n[else]\n\n预览内容\n\n[/read]\n'
+  encryption= '\n\n[read hold="SYMBOL amount"]\n\n隐藏内容\n\n暂仅在Matataki上使用\n\n> [📔使用说明](https://www.yuque.com/matataki/matataki/giw9u4)\n\n[else]\n\n预览内容\n\n[/read]\n'
 
   asyncGithubFormPush = {
     repos: '',
@@ -551,39 +553,12 @@ export default class Edidtor extends Vue {
   }
 
   downloadMd () {
-    function downloadBlob (blob: any, name = 'file.txt') {
-      // Convert your blob into a Blob URL (a special url that points to an object in the browser's memory)
-      const blobUrl = URL.createObjectURL(blob)
-
-      // Create a link element
-      const link = document.createElement('a')
-
-      // Set link's href to point to the Blob URL
-      link.href = blobUrl
-      link.download = name
-
-      // Append link to the body
-      document.body.appendChild(link)
-
-      // Dispatch click event on the link
-      // This is necessary as link.click() does not work on the latest firefox
-      link.dispatchEvent(
-        new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        })
-      )
-
-      // Remove link from body
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(blobUrl)
-    }
-
-    // Usage
-    const jsonBlob = new Blob([this.markdownData])
     const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
-    downloadBlob(jsonBlob, `${title}.md`)
+    try {
+      markdownDownload({ title, markdown: this.markdownData })
+    } catch (e) {
+      this.$message.error(`下载失败：${e.toString()}`)
+    }
   }
 }
 </script>
