@@ -55,3 +55,10 @@ export function ipfsUpload (data: { title: string, content: string }) {
     data
   })
 }
+
+export function userStats () {
+  return client.get('/api/user/stats')
+}
+export function postPublish (data: { title: string, content: string }) {
+  return client.post('/api/post/publish', data)
+}

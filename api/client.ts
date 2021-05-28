@@ -9,7 +9,7 @@ import { getCookie } from '../utils/cookie'
 
 const client = axios.create({
   baseURL: 'http://127.0.0.1:7001',
-  timeout: 1000 * 30,
+  timeout: 1000 * 60,
   headers: {
   },
   withCredentials: true
@@ -18,7 +18,7 @@ const client = axios.create({
 // Just copy from matataki-fe
 client.interceptors.request.use(
   (config) => {
-    const token = getCookie('token')
+    const token = getCookie('access-token')
     if (token) { config.headers['access-token'] = token }
     // console.warn('request config:',config)
     return config

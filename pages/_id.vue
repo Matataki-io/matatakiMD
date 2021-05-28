@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <div class="header">
-      <a v-if="!token" href="https://github.com/login/oauth/authorize?client_id=07025561030e5b006396&scope=repo">
-        <el-button type="primary" size="small">Github Login</el-button>
-      </a>
+      <el-button v-if="!token" type="primary" size="small" @click="jumpToMttkOAuth">
+        Login
+      </el-button>
       <div v-else class="user">
         <el-button type="primary" size="small" @click="downloadMd">
           导出 Markdown
         </el-button>
-        <el-button type="primary" size="small" disabled>
+        <el-button type="primary" size="small" @click="postPublishFn">
           同步到 Matataki
         </el-button>
         <el-button v-loading="ipfsUploadLoading" type="primary" size="small" @click="ipfsUploadFn">
@@ -17,9 +17,9 @@
         <el-button type="primary" size="small" @click="dialogAsyncGithub = !dialogAsyncGithub">
           同步到 GitHub
         </el-button>
-        <a :href="usersData.html_url" target="_blank" class="user-info">
-          <el-avatar :src="usersData.avatar_url" :size="30" />
-          <span>{{ usersData.login }}</span>
+        <a ref=" noopener noreferrer" :href="`${matatakiUrl}/user/${usersData.id}`" target="_blank" class="user-info">
+          <el-avatar :src="`https://ssimg.frontenduse.top/${usersData.avatar}`" :size="30" />
+          <span>{{ usersData.nickname || usersData.username }}</span>
         </a>
       </div>
       <el-dialog
@@ -139,10 +139,11 @@ import {
   Vue,
   Watch
 } from 'nuxt-property-decorator'
-import { push, pull, users, usersRepos, reposBranches, reposContentsList, upload, ipfsUpload } from '../api/index'
+import { push, pull, users, userStats, postPublish, usersRepos, reposBranches, reposContentsList, upload, ipfsUpload } from '../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie } from '../utils/cookie'
 import markdownDownload from '../utils/markdown-download'
+import { setOAuthRedirectUri } from '../api/developer'
 
 interface reposBranchesFnProps {
   owner: string
@@ -172,6 +173,7 @@ export default class Edidtor extends Vue {
   dialogAsyncGithub: boolean = false
   token: string = ''
   usersData: object = {}
+  usersGithubData: object = {}
   asyncGithubFormMode: string = '' // push pull
   repos: Array<object> = []
   branches= []
@@ -234,17 +236,36 @@ export default class Edidtor extends Vue {
       this.resizeEvent = throttle(this.handleResizeEditor, 300)
       window.addEventListener('resize', this.resizeEvent)
 
-      this.token = getCookie('token') || ''
+      this.token = getCookie('access-token') || ''
+      try {
+        const usersDataStore = getCookie('users') || ''
+        if (usersDataStore) {
+          this.usersData = JSON.parse(usersDataStore)
+        } else {
+          this.userStatsFn()
+        }
+      } catch (e) {
+        console.log('e', e)
+      }
+
       try {
         const usersDataStore = getCookie('users-github') || ''
         if (usersDataStore) {
-          this.usersData = JSON.parse(usersDataStore)
+          this.usersGithubData = JSON.parse(usersDataStore)
         } else {
           this.usersFn()
         }
       } catch (e) {
         console.log('e', e)
       }
+    }
+  }
+
+  get matatakiUrl () {
+    if (process.client) {
+      return process.env.APP_MATATAKI_URL
+    } else {
+      return ''
     }
   }
 
@@ -268,6 +289,16 @@ export default class Edidtor extends Vue {
     // window.localStorage.setItem('md', val)
     this.asyncContent(val)
   }
+
+  async jumpToMttkOAuth () {
+    try {
+      console.log('from', location)
+      await setOAuthRedirectUri(location.pathname)
+    } catch (error) {
+      console.log('error', error)
+    }
+    (window as any).location = process.env.REACT_APP_OAuthUrl
+  };
 
   async getContent (): Promise<void> {
     const res = await (this as any).$localForage.getItem(this.$route.params.id)
@@ -338,18 +369,26 @@ export default class Edidtor extends Vue {
     }
   }
 
+  async userStatsFn (): Promise<void> {
+    const res: any = await userStats()
+    if (res.code === 0) {
+      setCookie('users', JSON.stringify(res.data))
+      this.usersData = res.data
+    }
+  }
+
   async usersFn (): Promise<void> {
     const res: any = await users()
     if (res.code === 0) {
       setCookie('users-github', JSON.stringify(res.data))
-      this.usersData = res.data
+      this.usersGithubData = res.data
     }
   }
 
   async usersReposFn (): Promise<void> {
     try {
       const res: any = await usersRepos({
-        username: (this as any).usersData.login
+        username: (this as any).usersGithubData.login
       })
       if (res.code === 0) {
         this.repos = res.data
@@ -549,6 +588,20 @@ export default class Edidtor extends Vue {
       console.log(e.toString())
     } finally {
       this.ipfsUploadLoading = false
+    }
+  }
+
+  async postPublishFn () {
+    // TODO: 有问题 没有正确响应
+    try {
+      const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
+      const res = await postPublish({
+        title,
+        content: this.markdownData
+      })
+      console.log('res', res)
+    } catch (e) {
+      console.log(e.toString())
     }
   }
 

@@ -30,7 +30,7 @@ export default class AuthGithubCallback extends Vue {
       platform: 'github'
     })
     if (res.code === 0) {
-      setCookie('token', res.data)
+      setCookie('access-token', res.data)
     }
   }
 }
