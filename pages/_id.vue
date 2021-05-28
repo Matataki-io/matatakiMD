@@ -1,10 +1,15 @@
 <template>
-  <div class="container">
+  <div class="wrapper">
     <div class="header">
-      <el-button v-if="!token" type="primary" size="small" @click="jumpToMttkOAuth">
+      <router-link to="/overview">
+        <el-button type="primary" size="small">
+          Home
+        </el-button>
+      </router-link>
+      <!-- <el-button v-if="!token" type="primary" size="small" @click="jumpToMttkOAuth">
         Login
-      </el-button>
-      <div v-else class="user">
+      </el-button> -->
+      <div class="user">
         <el-button type="primary" size="small" @click="downloadMd">
           导出 Markdown
         </el-button>
@@ -617,10 +622,11 @@ export default class Edidtor extends Vue {
 </script>
 
 <style lang="less" scoped>
-.container {
+.wrapper {
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
+  background-color: #fff;
 }
 .editor {
   width: 100%;
@@ -631,10 +637,11 @@ export default class Edidtor extends Vue {
   padding: 0 20px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   box-shadow: 0 2px 10px  rgba(0, 0, 0, .05);
   box-sizing: border-box;
   border-bottom: 1px solid #f1f1f1;
+  background-color: #fff;
 }
 
 .user {
