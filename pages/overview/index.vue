@@ -823,7 +823,6 @@ export default class Home extends Vue {
       const res = await (this as any).$localForage.getItem(ele)
       // console.log('res', res)
       res.more = false
-      res.bookmark = !!res.bookmark
       list.push(res)
     }
 
@@ -837,7 +836,7 @@ export default class Home extends Vue {
     await (this as any).$localForage.setItem(time, {
       id: time,
       id_str: String(time),
-      title: '',
+      title: 'Untitled',
       content: '',
       create_time: time,
       update_time: time,
