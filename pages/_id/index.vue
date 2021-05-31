@@ -5,18 +5,25 @@
         <i class="fa fa-file-text" /><span class="hidden-xs"> MatatakiMD</span>
       </router-link>
       <div v-if="isUser" class="user">
-        <el-button type="primary" size="small" @click="downloadMd">
-          导出 Markdown
-        </el-button>
-        <el-button v-loading="mtkUploadLoading" type="primary" size="small" @click="postPublishFn">
-          同步到 Matataki
-        </el-button>
-        <el-button v-loading="ipfsUploadLoading" type="primary" size="small" @click="ipfsUploadFn">
-          同步到 IPFS
-        </el-button>
-        <el-button type="primary" size="small" @click="dialogAsyncGithub = !dialogAsyncGithub">
-          同步到 GitHub
-        </el-button>
+        <el-dropdown trigger="click" class="more-tooltip" @command="handleCommandMore">
+          <span class="more-icon">
+            <i class="el-icon-more" />
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="async-github">
+              同步到 GitHub
+            </el-dropdown-item>
+            <el-dropdown-item command="async-ipfs">
+              同步到 IPFS
+            </el-dropdown-item>
+            <el-dropdown-item command="async-matataki">
+              同步到 Matataki
+            </el-dropdown-item>
+            <el-dropdown-item command="save-file-md">
+              导出 Markdown
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
 
         <el-dropdown trigger="click" class="user-tooltip" @command="handleCommand">
           <el-tooltip effect="dark" :content="usersData.nickname || usersData.username" placement="bottom">
@@ -596,6 +603,11 @@ export default class Edidtor extends Vue {
   }
 
   async ipfsUploadFn () {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在发布...'
+    })
+
     try {
       const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
       const content = (document as any).querySelector('#previewContent').innerHTML
@@ -635,6 +647,7 @@ export default class Edidtor extends Vue {
       console.log(e.toString())
     } finally {
       this.ipfsUploadLoading = false
+      loading.close()
     }
   }
 
@@ -673,6 +686,18 @@ export default class Edidtor extends Vue {
     }
   }
 
+  handleCommandMore (command: string) {
+    if (command === 'async-github') {
+      this.dialogAsyncGithub = !this.dialogAsyncGithub
+    } else if (command === 'async-ipfs') {
+      this.ipfsUploadFn()
+    } else if (command === 'async-matataki') {
+      this.postPublishFn()
+    } else if (command === 'save-file-md') {
+      this.downloadMd()
+    }
+  }
+
   signOut () {
     removeCookie('access-token')
     removeCookie('users-github')
@@ -689,6 +714,7 @@ export default class Edidtor extends Vue {
   min-height: 100vh;
   position: relative;
   background-color: #fff;
+  text-align: left;
 }
 .editor {
   width: 100%;
@@ -724,7 +750,16 @@ export default class Edidtor extends Vue {
 .user-tooltip {
   display: flex;
   align-items: center;
-  margin-left: 20px;
+  margin-left: 10px;
+}
+.more-tooltip {
+  .more-icon {
+    padding: 0 20px;
+    font-size: 22px;
+    &:hover {
+      color: #333;
+    }
+  }
 }
 
 .async-github-form {

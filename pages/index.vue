@@ -1148,3 +1148,17 @@ export default class Home extends Vue {
 </script>
 
 <style lang="less" scoped src="./index/index.less"></style>
+<style lang="less" scoped>
+h1.cover-heading {
+  text-align: center;
+}
+p.lead {
+  text-align: center;
+}
+.feature-card .content {
+  text-align: center;
+}
+.home-container {
+  text-align: center;
+}
+</style>
