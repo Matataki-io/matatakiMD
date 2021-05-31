@@ -17,11 +17,17 @@
                     <img src="https://hackmd.io/images/home/group.svg" class="pull-right">
                   </li>
                   <li>
-                    <a target="_blank" href="https://hackmd.io/c/tutorials-tw">使用教學</i></a>
+                    <a target="_blank" href="https://hackmd.io/c/tutorials-tw">使用教學</a>
                   </li>
                   <li class="divider visible-xs" style="margin: 12px 0px; background-color: #4f4f4f;" />
                   <li class="ui-home-login">
-                    <a href="javascript:;" @click="jumpToMttkOAuth">登入</i></a>
+                    <router-link to="/overview">
+                      管理笔记
+                    </router-link>
+                  </li>
+                  <li class="ui-home-login">
+                    <a v-if="!isLogin" href="javascript:;" @click="jumpToMttkOAuth">登入</a>
+                    <a v-else href="javascript:;">已登入</a>
                   </li>
                 </ul>
               </div> <!-- /.collapse.navbar-collapse -->
@@ -29,9 +35,10 @@
           </div> <!-- /.col-xs-12 -->
         </div> <!-- /.row -->
       </div> <!-- /.container-fluid -->
+      <div class="modal-backdrop dim" />
     </header>
 
-    <div id="site-content" class="site-wrapper pt-1/4" style="padding-top: 50px;">
+    <div id="site-content" class="site-wrapper pt-1/4" style="padding-top: 70px;">
       <div id="home">
         <div class="container" />
         <div class="home-container container pt-3-xs pb-10-xs pt-9-md pb-16-md">
@@ -52,10 +59,10 @@
               </p>
 
               <form action="https://hackmd.io/join" class="input-group mt-3" method="get" style="display: flex; max-width: 680px; margin: auto;">
-                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email" disabled>
+                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email">
                 <div class="input-group-append">
                   <button type="submit" class="btn btn-success btn-lg ui-home-join">
-                    立即登入
+                    立即註冊
                   </button>
                 </div>
               </form>
@@ -73,10 +80,10 @@
             </div>
             <div class="col-xs-12 col-md-6 mb-3-xs mb-0-md">
               <div class="carousel-inner pull-right" style="width: auto;">
-                <div class="item active">
+                <div class="item">
                   <img src="https://hackmd.io/images/home/IndexPic_1-1.svg" class="d-block w-100" alt="Slide 1">
                 </div>
-                <div class="item">
+                <div class="item active">
                   <img src="https://hackmd.io/images/home/IndexPic_1-2.svg" class="d-block w-100" alt="Slide 2">
                 </div>
                 <div class="item">
@@ -90,7 +97,7 @@
                 <div>權限設定控管隱私</div>
               </h1>
               <div class="carousel-indicators">
-                <div class="carousel-item active" data-target="#carouselFirstIndicators" data-slide-to="0">
+                <div class="carousel-item" data-target="#carouselFirstIndicators" data-slide-to="0">
                   <img src="https://hackmd.io/images/home/index-team-value-01.svg" class="icon">
                   <div>
                     <div class="title">
@@ -101,7 +108,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="carousel-item" data-target="#carouselFirstIndicators" data-slide-to="1">
+                <div class="carousel-item active" data-target="#carouselFirstIndicators" data-slide-to="1">
                   <img src="https://hackmd.io/images/home/index-team-value-02.svg" class="icon">
                   <div>
                     <div class="title">
@@ -202,7 +209,7 @@
             <div class="col-xs-12 text-left button-container">
               <form action="https://hackmd.io/template/template-Try-it?redirect=true" method="POST">
                 <div class="dn">
-                  <input type="hidden" name="_csrf" value="V8FCywhL-Vx-Kdn2xEv9raJvO1Xgc3WjBY9E">
+                  <input type="hidden" name="_csrf" value="HlyGR5se-BINd6lv9fDqWlkA_4CgaHG3apPM">
                 </div>
                 <button type="submit" class="ui-new-note ui-new-note-features btn btn-lg btn-primary" style="min-width: 110px;">
                   免費試用
@@ -437,13 +444,13 @@
           <div class="row">
             <div class="col-xs-12">
               <p class="h3 mt-0 mb-3" style="font-size: 30px;">
-                加入 MatatakiMD 的 100,00+ 名使用者，一用就愛上 ❤️
+                加入 MatatakiMD 的 400,000+ 名使用者，一用就愛上 ❤️
               </p>
               <form action="https://hackmd.io/join" class="input-group" method="get" style="display: flex; max-width: 680px; margin: auto;">
-                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email" disabled>
+                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email">
                 <div class="input-group-append">
                   <button type="submit" class="btn btn-success btn-lg ui-home-join">
-                    立即登入
+                    立即註冊
                   </button>
                 </div>
               </form>
@@ -459,7 +466,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true">×</span>
             </button>
             <h4 id="myModalLabel" class="modal-title">
               您確定嗎？
@@ -509,7 +516,33 @@
             <div class="row">
               <div class="col-sm-8 template-preview-container hidden-xs">
                 <div>
-                  <div class="ui-template-spinner unselectable hidden-print" />
+                  <div class="ui-template-spinner unselectable hidden-print">
+                    <div class="spinner" role="progressbar" style="position: absolute; width: 0px; z-index: 2000000000; left: 50%; top: 50%;">
+                      <div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-0-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(0deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-1-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(32deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-2-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(65deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-3-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(98deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-4-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(130deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-5-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(163deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-6-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(196deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-7-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(229deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-8-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(261deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-9-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(294deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div><div style="position: absolute; top: -1px; transform: translate3d(0px, 0px, 0px); opacity: 0.25; animation: 0.909091s linear 0s infinite normal none running opacity-60-25-10-11;">
+                        <div style="position: absolute; width: 22px; height: 2px; background: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px; transform-origin: left center; transform: rotate(327deg) translate(30px, 0px); border-radius: 0px;" />
+                      </div>
+                    </div>
+                  </div>
                   <iframe class="template-viewer" style="width: 100%; height: 100%; border: none;" />
                   <div class="template-empty ui-template-viewer-empty" style="display: none; margin: 0px;">
                     <img src="https://hackmd.io/not-available.svg">
@@ -525,13 +558,7 @@
               </div>
               <div class="col-sm-4 template-list-container">
                 <div class="ui-templates-container">
-                  <button
-                    type="button"
-                    class="btn btn-success"
-                    style="margin: 20px; margin-bottom: 10px; height: 40px; font-size: 16px;"
-                    data-toggle="modal"
-                    data-target=".signin-modal"
-                  >
+                  <button type="button" class="btn btn-success" style="margin: 20px; margin-bottom: 10px; height: 40px; font-size: 16px;" data-toggle="modal" data-target=".signin-modal">
                     登入
                   </button>
 
@@ -644,14 +671,21 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: 10px; right: 20px; position: absolute;">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
 
           <h3>登入</h3>
 
-          <form data-toggle="validator" role="form" class="form-horizontal" method="post" enctype="application/x-www-form-urlencoded">
+          <form
+            data-toggle="validator"
+            role="form"
+            class="form-horizontal"
+            method="post"
+            enctype="application/x-www-form-urlencoded"
+            novalidate="true"
+          >
             <div class="dn">
-              <input type="hidden" name="_csrf" value="V8FCywhL-Vx-Kdn2xEv9raJvO1Xgc3WjBY9E">
+              <input type="hidden" name="_csrf" value="HlyGR5se-BINd6lv9fDqWlkA_4CgaHG3apPM">
             </div>
             <div class="dn">
               <input type="hidden" name="create_team" value="false">
@@ -669,7 +703,7 @@
                   class="form-control"
                   name="email"
                   placeholder="您的 Email"
-                  required
+                  required=""
                   autocomplete="email"
                 >
 
@@ -686,7 +720,7 @@
                   class="form-control"
                   name="password"
                   placeholder="您的密碼"
-                  required
+                  required=""
                   autocomplete="current-password"
                 >
                 <span class="error-sign" />
@@ -696,7 +730,7 @@
             </div>
 
             <div style="text-align: center; padding-top: 15px; margin-bottom: 0px;">
-              <input type="submit" class="btn btn-success btn-large" formaction="https://hackmd.io/login" value="登入">
+              <input type="submit" class="btn btn-success btn-large disabled" formaction="https://hackmd.io/login" value="登入">
             </div>
           </form>
 
@@ -741,7 +775,7 @@
         <div class="modal-content">
           <div class="modal-header" style="padding: 8px 15px; font-weight: 700">
             <button type="button" class="close" aria-label="Close" style="font-size: 26px; margin-top: -1px;" data-dismiss="modal">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true">×</span>
             </button>
             <h4 class="modal-title">
               使用回饋
@@ -756,11 +790,35 @@
               感謝您的使用
             </h3>
             <p>從 0 到 10 分，請問您向朋友、家人、或同事推薦 MatatakiMD 的可能性有多高？</p>
-            <div class="rating-group" style="margin-top: 15px; margin-bottom: 30px;" />
+            <div class="rating-group" style="margin-top: 15px; margin-bottom: 30px;">
+              <button type="button" class="btn" data-value="0">
+                0
+              </button><button type="button" class="btn" data-value="1">
+                1
+              </button><button type="button" class="btn" data-value="2">
+                2
+              </button><button type="button" class="btn" data-value="3">
+                3
+              </button><button type="button" class="btn" data-value="4">
+                4
+              </button><button type="button" class="btn" data-value="5">
+                5
+              </button><button type="button" class="btn" data-value="6">
+                6
+              </button><button type="button" class="btn" data-value="7">
+                7
+              </button><button type="button" class="btn" data-value="8">
+                8
+              </button><button type="button" class="btn" data-value="9">
+                9
+              </button><button type="button" class="btn" data-value="10">
+                10
+              </button>
+            </div>
             <p style="font-size:16px">
               希望您可以提供一些建議，幫助我們改善 MatatakiMD 💪
             </p>
-            <form role="form" data-toggle="validator">
+            <form role="form" data-toggle="validator" novalidate="true">
               <div class="form-group" style="margin-bottom: 10px;">
                 <textarea
                   name="feedback"
@@ -768,12 +826,12 @@
                   placeholder="請輸入您的使用回饋"
                   rows="3"
                   style="resize: none;"
-                  required
+                  required=""
                 />
               </div>
               <div class="checkbox" style="font-size:16px">
                 <label>
-                  <input name="engage" type="checkbox" checked>
+                  <input name="engage" type="checkbox" checked="">
                   我願意參與使用者訪談或後續改版測試，讓開發團隊更能完整理解我的需求
                 </label>
               </div>
@@ -787,7 +845,7 @@
                     class="form-control col-sm-9"
                     aria-describedby="helpId"
                     placeholder="請輸入您的 Email"
-                    required
+                    required=""
                   >
                 </div>
               </div>
@@ -795,7 +853,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">
                   取消
                 </button>
-                <button type="submit" class="btn btn-primary ui-feedback-submit">
+                <button type="submit" class="btn btn-primary ui-feedback-submit disabled">
                   送出回饋
                 </button>
               </div>
@@ -823,7 +881,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true">×</span>
             </button>
             <h4 id="myModalLabel" class="modal-title" />
           </div>
@@ -856,7 +914,7 @@
             border-top-right-radius: 4px;"
           >
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true">×</span>
             </button>
 
             <h4 id="myModalLabel" class="modal-title">
@@ -869,7 +927,7 @@
               <span class="team-create-error" />
             </div>
 
-            <form data-toggle="validator">
+            <form data-toggle="validator" novalidate="true">
               <div class="form-group flex items-center">
                 <label class="flex-one text-left" for="team-name">團隊名稱</label>
                 <input
@@ -880,7 +938,7 @@
                   placeholder="您的團隊名稱"
                   data-minlength="1"
                   maxlength="80"
-                  required
+                  required=""
                 >
               </div>
 
@@ -910,7 +968,7 @@
                       pattern="^(?!-)[a-zA-Z0-9-]+$"
                       data-minlength="1"
                       maxlength="39"
-                      required
+                      required=""
                     >
                   </div>
                   <small style="text-align: right; color: #888888;">僅允許輸入 a-Z、0-9 以及 - 號 (非首位字元)</small>
@@ -921,7 +979,7 @@
                 <button type="button" data-dismiss="modal" class="btn btn-default">
                   取消
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary disabled">
                   建立團隊
                 </button>
               </div>
@@ -1022,87 +1080,11 @@
         <div class="row">
           <div class="col-xs-12 col-sm-6 flex items-center">
             <span class="ui-brand pr-1">
-              &copy; 2021 MatatakiMD. All Rights Reserved.
+              © 2021 MatatakiMD. All Rights Reserved.
             </span>
           </div>
 
-          <div class="col-xs-12 col-sm-6 flex justify-start-xs justify-end-sm flex-row-sm flex-column-xs items-start-xs items-center-sm">
-            <!-- <form action="https://www.paypal.com/cgi-bin/webscr" target="_blank" class="pr-1/4 dib mt-2-xs mb-1-xs db-xs">
-              <input type="hidden" name="cmd" value="_donations">
-              <input type="hidden" name="business" value="KDGS4PREHX6QQ">
-              <input type="hidden" name="lc" value="US">
-              <input type="hidden" name="item_name" value="HackMD">
-              <input type="hidden" name="currency_code" value="USD">
-              <input type="hidden" name="bn" value="PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">
-              <button type="submit" class="btn-link ph-0 text-uppercase">
-                <i class="fa fa-coffee" /> 捐贈我們一杯咖啡
-              </button>
-                    &ensp;<span class="text-gray">$</span> <input class="w-4" type="number" name="amount" min="1" value="5">
-            </form> -->
-
-            <!-- <select title="Language" class="ui-locale">
-              <option value="en">
-                English
-              </option>
-              <option value="zh">
-                中文
-              </option>
-              <option value="fr">
-                Français
-              </option>
-              <option value="de">
-                Deutsch
-              </option>
-              <option value="ja">
-                日本語
-              </option>
-              <option value="es">
-                Español
-              </option>
-              <option value="ca">
-                Català
-              </option>
-              <option value="el">
-                Ελληνικά
-              </option>
-              <option value="pt">
-                Português
-              </option>
-              <option value="it">
-                italiano
-              </option>
-              <option value="tr">
-                Türkçe
-              </option>
-              <option value="ru">
-                Русский
-              </option>
-              <option value="nl">
-                Nederlands
-              </option>
-              <option value="hr">
-                hrvatski jezik
-              </option>
-              <option value="pl">
-                język polski
-              </option>
-              <option value="uk">
-                Українська
-              </option>
-              <option value="hi">
-                हिन्दी
-              </option>
-              <option value="sv">
-                svenska
-              </option>
-              <option value="eo">
-                Esperanto
-              </option>
-              <option value="da">
-                dansk
-              </option>
-            </select> -->
-          </div>
+          <div class="col-xs-12 col-sm-6 flex justify-start-xs justify-end-sm flex-row-sm flex-column-xs items-start-xs items-center-sm" />
         </div>  <!-- /.row -->
       </div> <!-- /.container-thin -->
     </footer>
@@ -1115,20 +1097,53 @@ import {
   Vue,
   Watch
 } from 'nuxt-property-decorator'
+import { isEmpty } from 'lodash'
 import { setOAuthRedirectUri } from '../api/developer'
+import { getCookie, setCookie } from '../utils/cookie'
+import { userStats } from '../api/index'
 
 @Component({
 })
 export default class Home extends Vue {
-  async jumpToMttkOAuth () {
-    try {
-      console.log('from', location)
-      await setOAuthRedirectUri(location.pathname)
-    } catch (error) {
-      console.log('error', error)
+    usersData: object = {}
+
+    get isLogin () {
+      return !isEmpty(this.usersData)
     }
-    (window as any).location = process.env.REACT_APP_OAuthUrl
-  };
+
+    mounted () {
+    // 编辑文章不会自动保存
+      if (process.browser) {
+        try {
+          const usersDataStore = getCookie('users') || ''
+          if (usersDataStore) {
+            this.usersData = JSON.parse(usersDataStore)
+          } else {
+            this.userStatsFn()
+          }
+        } catch (e) {
+          console.log('e', e)
+        }
+      }
+    }
+
+    async userStatsFn (): Promise<void> {
+      const res: any = await userStats()
+      if (res.code === 0) {
+        setCookie('users', JSON.stringify(res.data))
+        this.usersData = res.data
+      }
+    }
+
+    async jumpToMttkOAuth () {
+      try {
+        console.log('from', location)
+        await setOAuthRedirectUri(location.pathname)
+      } catch (error) {
+        console.log('error', error)
+      }
+      (window as any).location = process.env.REACT_APP_OAuthUrl
+    };
 }
 </script>
 
