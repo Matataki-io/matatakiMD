@@ -69,14 +69,16 @@
             </div>
             <div class="ui-next-sidenav-pages sidenav-menu" style="margin-top: 15px;">
               <ul>
-                <li><a aria-current="page" class="sidenav-menu-link active" history="[object Object]" match="[object Object]" href="/?nav=overview"><span class="item-icon"><i class="fa fa-lock fa-fw" /></span> 我的筆記</a></li>
+                <li>
+                  <a aria-current="page" class="sidenav-menu-link active" history="[object Object]" match="[object Object]" href="/overview"><span class="item-icon"><i class="fa fa-lock fa-fw" /></span> 我的筆記</a>
+                </li>
                 <!-- <li><a class="sidenav-menu-link" history="[object Object]" match="[object Object]" href="/?nav=collab"><span class="item-icon"><i class="fa fa-users fa-fw" /></span> 協作筆記</a></li> -->
-                <!-- <li style="position: absolute; bottom: 96px; left: 0px; right: 0px; z-index: 2;">
-                  <a class="sidenav-menu-link" href="/bookmark"><span class="item-icon"><i class="fa fa-bookmark fa-fw" /></span> 收藏</a>
+                <li style="position: absolute; bottom: 96px; left: 0px; right: 0px; z-index: 2;">
+                  <a class="sidenav-menu-link" href="/"><span class="item-icon"><i class="fa fa-bookmark fa-fw" /></span> 收藏</a>
                 </li>
                 <li style="position: absolute; bottom: 56px; left: 0px; right: 0px; z-index: 2;">
-                  <a class="sidenav-menu-link" href="/recent"><span class="item-icon"><i class="fa fa-clock-o fa-fw" /></span> 最近瀏覽</a>
-                </li> -->
+                  <a class="sidenav-menu-link" href="/"><span class="item-icon"><i class="fa fa-clock-o fa-fw" /></span> 最近瀏覽</a>
+                </li>
               </ul>
             </div>
             <div v-if="isUser" class="ui-next-sidenav-bottom-menu">
@@ -245,7 +247,9 @@
                                     data-placement="bottom"
                                     data-original-title=""
                                     title=""
-                                  ><i class="fa fa-bookmark-o" aria-hidden="true" /></span>
+                                    @click="toggleBookmark({ id: item.id_str, idx: index, value: !item.bookmark })"
+                                  >
+                                    <i class="fa" aria-hidden="true" :class="item.bookmark ? 'fa-bookmark' : 'fa-bookmark-o'" /></span>
                                   <div class="overview-card-menu-container" @click="item.more = !item.more">
                                     <div class="overview-card-menu menu-component white">
                                       <div
@@ -818,8 +822,8 @@ export default class Home extends Vue {
       const ele = keys[i]
       const res = await (this as any).$localForage.getItem(ele)
       // console.log('res', res)
-      res.id = ele
       res.more = false
+      res.bookmark = !!res.bookmark
       list.push(res)
     }
 
@@ -831,10 +835,13 @@ export default class Home extends Vue {
   async handleSubmit () :Promise<void> {
     const time = Date.now()
     await (this as any).$localForage.setItem(time, {
+      id: time,
+      id_str: String(time),
       title: '',
       content: '',
       create_time: time,
-      update_time: time
+      update_time: time,
+      bookmark: false
     })
     this.$router.push(`/${time}`)
   }
@@ -842,6 +849,15 @@ export default class Home extends Vue {
   async removeNotes (key: string) {
     await (this as any).$localForage.removeItem(key)
     this.getAll()
+  }
+
+  async toggleBookmark ({ id, idx, value }: { id: string, idx: number, value: boolean }) {
+    console.log('id', id, idx)
+    const res = await (this as any).$localForage.getItem(id)
+    await (this as any).$localForage.setItem(id, Object.assign(res, {
+      bookmark: value
+    }))
+    await this.getAll()
   }
 
   signOut () {
