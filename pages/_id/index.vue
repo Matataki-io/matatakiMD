@@ -50,8 +50,10 @@
       title="同步到 GitHub"
       :visible.sync="dialogAsyncGithub"
       width="600px"
+      custom-class="async-giithub"
     >
       <div>
+        <div v-loading="githubLoading" class="async-github-loading" />
         <div v-if="isUserGithub">
           <el-button size="small" @click="toggleMode('push')">
             推送至 GitHub
@@ -79,7 +81,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Branch" prop="branches">
-          <el-select v-model="asyncGithubFormPush.branches" style="width: 100%" placeholder="请选择 Branches">
+          <el-select v-model="asyncGithubFormPush.branches" style="width: 100%" placeholder="请选择 Branches" disabled>
             <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
           </el-select>
         </el-form-item>
@@ -112,12 +114,12 @@
         class="async-github-form"
       >
         <el-form-item label="Repo" prop="repos">
-          <el-select v-model="asyncGithubFormPull.repos" style="width: 100%" placeholder="请选择 Repo">
+          <el-select v-model="asyncGithubFormPull.repos" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
             <el-option v-for="(item, idx) of repos" :key="idx" :value="item.full_name" :label="`${item.full_name}${item.private ? '(private)' : ''}`" />
           </el-select>
         </el-form-item>
         <el-form-item label="Branch" prop="branches">
-          <el-select v-model="asyncGithubFormPull.branches" style="width: 100%" placeholder="请选择 Branches">
+          <el-select v-model="asyncGithubFormPull.branches" style="width: 100%" placeholder="请选择 Branches" disabled>
             <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
           </el-select>
         </el-form-item>
@@ -222,6 +224,7 @@ export default class Edidtor extends Vue {
   ipfsUploadLoading = false
   mtkUploadLoading = false
   githubUploadLoading = false
+  githubLoading = false
 
   get asyncGithubFormRules () {
     if (this.asyncGithubFormMode === 'push') {
@@ -257,6 +260,18 @@ export default class Edidtor extends Vue {
     return !isEmpty(this.usersData)
   }
 
+  get matatakiUrl () {
+    if (process.client) {
+      return process.env.APP_MATATAKI_URL
+    } else {
+      return ''
+    }
+  }
+
+  get isUserGithub () {
+    return !isEmpty(this.usersGithubData)
+  }
+
   mounted () {
     // 编辑文章不会自动保存
     if (process.browser) {
@@ -288,14 +303,6 @@ export default class Edidtor extends Vue {
       } catch (e) {
         console.log('e', e)
       }
-    }
-  }
-
-  get matatakiUrl () {
-    if (process.client) {
-      return process.env.APP_MATATAKI_URL
-    } else {
-      return ''
     }
   }
 
@@ -361,17 +368,27 @@ export default class Edidtor extends Vue {
   }, 1000)
 
   handleResizeEditor (): void {
-    const clientHeight = document.body.clientHeight || document.documentElement.clientHeight
-    // const clientWidth = document.body.clientWidth || document.documentElement.clientWidth
-    this.editorStyle = {
+    try {
+      const clientHeight = document.body.clientHeight || document.documentElement.clientHeight
+      // const clientWidth = document.body.clientWidth || document.documentElement.clientWidth
+      this.editorStyle = {
       // height: `${clientHeight - (clientWidth < 768 ? 47 : 60)}px`
-      height: `${clientHeight - 50}px`
+        height: `${clientHeight - 50}px`
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
 
   async handPushEvent (): Promise<void> {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在推送...'
+    })
+
     try {
       console.log(this.asyncGithubFormPush)
+
       this.githubUploadLoading = true
       const [owner, repo] = this.asyncGithubFormPush.repos.split('/')
       const res: any = await push({
@@ -391,10 +408,16 @@ export default class Edidtor extends Vue {
       this.$message.error(`推送失败: ${e.toString()}`)
     } finally {
       this.githubUploadLoading = false
+      loading.close()
     }
   }
 
   async handPullEvent (): Promise<void> {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在拉取...'
+    })
+
     try {
       this.githubUploadLoading = true
 
@@ -416,6 +439,7 @@ export default class Edidtor extends Vue {
       this.$message.error(`拉取失败: ${e.toString()}`)
     } finally {
       this.githubUploadLoading = false
+      loading.close()
     }
   }
 
@@ -436,6 +460,7 @@ export default class Edidtor extends Vue {
   }
 
   async usersReposFn (): Promise<void> {
+    this.githubLoading = true
     try {
       const res: any = await usersRepos({
         username: (this as any).usersGithubData.login
@@ -453,10 +478,14 @@ export default class Edidtor extends Vue {
       }
     } catch (e) {
       console.warn(e)
+    } finally {
+      this.githubLoading = false
     }
   }
 
   async reposBranchesFn ({ owner, repo }: reposBranchesFnProps): Promise<void> {
+    this.githubLoading = true
+
     try {
       const res: any = await reposBranches({
         owner,
@@ -474,10 +503,14 @@ export default class Edidtor extends Vue {
       }
     } catch (e) {
       console.warn(e)
+    } finally {
+      this.githubLoading = false
     }
   }
 
   async reposContentsListFn ({ owner, repo }: reposContentsListProps): Promise<void> {
+    this.githubLoading = true
+
     try {
       const res: any = await reposContentsList({
         owner,
@@ -490,11 +523,9 @@ export default class Edidtor extends Vue {
       }
     } catch (e) {
       console.warn(e)
+    } finally {
+      this.githubLoading = false
     }
-  }
-
-  get isUserGithub () {
-    return !isEmpty(this.usersGithubData)
   }
 
   handleChangeRepos (e: any) {
@@ -787,5 +818,12 @@ export default class Edidtor extends Vue {
   font-size: 14px;
   text-decoration: none;
 }
-
+.async-github {
+  position: relative;
+}
+.async-github-loading {
+  position: absolute;
+  right: 60px;
+  bottom: 40px;
+}
 </style>
