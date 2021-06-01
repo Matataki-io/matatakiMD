@@ -86,7 +86,7 @@
                 <div class="sidenav-item-action menu-component" style="position: relative;">
                   <div class="ui-next-sidenav-profile-container">
                     <div class="ui-next-sidenav-profile-label ellipsis-text">
-                      <img class="ui-avatar circle" width="22" height="22" :src="`https://ssimg.frontenduse.top/${usersData.avatar}`"><span class="ui-name">{{ usersData.username || usersData.nickname }}</span>
+                      <img class="ui-avatar circle" width="22" height="22" :src="`https://ssimg.frontenduse.top/${usersData.avatar}`"><span class="ui-name">{{ usersData.nickname || usersData.username }}</span>
                     </div>
                     <div class="ui-next-sidenav-profile-button" @click="toggleUserModal = true">
                       <i class="fa fa-angle-up" />
