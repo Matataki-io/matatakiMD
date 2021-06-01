@@ -3,7 +3,7 @@ export default {
   development: {
     NODE: 'development',
     NODE_ENV: 'development',
-    APP_API_URL: 'https://md-api.mttk.net',
+    APP_API_URL: 'http://127.0.0.1:7001',
     // Matataki
     APP_MATATAKI_URL: 'https://test.matataki.io',
     // # Matataki OAuth Related config
