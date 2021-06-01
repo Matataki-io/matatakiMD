@@ -8,7 +8,7 @@ import { getCookie } from '../utils/cookie'
 // }
 
 const client = axios.create({
-  baseURL: 'http://127.0.0.1:7001',
+  baseURL: process.env.APP_API_URL,
   timeout: 1000 * 60,
   headers: {
   },

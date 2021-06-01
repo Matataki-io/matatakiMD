@@ -1,20 +1,5 @@
 import client from './client'
 
-export function add (params: any) {
-  return client.get('/add', { params })
-}
-
-export function remove (params: any) {
-  return client.get('/remove', { params })
-}
-
-export function fetchPosts (params: any) {
-  return client.get('/fetchPosts', { params })
-}
-
-export function signIn (data: any) {
-  return client.post('/signIn', data)
-}
 export function users () {
   return client.get('/api/users')
 }
@@ -33,10 +18,7 @@ export function reposBranches (params: any) {
 export function reposContentsList (params: any) {
   return client.get('/api/repos/contents/list', { params })
 }
-// oauth login accessToken
-export function oauthLoginAccessToken (params: any) {
-  return client.get('/api/oauth/login/access_token', { params })
-}
+
 // image upload
 export function upload (file: File) {
   const formdata = new FormData()
