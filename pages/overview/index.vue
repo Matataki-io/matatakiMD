@@ -777,6 +777,8 @@ export default class Home extends Vue {
   mounted () {
     // 编辑文章不会自动保存
     if (process.browser) {
+      console.log('APP_API_URL', process.env.APP_API_URL)
+
       this.getAll()
 
       try {
