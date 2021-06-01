@@ -1,5 +1,10 @@
 import ENV from './env'
 
+const PORT = {
+  development: 3000,
+  production: 5068
+}
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -60,7 +65,7 @@ export default {
     transpile: [/^element-ui/]
   },
   server: {
-    port: 3000, // default: 3000
+    port: PORT[process.env.NODE_ENV], // default: 3000
     host: '0.0.0.0' // default: localhost
   },
   env: ENV[process.env.NODE_ENV]
