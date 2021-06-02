@@ -1,4 +1,14 @@
+import { hCaptchaDataProps } from '../types/index.d'
 import client from './client'
+
+interface PublishProps {
+  title: string
+  content: string
+  shortContent: string
+  platform: string
+  author: string
+  hCaptchaData: hCaptchaDataProps
+}
 
 export function users () {
   return client.get('/api/users')
@@ -38,9 +48,13 @@ export function ipfsUpload (data: { title: string, content: string }) {
   })
 }
 
+// MTK API
 export function userStats () {
   return client.get('/api/user/stats')
 }
-export function postPublish (data: { title: string, content: string }) {
+export function postPublish (data: PublishProps) {
   return client.post('/api/post/publish', data)
+}
+export function doINeedHCaptcha () {
+  return client.get('/api/captcha/doINeedHCaptcha')
 }

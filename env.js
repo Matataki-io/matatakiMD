@@ -9,7 +9,8 @@ export default {
     // # Matataki OAuth Related config
     REACT_APP_OAuthUrl: 'https://developer.matataki.io/app/905ac873d9d71038/oauth?network=test',
     REACT_APP_OAuthClientId: '401523152384315',
-    REACT_APP_OAuthClientSecret: '2987112115071a55'
+    REACT_APP_OAuthClientSecret: '2987112115071a55',
+    VUE_APP_HCAPTCHA_SITE_KEY: 'add3227a-649b-4e14-b286-d6c917f9b775'
   },
   production: {
     NODE: 'production',
@@ -20,6 +21,7 @@ export default {
     // # Matataki OAuth Related config
     REACT_APP_OAuthUrl: 'https://developer.matataki.io/app/f1d77cd8b16bd25f/oauth',
     REACT_APP_OAuthClientId: '582657204820772',
-    REACT_APP_OAuthClientSecret: '62694caddff0c216'
+    REACT_APP_OAuthClientSecret: '62694caddff0c216',
+    VUE_APP_HCAPTCHA_SITE_KEY: '929510ae-ff3e-4ccc-bb8b-f7dd3983e791'
   }
 }

@@ -267,7 +267,7 @@
                                           <i class="fa fa-eye fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />以瀏覽模式開啟
                                         </a>
                                         <div class="divider" /> -->
-                                        <div class="menu-item danger" style="padding-left: 40px;" @click="removeNotes(item.id)">
+                                        <div class="menu-item danger" style="padding-left: 40px;" @click="removeNotes(item.id_str || item.key)">
                                           <i class="fa fa-trash fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />刪除此筆記
                                         </div>
                                       </div>
@@ -807,7 +807,7 @@ export default class Home extends Vue {
   async userStatsFn (): Promise<void> {
     const res: any = await userStats()
     if (res.code === 0) {
-      setCookie('users', JSON.stringify(res.data))
+      setCookie('users', JSON.stringify(res.data), 1)
       this.usersData = res.data
     }
   }
@@ -817,20 +817,25 @@ export default class Home extends Vue {
   }
 
   async getAll () :Promise<void> {
-    const keys = await (this as any).$localForage.keys()
-    // console.log('keys', keys)
-    const list = []
-    for (let i = 0; i < keys.length; i++) {
-      const ele = keys[i]
-      const res = await (this as any).$localForage.getItem(ele)
-      // console.log('res', res)
-      res.more = false
-      list.push(res)
+    try {
+      const keys = await (this as any).$localForage.keys()
+      // console.log('keys', keys)
+      const list = []
+      for (let i = 0; i < keys.length; i++) {
+        const ele = keys[i]
+        const res = await (this as any).$localForage.getItem(ele)
+        // console.log('res', res)
+        res.key = ele // 防止丢失 key 做的一层 防止清理不掉
+        res.more = false
+        list.push(res)
+      }
+
+      const mdItem = list.sort((a: any, b: any) => b.update_time - a.update_time)
+
+      this.markdownItem = mdItem
+    } catch (e) {
+      console.log(e.toString())
     }
-
-    const mdItem = list.sort((a: any, b: any) => b.update_time - a.update_time)
-
-    this.markdownItem = mdItem
   }
 
   async handleSubmit () :Promise<void> {
@@ -848,17 +853,25 @@ export default class Home extends Vue {
   }
 
   async removeNotes (key: string) {
-    await (this as any).$localForage.removeItem(key)
-    this.getAll()
+    try {
+      await (this as any).$localForage.removeItem(key)
+      this.getAll()
+    } catch (e) {
+      console.log(e.toString())
+    }
   }
 
   async toggleBookmark ({ id, idx, value }: { id: string, idx: number, value: boolean }) {
-    console.log('id', id, idx)
-    const res = await (this as any).$localForage.getItem(id)
-    await (this as any).$localForage.setItem(id, Object.assign(res, {
-      bookmark: value
-    }))
-    await this.getAll()
+    try {
+      console.log('id', id, idx)
+      const res = await (this as any).$localForage.getItem(id)
+      await (this as any).$localForage.setItem(id, Object.assign(res, {
+        bookmark: value
+      }))
+      await this.getAll()
+    } catch (e) {
+      console.log(e.toString())
+    }
   }
 
   signOut () {

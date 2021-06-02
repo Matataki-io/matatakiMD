@@ -19,7 +19,7 @@ export default class AuthGithubCallback extends Vue {
       console.log('router', this.$route)
       const { token, path } = this.$route.query
       if (!isEmpty(token)) {
-        setCookie('access-token', String(token))
+        setCookie('access-token', String(token), 1)
         this.$router.push(decodeURIComponent(String(path) || '/'))
       } else {
         this.$message.error('not token!')

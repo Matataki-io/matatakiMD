@@ -19,7 +19,7 @@
             <el-dropdown-item command="async-matataki">
               同步到 Matataki
             </el-dropdown-item>
-            <el-dropdown-item command="save-file-md">
+            <el-dropdown-item command="save-file-md" divided>
               导出 Markdown
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -94,11 +94,11 @@
           <el-input v-model="asyncGithubFormPush.commit" type="textarea" placeholder="请输入 Commit(可选)" />
         </el-form-item>
         <el-form-item>
-          <el-button v-loading="githubUploadLoading" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPush')">
+          <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPush')">
             确定
           </el-button>
           <a v-if="asyncGithubFormPush.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPush.repos}`">
-            <el-button>
+            <el-button size="small">
               View Repo
             </el-button>
           </a>
@@ -129,14 +129,57 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button v-loading="githubUploadLoading" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPull')">
+          <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPull')">
             确定
           </el-button>
           <a v-if="asyncGithubFormPull.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPull.repos}`">
-            <el-button>
+            <el-button size="small">
               View Repo
             </el-button>
           </a>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <el-dialog
+      title="发布到 Matataki"
+      :visible.sync="dialogPublishMatataki"
+      width="600px"
+    >
+      <el-form
+        ref="publishMatatakiForm"
+        class="publish-matataki_form"
+        :model="publishMatatakiForm"
+        :rules="publishMatatakiFormRules"
+      >
+        <el-form-item label="標題" prop="title">
+          <el-input v-model="publishMatatakiForm.title" placeholder="请输入標題" />
+        </el-form-item>
+        <el-form-item label="摘要" prop="shortContent">
+          <el-input
+            v-model="publishMatatakiForm.shortContent"
+            type="textarea"
+            :rows="6"
+            placeholder="请输入摘要"
+          />
+        </el-form-item>
+        <div>
+          <client-only>
+            <vue-hcaptcha
+              v-if="doINeedHCaptcha"
+              :sitekey="hCaptchaSiteKey"
+              language="zh"
+              @verify="onCaptchaVerify"
+              @expired="onExpire"
+              @error="onError"
+              @reset="onCaptchaReset"
+            />
+          </client-only>
+        </div>
+        <el-form-item>
+          <el-button v-loading="mtkUploadLoading" size="small" type="primary" @click="submitPublishMatatakiForm('publishMatatakiForm')">
+            发布
+          </el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -165,11 +208,18 @@ import {
   Vue,
   Watch
 } from 'nuxt-property-decorator'
-import { push, pull, users, userStats, postPublish, usersRepos, reposBranches, reposContentsList, upload, ipfsUpload } from '../../api/index'
+import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
+import {
+  push, pull, users,
+  userStats, postPublish, usersRepos,
+  reposBranches, reposContentsList, upload,
+  ipfsUpload, doINeedHCaptcha
+} from '../../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import markdownDownload from '../../utils/markdown-download'
 import { setOAuthRedirectUri } from '../../api/developer'
+import { hCaptchaDataProps } from '../../types/index.d'
 
 interface reposBranchesFnProps {
   owner: string
@@ -178,6 +228,14 @@ interface reposBranchesFnProps {
 interface reposContentsListProps {
   owner: string
   repo: string
+}
+
+interface userProps {
+  avatar: string
+  id: number
+  nickname: string
+  platform: string
+  username: string
 }
 
 let mavonEditor: any = {
@@ -189,7 +247,8 @@ if (process.client) {
 
 @Component({
   components: {
-    'mavon-editor': mavonEditor.mavonEditor
+    'mavon-editor': mavonEditor.mavonEditor,
+    VueHcaptcha
   }
 })
 export default class Edidtor extends Vue {
@@ -197,8 +256,9 @@ export default class Edidtor extends Vue {
   editorStyle: object = {}
   markdownData: string = ''
   dialogAsyncGithub: boolean = false
+  dialogPublishMatataki: boolean = false
   token: string = ''
-  usersData: object = {}
+  usersData: userProps = {} as userProps
   usersGithubData: object = {}
   asyncGithubFormMode: string = '' // push pull
   repos: Array<object> = []
@@ -221,10 +281,32 @@ export default class Edidtor extends Vue {
     path: ''
   }
 
+  publishMatatakiForm = {
+    title: '',
+    shortContent: ''
+  }
+
+  publishMatatakiFormRules = {
+    title: [
+      { required: true, message: '请输入標題', trigger: 'blur' }
+    ],
+    shortContent: [
+      { required: true, message: '请输入摘要', trigger: 'blur' }
+    ]
+  }
+
   ipfsUploadLoading = false
   mtkUploadLoading = false
   githubUploadLoading = false
   githubLoading = false
+
+  doINeedHCaptcha = true
+  hCaptchaData: hCaptchaDataProps = {
+    expired: false,
+    token: '',
+    eKey: '',
+    error: ''
+  }
 
   get asyncGithubFormRules () {
     if (this.asyncGithubFormMode === 'push') {
@@ -272,6 +354,14 @@ export default class Edidtor extends Vue {
     return !isEmpty(this.usersGithubData)
   }
 
+  get hCaptchaSiteKey () {
+    if (process.client) {
+      return process.env.VUE_APP_HCAPTCHA_SITE_KEY
+    } else {
+      return ''
+    }
+  }
+
   mounted () {
     // 编辑文章不会自动保存
     if (process.browser) {
@@ -303,6 +393,8 @@ export default class Edidtor extends Vue {
       } catch (e) {
         console.log('e', e)
       }
+
+      this.doINeedHCaptchaFn()
     }
   }
 
@@ -310,9 +402,9 @@ export default class Edidtor extends Vue {
   onDialogAsyncGithubChangeed (val: boolean) {
     if (!val) {
       if (this.asyncGithubFormMode === 'push') {
-        this.resetAsyncGithubForm('asyncGithubFormPush')
+        this.resetForm('asyncGithubFormPush')
       } else if (this.asyncGithubFormMode === 'pull') {
-        this.resetAsyncGithubForm('asyncGithubFormPull')
+        this.resetForm('asyncGithubFormPull')
       }
 
       this.asyncGithubFormMode = ''
@@ -325,6 +417,11 @@ export default class Edidtor extends Vue {
     // console.log('val', val, oldVal)
     // window.localStorage.setItem('md', val)
     this.asyncContent(val)
+  }
+
+  @Watch('dialogPublishMatataki')
+  onDialogPublishMatatakiChangeed () {
+    this.onCaptchaReset()
   }
 
   async jumpToMttkOAuth () {
@@ -351,7 +448,7 @@ export default class Edidtor extends Vue {
   asyncContent = debounce(async (val: string) => {
     try {
       console.log('val', val)
-      const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
+      const title = this.generateTitle()
       const res = await (this as any).$localForage.getItem(this.$route.params.id)
       const data = Object.assign(res, {
         title,
@@ -383,7 +480,8 @@ export default class Edidtor extends Vue {
   async handPushEvent (): Promise<void> {
     const loading = this.$notify({
       title: '提示',
-      message: '正在推送...'
+      message: '正在推送...',
+      duration: 0
     })
 
     try {
@@ -415,7 +513,8 @@ export default class Edidtor extends Vue {
   async handPullEvent (): Promise<void> {
     const loading = this.$notify({
       title: '提示',
-      message: '正在拉取...'
+      message: '正在拉取...',
+      duration: 0
     })
 
     try {
@@ -446,7 +545,7 @@ export default class Edidtor extends Vue {
   async userStatsFn (): Promise<void> {
     const res: any = await userStats()
     if (res.code === 0) {
-      setCookie('users', JSON.stringify(res.data))
+      setCookie('users', JSON.stringify(res.data), 1)
       this.usersData = res.data
     }
   }
@@ -454,7 +553,7 @@ export default class Edidtor extends Vue {
   async usersFn (): Promise<void> {
     const res: any = await users()
     if (res.code === 0) {
-      setCookie('users-github', JSON.stringify(res.data))
+      setCookie('users-github', JSON.stringify(res.data), 1)
       this.usersGithubData = res.data
     }
   }
@@ -477,7 +576,7 @@ export default class Edidtor extends Vue {
         })
       }
     } catch (e) {
-      console.warn(e)
+      console.warn(e.toString())
     } finally {
       this.githubLoading = false
     }
@@ -522,7 +621,7 @@ export default class Edidtor extends Vue {
         this.asyncGithubFormPull.path = res.data[0].name
       }
     } catch (e) {
-      console.warn(e)
+      console.warn(e.toString())
     } finally {
       this.githubLoading = false
     }
@@ -561,8 +660,19 @@ export default class Edidtor extends Vue {
     })
   }
 
-  resetAsyncGithubForm (formName: string) {
+  resetForm (formName: string) {
     (this as any).$refs[formName].resetFields()
+  }
+
+  submitPublishMatatakiForm (formName: string) {
+    (this as any).$refs[formName].validate((valid: boolean) => {
+      if (valid) {
+        this.postPublishFn()
+      } else {
+        console.log('error submit!!')
+        return false
+      }
+    })
   }
 
   // 图片上传的回调方法
@@ -636,11 +746,12 @@ export default class Edidtor extends Vue {
   async ipfsUploadFn () {
     const loading = this.$notify({
       title: '提示',
-      message: '正在发布...'
+      message: '正在发布...',
+      duration: 0
     })
 
     try {
-      const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
+      const title = this.generateTitle()
       const content = (document as any).querySelector('#previewContent').innerHTML
 
       this.ipfsUploadLoading = true
@@ -665,42 +776,87 @@ export default class Edidtor extends Vue {
 
         ipfs.push(res.data)
 
-        await (this as any).$localForage.setItem(this.$route.params.id, {
-          title,
-          content: this.markdownData,
-          create_time: Date.now(),
+        const data = Object.assign(mdData, {
+          update_time: Date.now(),
           ipfs
         })
+        await (this as any).$localForage.setItem(this.$route.params.id, data)
       } else {
-        throw new Error('发布失败')
+        throw new Error(res.message)
       }
     } catch (e) {
-      console.log(e.toString())
+      this.$message.error(e.toString())
     } finally {
       this.ipfsUploadLoading = false
       loading.close()
     }
   }
 
-  async postPublishFn () {
-    // TODO: 有问题 没有正确响应
+  // 生成简介
+  generateShortContent () {
     try {
-      this.mtkUploadLoading = true
-      const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
-      const res = await postPublish({
-        title,
-        content: this.markdownData
-      })
-      console.log('res', res)
+      const dom: any = document.querySelectorAll('#previewContent p') // 有些导入的文章是 Section 等标签包裹的，所以选择所有 P
+      const domList = [...dom].filter(i => !!(i.innerText.trim())) // 过滤一些没有内容的
+      const str = domList.reduce((t, c) => {
+        return `${t} ${c.innerText}`
+      }, '')
+      // console.log(str)
+      return (str.trim()).slice(0, 300)
     } catch (e) {
-      console.log(e.toString())
-    } finally {
-      this.mtkUploadLoading = false
+      console.log('e', e.toString())
+      return '...'
     }
   }
 
+  // 生成标题
+  generateTitle () {
+    try {
+      const titleDom = (document as any).querySelector('#previewContent h1')
+      return titleDom ? titleDom.innerText : 'Untitled'
+    } catch (e) {
+      console.log(e.toString())
+      return 'Untitled'
+    }
+  }
+
+  // 发布到 Matataki
+  async postPublishFn () {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在发布...',
+      duration: 0
+    })
+    try {
+      this.mtkUploadLoading = true
+
+      const res: any = await postPublish({
+        title: this.publishMatatakiForm.title,
+        content: this.markdownData,
+        shortContent: this.publishMatatakiForm.shortContent,
+        platform: this.usersData.platform,
+        author: this.usersData.username || this.usersData.nickname,
+        hCaptchaData: this.hCaptchaData
+      })
+      console.log('res', res)
+      if (res.code === 0) {
+        this.$notify({
+          title: '提示',
+          message: `url:${process.env.APP_MATATAKI_URL}/p/${res.data}`
+        })
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e) {
+      this.$message.error(e.toString())
+    } finally {
+      this.mtkUploadLoading = false
+      loading.close()
+    }
+  }
+
+  // 下载为 Markdown
   downloadMd () {
-    const title = (document as any).querySelector('#previewContent h1').innerText || 'Untitled'
+    const title = this.generateTitle()
     try {
       markdownDownload({ title, markdown: this.markdownData })
     } catch (e) {
@@ -708,32 +864,81 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 用户下拉处理
   handleCommand (command: string) {
     if (command === 'user') {
       //
     } else if (command === 'signout') {
       this.signOut()
-      this.$router.push('/')
+      // this.$router.push('/')
     }
   }
 
+  // 更多下拉处理
   handleCommandMore (command: string) {
     if (command === 'async-github') {
       this.dialogAsyncGithub = !this.dialogAsyncGithub
     } else if (command === 'async-ipfs') {
       this.ipfsUploadFn()
     } else if (command === 'async-matataki') {
-      this.postPublishFn()
+      const title = this.generateTitle()
+      const _shortContent = this.generateShortContent()
+
+      console.log('_shortContent', _shortContent)
+
+      this.publishMatatakiForm = {
+        title,
+        shortContent: _shortContent
+      }
+
+      this.dialogPublishMatataki = true
     } else if (command === 'save-file-md') {
       this.downloadMd()
     }
   }
 
+  // 退出登录
   signOut () {
     removeCookie('access-token')
     removeCookie('users-github')
     removeCookie('users')
-    this.usersData = {}
+    this.usersData = {} as userProps
+  }
+
+  onCaptchaVerify (token: string, eKey: string) {
+    this.hCaptchaData = { token, eKey, expired: false, error: '' }
+  }
+
+  onExpire () {
+    this.hCaptchaData = { token: '', eKey: '', expired: true, error: 'current token expires.' }
+  }
+
+  onError (e: any) {
+    this.hCaptchaData = { token: '', eKey: '', expired: true, error: e }
+    console.error('captcha error: ', e)
+  }
+
+  // 当hCaptcha状态重置时，重置hCaptchaData对象的值
+  onCaptchaReset () {
+    this.hCaptchaData = {
+      expired: false,
+      token: '',
+      eKey: '',
+      error: ''
+    }
+  }
+
+  async doINeedHCaptchaFn () {
+    try {
+      const res: any = await doINeedHCaptcha()
+      if (res.code === 0) {
+        this.doINeedHCaptcha = !res.data.isInWhiteList
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e) {
+      console.log(e.toString())
+    }
   }
 }
 </script>
@@ -820,6 +1025,11 @@ export default class Edidtor extends Vue {
 }
 .async-github {
   position: relative;
+}
+.publish-matataki_form {
+  text-align: center;
+  max-width: 80%;
+  margin: 0 auto;
 }
 .async-github-loading {
   position: absolute;
