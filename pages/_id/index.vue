@@ -10,17 +10,20 @@
             <i class="el-icon-more" />
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="async-github">
+            <el-dropdown-item icon="el-icon-upload" command="async-github">
               同步到 GitHub
             </el-dropdown-item>
-            <el-dropdown-item command="async-ipfs">
-              同步到 IPFS
+            <el-dropdown-item icon="el-icon-upload" command="async-ipfs">
+              推送到 IPFS
             </el-dropdown-item>
-            <el-dropdown-item command="async-matataki">
-              同步到 Matataki
+            <el-dropdown-item icon="el-icon-upload" command="async-matataki">
+              推送到 Matataki
             </el-dropdown-item>
-            <el-dropdown-item command="save-file-md" divided>
+            <el-dropdown-item icon="el-icon-download" command="save-file-md" divided>
               导出 Markdown
+            </el-dropdown-item>
+            <el-dropdown-item icon="el-icon-download" command="save-user-data" divided>
+              导出所有数据
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -30,10 +33,10 @@
             <el-avatar :src="`https://ssimg.frontenduse.top/${usersData.avatar}`" :size="30" />
           </el-tooltip>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="user">
+            <el-dropdown-item icon="el-icon-user" command="user">
               <a ref="noopener noreferrer" :href="`${matatakiUrl}/user/${usersData.id}`" target="_blank" class="user-item">个人主页</a>
             </el-dropdown-item>
-            <el-dropdown-item divided command="signout">
+            <el-dropdown-item divided icon="el-icon-warning-outline" command="signout">
               登出
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -209,6 +212,7 @@ import {
   Watch
 } from 'nuxt-property-decorator'
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
+import moment from 'moment'
 import {
   push, pull, users,
   userStats, postPublish, usersRepos,
@@ -217,7 +221,7 @@ import {
 } from '../../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
-import markdownDownload from '../../utils/markdown-download'
+import fileDownload from '../../utils/markdown-download'
 import { setOAuthRedirectUri } from '../../api/developer'
 import { hCaptchaDataProps } from '../../types/index.d'
 
@@ -858,7 +862,30 @@ export default class Edidtor extends Vue {
   downloadMd () {
     const title = this.generateTitle()
     try {
-      markdownDownload({ title, markdown: this.markdownData })
+      fileDownload({ content: this.markdownData, name: `${title}.md` })
+    } catch (e) {
+      this.$message.error(`下载失败：${e.toString()}`)
+    }
+  }
+
+  // 保存用户数据
+  async downloadUserData () {
+    try {
+      const keys = await (this as any).$localForage.keys()
+      const list = []
+      for (let i = 0; i < keys.length; i++) {
+        const ele = keys[i]
+        const res = await (this as any).$localForage.getItem(ele)
+        list.push(res)
+      }
+
+      const time = moment().format('YYYY-MM-DD')
+      fileDownload({
+        content: JSON.stringify({
+          notes: list
+        }),
+        name: `MatatakiMD-备份数据-${time}.json`
+      })
     } catch (e) {
       this.$message.error(`下载失败：${e.toString()}`)
     }
@@ -894,6 +921,8 @@ export default class Edidtor extends Vue {
       this.dialogPublishMatataki = true
     } else if (command === 'save-file-md') {
       this.downloadMd()
+    } else if (command === 'save-user-data') {
+      this.downloadUserData()
     }
   }
 

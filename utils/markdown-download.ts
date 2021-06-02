@@ -1,9 +1,9 @@
 interface Props {
-  title: string
-  markdown: string
+  content: string
+  name: string
 }
 
-const markdownDownload = ({ title, markdown }: Props) => {
+const fileDownload = ({ content, name }: Props) => {
   function downloadBlob (blob: any, name = 'file.md') {
     // Convert your blob into a Blob URL (a special url that points to an object in the browser's memory)
     const blobUrl = URL.createObjectURL(blob)
@@ -34,8 +34,8 @@ const markdownDownload = ({ title, markdown }: Props) => {
   }
 
   // Usage
-  const mdBlob = new Blob([markdown])
-  downloadBlob(mdBlob, `${title}.md`)
+  const mdBlob = new Blob([content])
+  downloadBlob(mdBlob, name)
 }
 
-export default markdownDownload
+export default fileDownload
