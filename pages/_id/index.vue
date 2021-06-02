@@ -23,7 +23,10 @@
               导出 Markdown
             </el-dropdown-item>
             <el-dropdown-item icon="el-icon-download" command="save-user-data" divided>
-              导出所有数据
+              导出用户数据
+            </el-dropdown-item>
+            <el-dropdown-item icon="el-icon-upload2" command="import-user-data" disabled>
+              导入用户数据
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -891,6 +894,12 @@ export default class Edidtor extends Vue {
     }
   }
 
+  uploadSuccess (response: any, file: any, fileList: any) {
+    console.log(response)
+    console.log(file)
+    console.log(fileList)
+  }
+
   // 用户下拉处理
   handleCommand (command: string) {
     if (command === 'user') {
@@ -923,6 +932,8 @@ export default class Edidtor extends Vue {
       this.downloadMd()
     } else if (command === 'save-user-data') {
       this.downloadUserData()
+    } else if (command === 'import-user-data') {
+      //
     }
   }
 
