@@ -25,7 +25,8 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "nuxt": "^2.15.3",
-    "nuxt-property-decorator": "^2.9.1"
+    "nuxt-property-decorator": "^2.9.1",
+    "vue-upload-component": "^2.8.22"
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.3",

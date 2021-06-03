@@ -6,6 +6,12 @@ interface Props {
 const fileDownload = ({ content, name }: Props) => {
   function downloadBlob (blob: any, name = 'file.md') {
     // Convert your blob into a Blob URL (a special url that points to an object in the browser's memory)
+    const URL = window.URL || window.webkitURL
+    if (!(URL && URL.createObjectURL)) {
+      console.log('No URL OR URL.createObjectURL')
+      return
+    }
+
     const blobUrl = URL.createObjectURL(blob)
 
     // Create a link element

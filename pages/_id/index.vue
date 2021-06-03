@@ -25,8 +25,19 @@
             <el-dropdown-item icon="el-icon-download" command="save-user-data" divided>
               导出用户数据
             </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-upload2" command="import-user-data" disabled>
-              导入用户数据
+            <el-dropdown-item icon="el-icon-upload2" command="import-user-data" class="item-file-upload">
+              <client-only>
+                <file-upload
+                  ref="upload"
+                  v-model="files"
+                  accept="application/json"
+                  @input-filter="inputFilter"
+                >
+                  <div class="item-file-upload_name">
+                    导入用户数据
+                  </div>
+                </file-upload>
+              </client-only>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -248,14 +259,18 @@ interface userProps {
 let mavonEditor: any = {
   mavonEditor: null
 }
+let VueUploadComponent = null
+
 if (process.client) {
   mavonEditor = require('@matataki/editor')
+  VueUploadComponent = require('vue-upload-component')
 }
 
 @Component({
   components: {
     'mavon-editor': mavonEditor.mavonEditor,
-    VueHcaptcha
+    VueHcaptcha,
+    FileUpload: VueUploadComponent
   }
 })
 export default class Edidtor extends Vue {
@@ -315,6 +330,8 @@ export default class Edidtor extends Vue {
     error: ''
   }
 
+  files = [] // import user data file
+
   get asyncGithubFormRules () {
     if (this.asyncGithubFormMode === 'push') {
       return {
@@ -369,6 +386,35 @@ export default class Edidtor extends Vue {
     }
   }
 
+  @Watch('dialogAsyncGithub')
+  onDialogAsyncGithubChangeed (val: boolean) {
+    if (!val) {
+      if (this.asyncGithubFormMode === 'push') {
+        this.resetForm('asyncGithubFormPush')
+      } else if (this.asyncGithubFormMode === 'pull') {
+        this.resetForm('asyncGithubFormPull')
+      }
+
+      this.asyncGithubFormMode = ''
+    }
+  }
+
+  @Watch('markdownData')
+  // oldVal: string
+  onMdChangeed (val: string) {
+    this.asyncContent(val)
+  }
+
+  @Watch('dialogPublishMatataki')
+  onDialogPublishMatatakiChangeed () {
+    this.onCaptchaReset()
+  }
+
+  @Watch('files')
+  onFilesChanged () {
+    this.handleFilesChange()
+  }
+
   mounted () {
     // 编辑文章不会自动保存
     if (process.browser) {
@@ -403,32 +449,6 @@ export default class Edidtor extends Vue {
 
       this.doINeedHCaptchaFn()
     }
-  }
-
-  @Watch('dialogAsyncGithub')
-  onDialogAsyncGithubChangeed (val: boolean) {
-    if (!val) {
-      if (this.asyncGithubFormMode === 'push') {
-        this.resetForm('asyncGithubFormPush')
-      } else if (this.asyncGithubFormMode === 'pull') {
-        this.resetForm('asyncGithubFormPull')
-      }
-
-      this.asyncGithubFormMode = ''
-    }
-  }
-
-  @Watch('markdownData')
-  // oldVal: string
-  onMdChangeed (val: string) {
-    // console.log('val', val, oldVal)
-    // window.localStorage.setItem('md', val)
-    this.asyncContent(val)
-  }
-
-  @Watch('dialogPublishMatataki')
-  onDialogPublishMatatakiChangeed () {
-    this.onCaptchaReset()
   }
 
   async jumpToMttkOAuth () {
@@ -894,10 +914,57 @@ export default class Edidtor extends Vue {
     }
   }
 
-  uploadSuccess (response: any, file: any, fileList: any) {
-    console.log(response)
-    console.log(file)
-    console.log(fileList)
+  /**
+     * Pretreatment
+     * @param  Object|undefined   newFile   读写
+     * @param  Object|undefined   oldFile   只读
+     * @param  Function           prevent   阻止回调
+     * @return undefined
+     */
+  inputFilter (newFile: any, oldFile: any, prevent: Function) {
+    if (newFile && !oldFile) {
+      // 过滤不是图片后缀的文件
+      if (!/\.(json)$/i.test(newFile.name)) {
+        this.$message.warning('只能上传 JSON 文件！')
+        return prevent()
+      }
+    }
+  }
+
+  // files change
+  handleFilesChange () {
+    console.log('files', this.files)
+
+    const fileData: any = this.files[0]
+    if (!fileData) {
+      console.log('fileData', fileData)
+      return
+    }
+
+    const file = fileData.file
+    const reader = new FileReader()
+    reader.onload = (event: any) => {
+      console.log('读取结果：', event)
+      const result = event.target.result || event.currentTarget.result
+      const notes = JSON.parse(result)
+      // console.log('notes', notes)
+      this.importUserData(notes)
+    }
+    reader.onerror = (event: any) => {
+      console.log('event', event)
+      this.$message.error('文件读取发生错误')
+    }
+    reader.readAsText(file)
+  }
+
+  // import user data
+  importUserData (notes: any[]) {
+    console.log('notes', notes)
+    // 询问是否导入 并且展示会影响到的数据内容
+
+    // 合并数据
+
+    // 替换
   }
 
   // 用户下拉处理
@@ -1013,7 +1080,13 @@ export default class Edidtor extends Vue {
   color: #777;
   text-decoration: none;
 }
-
+.item-file-upload {
+  display: flex;
+  align-items: center;
+}
+.item-file-upload_name {
+  margin-left: 4px;
+}
 .user {
   display: flex;
   align-items: center;
