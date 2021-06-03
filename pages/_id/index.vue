@@ -22,6 +22,20 @@
             <el-dropdown-item icon="el-icon-download" command="save-file-md" divided>
               导出 Markdown
             </el-dropdown-item>
+            <el-dropdown-item icon="el-icon-upload2" command="save-file-md" class="item-file-upload">
+              <client-only>
+                <file-upload
+                  ref="upload"
+                  v-model="filesMarkdown"
+                  accept="text/markdown"
+                  @input-filter="inputFilterMarkdown"
+                >
+                  <div class="item-file-upload_name">
+                    导入 Markdown
+                  </div>
+                </file-upload>
+              </client-only>
+            </el-dropdown-item>
             <el-dropdown-item icon="el-icon-download" command="save-user-data" divided>
               导出用户数据
             </el-dropdown-item>
@@ -331,6 +345,7 @@ export default class Edidtor extends Vue {
   }
 
   files = [] // import user data file
+  filesMarkdown = [] // import markdown file
 
   get asyncGithubFormRules () {
     if (this.asyncGithubFormMode === 'push') {
@@ -413,6 +428,11 @@ export default class Edidtor extends Vue {
   @Watch('files')
   onFilesChanged () {
     this.handleFilesChange()
+  }
+
+  @Watch('filesMarkdown')
+  onFilesMarkdownChanged () {
+    this.handleFilesMarkdownChange()
   }
 
   mounted () {
@@ -934,6 +954,24 @@ export default class Edidtor extends Vue {
     }
   }
 
+  /**
+     * Pretreatment
+     * @param  Object|undefined   newFile   读写
+     * @param  Object|undefined   oldFile   只读
+     * @param  Function           prevent   阻止回调
+     * @return undefined
+     */
+  inputFilterMarkdown (newFile: any, oldFile: any, prevent: Function) {
+    console.log('newFile', newFile)
+    if (newFile && !oldFile) {
+      // 过滤不是图片后缀的文件
+      if (!/\.(md)$/i.test(newFile.name)) {
+        this.$message.warning('只能上传 Markdown 文件！')
+        return prevent()
+      }
+    }
+  }
+
   // files change
   handleFilesChange () {
     console.log('files', this.files)
@@ -982,10 +1020,6 @@ export default class Edidtor extends Vue {
         })
       })
       .catch(() => {})
-
-    // 合并数据
-
-    // 替换
   }
 
   // 合并用户数据
@@ -1002,6 +1036,53 @@ export default class Edidtor extends Vue {
         console.log(e.toString())
       }
     }
+  }
+
+  // files markdown change
+  handleFilesMarkdownChange () {
+    console.log('filesMarkdown', this.filesMarkdown)
+
+    if (this.filesMarkdown.length <= 0) {
+      return
+    }
+
+    const fileData: any = this.filesMarkdown[0]
+    if (isEmpty(fileData)) {
+      console.log('fileData', fileData)
+      return
+    }
+
+    const file = fileData.file
+    const reader = new FileReader()
+    reader.onload = (event: any) => {
+      console.log('读取结果：', event)
+      const data = event.target.result || event.currentTarget.result
+      // console.log('data', data)
+      this.importMarkdown(data)
+    }
+    reader.onerror = (event: any) => {
+      console.log('event', event)
+      this.$message.error('文件读取发生错误')
+    }
+    reader.readAsText(file)
+  }
+
+  // import markdown
+  importMarkdown (data: any) {
+    // 询问是否导入 并且展示会影响到的数据内容
+    this.$confirm('该操作会覆盖内容！是否导入？', '确认信息', {
+      distinguishCancelAndClose: true,
+      confirmButtonText: '保存',
+      cancelButtonText: '取消'
+    })
+      .then(() => {
+        this.markdownData = data
+        this.$message({
+          type: 'info',
+          message: '保存修改'
+        })
+      })
+      .catch(() => {})
   }
 
   // 用户下拉处理
