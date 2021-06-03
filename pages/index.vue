@@ -14,7 +14,7 @@
               <div id="header-navbar" class="collapse navbar-collapse right">
                 <ul class="nav navbar-nav navbar-right">
                   <li class="visible-xs" style="padding: 20px 30px 40px 30px;">
-                    <img src="https://hackmd.io/images/home/group.svg" class="pull-right">
+                    <img src="/images/home/group.svg" class="pull-right">
                   </li>
                   <li>
                     <a target="_blank" href="https://hackmd.io/c/tutorials-tw">使用教學</a>
@@ -81,13 +81,13 @@
             <div class="col-xs-12 col-md-6 mb-3-xs mb-0-md">
               <div class="carousel-inner pull-right" style="width: auto;">
                 <div class="item">
-                  <img src="https://hackmd.io/images/home/IndexPic_1-1.svg" class="d-block w-100" alt="Slide 1">
+                  <img src="/images/home/IndexPic_1-1.svg" class="d-block w-100" alt="Slide 1">
                 </div>
                 <div class="item active">
-                  <img src="https://hackmd.io/images/home/IndexPic_1-2.svg" class="d-block w-100" alt="Slide 2">
+                  <img src="/images/home/IndexPic_1-2.svg" class="d-block w-100" alt="Slide 2">
                 </div>
                 <div class="item">
-                  <img src="https://hackmd.io/images/home/IndexPic_1-3.svg" class="d-block w-100" alt="Slide 3">
+                  <img src="/images/home/IndexPic_1-3.svg" class="d-block w-100" alt="Slide 3">
                 </div>
               </div>
             </div>
@@ -98,7 +98,7 @@
               </h1>
               <div class="carousel-indicators">
                 <div class="carousel-item" data-target="#carouselFirstIndicators" data-slide-to="0">
-                  <img src="https://hackmd.io/images/home/index-team-value-01.svg" class="icon">
+                  <img src="/images/home/index-team-value-01.svg" class="icon">
                   <div>
                     <div class="title">
                       跨越時空協作
@@ -109,7 +109,7 @@
                   </div>
                 </div>
                 <div class="carousel-item active" data-target="#carouselFirstIndicators" data-slide-to="1">
-                  <img src="https://hackmd.io/images/home/index-team-value-02.svg" class="icon">
+                  <img src="/images/home/index-team-value-02.svg" class="icon">
                   <div>
                     <div class="title">
                       輕鬆共享知識
@@ -120,7 +120,7 @@
                   </div>
                 </div>
                 <div class="carousel-item" data-target="#carouselFirstIndicators" data-slide-to="2">
-                  <img src="https://hackmd.io/images/home/index-team-value-03.svg" class="icon">
+                  <img src="/images/home/index-team-value-03.svg" class="icon">
                   <div>
                     <div class="title">
                       分級保護隱私
@@ -152,13 +152,13 @@
             <div class="col-xs-12 col-md-6">
               <div class="carousel-inner pull-right" style="width: auto;">
                 <div class="item active">
-                  <img src="https://hackmd.io/images/home/IndexPic_2-1.svg" class="d-block w-100" alt="Slide 1">
+                  <img src="/images/home/IndexPic_2-1.svg" class="d-block w-100" alt="Slide 1">
                 </div>
                 <div class="item">
-                  <img src="https://hackmd.io/images/home/IndexPic_2-3.svg" class="d-block w-100" alt="Slide 2">
+                  <img src="/images/home/IndexPic_2-3.svg" class="d-block w-100" alt="Slide 2">
                 </div>
                 <div class="item">
-                  <img src="https://hackmd.io/images/home/IndexPic_2-2.svg" class="d-block w-100" alt="Slide 3">
+                  <img src="/images/home/IndexPic_2-2.svg" class="d-block w-100" alt="Slide 3">
                 </div>
               </div>
             </div>
@@ -169,7 +169,7 @@
               </h1>
               <div class="carousel-indicators">
                 <div class="carousel-item active" data-target="#carouselSecondIndicators" data-slide-to="0">
-                  <img src="https://hackmd.io/images/home/index-value-01.svg" class="icon">
+                  <img src="/images/home/index-value-01.svg" class="icon">
                   <div>
                     <div class="title">
                       用 Markdown 寫作任何文件
@@ -180,7 +180,7 @@
                   </div>
                 </div>
                 <div class="carousel-item" data-target="#carouselSecondIndicators" data-slide-to="1">
-                  <img src="https://hackmd.io/images/home/index-value-02.svg" class="icon">
+                  <img src="/images/home/index-value-02.svg" class="icon">
                   <div>
                     <div class="title">
                       與 GitHub 同步
@@ -191,7 +191,7 @@
                   </div>
                 </div>
                 <div class="carousel-item" data-target="#carouselSecondIndicators" data-slide-to="2">
-                  <img src="https://hackmd.io/images/home/index-value-03.svg" class="icon">
+                  <img src="/images/home/index-value-03.svg" class="icon">
                   <div>
                     <div class="title">
                       讓工具為您服務
@@ -234,7 +234,7 @@
             <div class="col-xs-12" /> <!-- hack for safari -->
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="https://hackmd.io/images/home/feature-01.svg" class="icon">
+                <img src="/images/home/feature-01.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
                   <strong>VSCode 擴充功能</strong>
                 </p>
@@ -248,7 +248,7 @@
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="https://hackmd.io/images/home/feature-02.svg" class="icon">
+                <img src="/images/home/feature-02.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
                   <strong>GitHub 整合</strong>
                 </p>
@@ -262,7 +262,7 @@
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="https://hackmd.io/images/home/feature-03.svg" class="icon">
+                <img src="/images/home/feature-03.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
                   <strong>瀏覽器擴充功能</strong>
                 </p>
@@ -276,7 +276,7 @@
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="https://hackmd.io/images/home/feature-04.svg" class="icon">
+                <img src="/images/home/feature-04.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
                   <strong>MathJax 及 UML</strong>
                 </p>
@@ -290,7 +290,7 @@
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="https://hackmd.io/images/home/feature-05.svg" class="icon">
+                <img src="/images/home/feature-05.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
                   <strong>簡報模式</strong>
                 </p>
@@ -304,7 +304,7 @@
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="https://hackmd.io/images/home/feature-06.svg" class="icon">
+                <img src="/images/home/feature-06.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
                   <strong>書本模式</strong>
                 </p>
@@ -329,18 +329,18 @@
             </div>
           </div>
           <div class="row trusted-by-customer-block">
-            <a class="customer-card"><img src="https://hackmd.io/images/home/logo-ethereum.svg" alt="ethereum"></a>
-            <a class="customer-card"><img src="https://hackmd.io/images/home/logo-g-0-v.svg" alt="g0v"></a>
-            <a class="customer-card"><img src="https://hackmd.io/images/home/logo-procore.svg" alt="procore"></a>
-            <a class="customer-card"><img src="https://hackmd.io/images/home/logo-rayark.svg" alt="rayark"></a>
-            <a class="customer-card"><img src="https://hackmd.io/images/home/logo-crowd-works.png" alt="crowd-works"></a>
+            <a class="customer-card"><img src="/images/home/logo-ethereum.svg" alt="ethereum"></a>
+            <a class="customer-card"><img src="/images/home/logo-g-0-v.svg" alt="g0v"></a>
+            <a class="customer-card"><img src="/images/home/logo-procore.svg" alt="procore"></a>
+            <a class="customer-card"><img src="/images/home/logo-rayark.svg" alt="rayark"></a>
+            <a class="customer-card"><img src="/images/home/logo-crowd-works.png" alt="crowd-works"></a>
           </div>
 
           <div class="mt-6">
             <div class="customer-testimonial ph-3/2">
               <div class="testimonial-block text-gray-lightest mh-auto mb-2 ph-0 ph-7-sm pt-6 pt-0-sm text-left" style="max-width: 790px;">
-                <img class="quote quote-l" src="https://hackmd.io/images/quote-L.svg">
-                <img class="quote quote-r dn db-sm" src="https://hackmd.io/images/quote-R.svg">
+                <img class="quote quote-l" src="/images/quote-L.svg">
+                <img class="quote quote-r dn db-sm" src="/images/quote-R.svg">
 
                 <p class="mb-3">
                   我們在尋找能讓團隊討論更透明與容易存取的方法，最近從 Google Docs 換到 HackMD。HackMD 提供一致的 Markdown 編輯器與預覽結果，這跟之前的使用方式很相似也符合我們的需求。短時間內，會議記錄改善了許多，讓我們作為團隊更能良好的互相合作。
@@ -361,7 +361,7 @@
             </h2>
             <div class="flex flex-column flex-row-sm justify-center">
               <div class="flex-one mr-2-sm">
-                <img class="mw-100 w-100" src="https://hackmd.io/images/home/blog/k8s.png">
+                <img class="mw-100 w-100" src="/images/home/blog/k8s.png">
               </div>
 
               <div class="text-left flex-one ml-2-sm">
@@ -401,7 +401,7 @@
                 <a class="plan order-0-sm order-0 mb-3" href="https://hackmd.io/pricing">
                   <div class="ribbon text-uppercase">Hot</div>
                   <div class="title">
-                    <img src="https://hackmd.io/images/home/team-plan.svg" alt="team-plan">
+                    <img src="/images/home/team-plan.svg" alt="team-plan">
                     <h2>團隊方案</h2>
                   </div>
                   <p>
@@ -417,7 +417,7 @@
 
                 <a class="plan order-1-sm order-1 mb-3" href="https://hackmd.io/pricing">
                   <div class="title">
-                    <img src="https://hackmd.io/images/home/ee-plan.svg" alt="ee-plan">
+                    <img src="/images/home/ee-plan.svg" alt="ee-plan">
                     <h2>商業方案</h2>
                   </div>
                   <p>
@@ -545,7 +545,7 @@
                   </div>
                   <iframe class="template-viewer" style="width: 100%; height: 100%; border: none;" />
                   <div class="template-empty ui-template-viewer-empty" style="display: none; margin: 0px;">
-                    <img src="https://hackmd.io/not-available.svg">
+                    <img src="/not-available.svg">
                     <div>
                       <div>哎呀</div>
                       <div>這個範本無法使用</div>
@@ -1147,7 +1147,6 @@ export default class Home extends Vue {
 }
 </script>
 
-<style lang="less" scoped src="./index/index.less"></style>
 <style lang="less" scoped>
 h1.cover-heading {
   text-align: center;
