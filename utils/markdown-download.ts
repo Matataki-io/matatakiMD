@@ -34,8 +34,8 @@ const fileDownload = ({ content, name }: Props) => {
   }
 
   // Usage
-  const mdBlob = new Blob([content])
-  downloadBlob(mdBlob, name)
+  const contentBlob = new Blob([content])
+  downloadBlob(contentBlob, name)
 }
 
 export default fileDownload

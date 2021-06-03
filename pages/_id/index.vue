@@ -863,8 +863,8 @@ export default class Edidtor extends Vue {
 
   // 下载为 Markdown
   downloadMd () {
-    const title = this.generateTitle()
     try {
+      const title = this.generateTitle()
       fileDownload({ content: this.markdownData, name: `${title}.md` })
     } catch (e) {
       this.$message.error(`下载失败：${e.toString()}`)
