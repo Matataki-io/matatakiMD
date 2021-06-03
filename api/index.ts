@@ -58,3 +58,6 @@ export function postPublish (data: PublishProps) {
 export function doINeedHCaptcha () {
   return client.get('/api/captcha/doINeedHCaptcha')
 }
+export function postsImport (data: { url: string }) {
+  return client.post('/api/posts/importer', data)
+}

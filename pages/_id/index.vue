@@ -19,6 +19,9 @@
             <el-dropdown-item icon="el-icon-upload" command="async-matataki">
               推送到 Matataki
             </el-dropdown-item>
+            <el-dropdown-item icon="el-icon-download" command="posts-import">
+              导入文章
+            </el-dropdown-item>
             <el-dropdown-item icon="el-icon-download" command="save-file-md" divided>
               导出 Markdown
             </el-dropdown-item>
@@ -215,6 +218,25 @@
       </el-form>
     </el-dialog>
 
+    <el-dialog
+      title="导入文章"
+      :visible.sync="dialogImportMatataki"
+      width="600px"
+    >
+      <div>
+        <p>基於 Matataki 的導入文章功能</p>
+        <el-input v-model="dialogImportMatatakiInput" placeholder="請輸入文章地址" />
+        <div style="margin-top: 20px;">
+          <el-button size="small" @click="dialogImportMatataki = false">
+            取消
+          </el-button>
+          <el-button v-loading="dialogImportMatatakiLoading" size="small" type="primary" @click="handlePostsImport">
+            导入
+          </el-button>
+        </div>
+      </div>
+    </el-dialog>
+
     <client-only>
       <mavon-editor
         ref="md"
@@ -245,7 +267,7 @@ import {
   push, pull, users,
   userStats, postPublish, usersRepos,
   reposBranches, reposContentsList, upload,
-  ipfsUpload, doINeedHCaptcha
+  ipfsUpload, doINeedHCaptcha, postsImport
 } from '../../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
@@ -293,6 +315,9 @@ export default class Edidtor extends Vue {
   markdownData: string = ''
   dialogAsyncGithub: boolean = false
   dialogPublishMatataki: boolean = false
+  dialogImportMatataki: boolean = false
+  dialogImportMatatakiInput: string = ''
+  dialogImportMatatakiLoading: boolean = false
   token: string = ''
   usersData: userProps = {} as userProps
   usersGithubData: object = {}
@@ -1113,6 +1138,8 @@ export default class Edidtor extends Vue {
       }
 
       this.dialogPublishMatataki = true
+    } else if (command === 'posts-import') {
+      this.dialogImportMatataki = true
     } else if (command === 'save-file-md') {
       this.downloadMd()
     } else if (command === 'save-user-data') {
@@ -1163,6 +1190,25 @@ export default class Edidtor extends Vue {
       }
     } catch (e) {
       console.log(e.toString())
+    }
+  }
+
+  async handlePostsImport () {
+    try {
+      this.dialogImportMatatakiLoading = true
+      const res: any = await postsImport({ url: this.dialogImportMatatakiInput })
+      // console.log('res', res)
+      if (res.code === 0) {
+        this.markdownData = res.data.content
+        this.dialogImportMatataki = false
+        this.$message.success('導入成功')
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e) {
+      this.$message.error(e.toString())
+    } finally {
+      this.dialogImportMatatakiLoading = false
     }
   }
 }
