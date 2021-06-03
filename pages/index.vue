@@ -1103,6 +1103,16 @@ import { getCookie, setCookie } from '../utils/cookie'
 import { userStats } from '../api/index'
 
 @Component({
+  head () {
+    return {
+      link: [
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/font-vendor.b86e2bf451b246b1a88e.css' },
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/common-vendor.b8ecfc406ac0b5f77a26.css' },
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/cover-vendor.57f8768862d5f2e927af.css' },
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/cover.01d5cdede9d70ea0fa0c.css' }
+      ]
+    }
+  }
 })
 export default class Home extends Vue {
     usersData: object = {}

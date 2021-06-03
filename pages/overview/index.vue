@@ -763,6 +763,16 @@ import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import { setOAuthRedirectUri } from '../../api/developer'
 
 @Component({
+  head () {
+    return {
+      link: [
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/font-vendor.b86e2bf451b246b1a88e.css' },
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/common-vendor.b8ecfc406ac0b5f77a26.css' },
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/hackmd-app-vendor.681b42e325538005fa7d.css' },
+        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/hackmd-app.dd3987cdcf45bbb50f21.css' }
+      ]
+    }
+  }
 })
 export default class Home extends Vue {
   usersData: object = {}
@@ -883,7 +893,6 @@ export default class Home extends Vue {
 }
 </script>
 
-<style scoped src="./index.css"></style>
 <style lang="less" scoped>
 .ui-next-sidenav-inner>* { text-align: left; }
 .user-not-logged {

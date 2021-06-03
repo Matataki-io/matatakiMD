@@ -226,7 +226,7 @@
       <div>
         <p>基於 Matataki 的導入文章功能</p>
         <el-input v-model="dialogImportMatatakiInput" placeholder="請輸入文章地址" />
-        <div style="margin-top: 20px;">
+        <div style="margin: 20px 0;">
           <el-button size="small" @click="dialogImportMatataki = false">
             取消
           </el-button>
