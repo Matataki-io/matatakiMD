@@ -219,7 +219,7 @@
     </el-dialog>
 
     <el-dialog
-      title="导入文章"
+      title="導入文章"
       :visible.sync="dialogImportMatataki"
       width="600px"
     >
@@ -1196,6 +1196,12 @@ export default class Edidtor extends Vue {
   async handlePostsImport () {
     try {
       this.dialogImportMatatakiLoading = true
+
+      if (!this.dialogImportMatatakiInput) {
+        this.$message.warning('URL 不能為空')
+        return
+      }
+
       const res: any = await postsImport({ url: this.dialogImportMatatakiInput })
       // console.log('res', res)
       if (res.code === 0) {
