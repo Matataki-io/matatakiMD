@@ -25,7 +25,7 @@
             <el-dropdown-item icon="el-icon-download" command="save-file-md" divided>
               导出 Markdown
             </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-upload2" command="save-file-md" class="item-file-upload">
+            <el-dropdown-item icon="el-icon-upload2" command="import-file-md" class="item-file-upload">
               <client-only>
                 <file-upload
                   ref="upload"
@@ -1146,8 +1146,6 @@ export default class Edidtor extends Vue {
       this.downloadMd()
     } else if (command === 'save-user-data') {
       this.downloadUserData()
-    } else if (command === 'import-user-data') {
-      //
     }
   }
 
