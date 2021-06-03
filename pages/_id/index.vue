@@ -219,7 +219,7 @@
 </template>
 
 <script lang="ts">
-import { throttle, debounce, isEmpty, isArray } from 'lodash'
+import { throttle, debounce, isEmpty, isArray, assign } from 'lodash'
 import {
   Component,
   Vue,
@@ -477,7 +477,7 @@ export default class Edidtor extends Vue {
       console.log('val', val)
       const title = this.generateTitle()
       const res = await (this as any).$localForage.getItem(this.$route.params.id)
-      const data = Object.assign(res, {
+      const data = assign(res, {
         title,
         content: val,
         update_time: Date.now()
@@ -803,7 +803,7 @@ export default class Edidtor extends Vue {
 
         ipfs.push(res.data)
 
-        const data = Object.assign(mdData, {
+        const data = assign(mdData, {
           update_time: Date.now(),
           ipfs
         })
@@ -899,7 +899,10 @@ export default class Edidtor extends Vue {
       for (let i = 0; i < keys.length; i++) {
         const ele = keys[i]
         const res = await (this as any).$localForage.getItem(ele)
-        list.push(res)
+        const key = res.id_str || ele // 用字符串 id
+        list.push({
+          [key]: res
+        })
       }
 
       const time = moment().format('YYYY-MM-DD')
@@ -935,8 +938,12 @@ export default class Edidtor extends Vue {
   handleFilesChange () {
     console.log('files', this.files)
 
+    if (this.files.length <= 0) {
+      return
+    }
+
     const fileData: any = this.files[0]
-    if (!fileData) {
+    if (isEmpty(fileData)) {
       console.log('fileData', fileData)
       return
     }
@@ -946,9 +953,9 @@ export default class Edidtor extends Vue {
     reader.onload = (event: any) => {
       console.log('读取结果：', event)
       const result = event.target.result || event.currentTarget.result
-      const notes = JSON.parse(result)
-      // console.log('notes', notes)
-      this.importUserData(notes)
+      const data = JSON.parse(result)
+      // console.log('data', data)
+      this.importUserData(data)
     }
     reader.onerror = (event: any) => {
       console.log('event', event)
@@ -958,13 +965,43 @@ export default class Edidtor extends Vue {
   }
 
   // import user data
-  importUserData (notes: any[]) {
-    console.log('notes', notes)
+  importUserData (data: any) {
+    console.log('data', data)
+
     // 询问是否导入 并且展示会影响到的数据内容
+    this.$confirm('该操作会覆盖本地的数据！是否导入？', '确认信息', {
+      distinguishCancelAndClose: true,
+      confirmButtonText: '保存',
+      cancelButtonText: '取消'
+    })
+      .then(() => {
+        this.mergedUserData(data.notes)
+        this.$message({
+          type: 'info',
+          message: '保存修改'
+        })
+      })
+      .catch(() => {})
 
     // 合并数据
 
     // 替换
+  }
+
+  // 合并用户数据
+  async mergedUserData (list: object[]) {
+    for (let i = 0; i < list.length; i++) {
+      const ele: { [key: string]: any } = list[i]
+      // console.log('ele', ele)
+      const key: any = Object.keys(ele)
+      try {
+        const itemResult = await (this as any).$localForage.getItem(key) || {}
+        const data = assign(itemResult, ele[key])
+        await (this as any).$localForage.setItem(key, data)
+      } catch (e) {
+        console.log(e.toString())
+      }
+    }
   }
 
   // 用户下拉处理
