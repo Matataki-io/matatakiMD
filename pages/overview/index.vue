@@ -98,7 +98,7 @@
                     <a href="/settings#general" style="text-decoration: none;">
                       <div class="menu-item" style="padding-left: 40px;"><i class="fa fa-cog fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />設定</div></a>
                     <a href="/@It_nJKeNS-ieRL2hcUZRTg" style="text-decoration: none;"><div class="menu-item" style="padding-left: 40px;"><i class="fa fa-user-circle-o fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />個人公開頁</div></a>
-                    <a class="menu-item" history="[object Object]" match="[object Object]" href="/?nav=myTeams" style="padding: 0px;"><div class="menu-item" style="padding-left: 22px;"><img src="https://hackmd.io/images/team-icon.svg" width="14" height="14" style="margin: 0px 4px 2px 2px; vertical-align: text-bottom;">我參與的團隊</div></a>
+                    <a class="menu-item" history="[object Object]" match="[object Object]" href="/?nav=myTeams" style="padding: 0px;"><div class="menu-item" style="padding-left: 22px;"><img src="/images/team-icon.svg" width="14" height="14" style="margin: 0px 4px 2px 2px; vertical-align: text-bottom;">我參與的團隊</div></a>
                     <a class="menu-item" history="[object Object]" match="[object Object]" href="/?nav=billing" style="padding: 0px;"><div class="menu-item" style="padding-left: 40px;"><i class="fa fa-credit-card fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />付費</div></a>
                     <div class="divider" />
                     <div class="menu-item" style="padding-left: 40px;" @click="signOut">
@@ -133,7 +133,7 @@
           </div>
           <div class="ui-next-sidenav-collapse-handle">
             <div class="ui-next-sidenav-collapse-handle-button">
-              <img src="https://hackmd.io/images/hide-side-bar-icon.svg" width="20" height="20">
+              <img src="/images/hide-side-bar-icon.svg" width="20" height="20">
             </div>
           </div>
         </div><div class="ui-next-content">
@@ -327,7 +327,7 @@
                   <div class="ui-template-spinner unselectable hidden-print" />
                   <iframe class="template-viewer" style="width: 100%; height: 100%; border: none;" />
                   <div class="template-empty ui-template-viewer-empty" style="display: none; margin: 0px;">
-                    <img src="https://hackmd.io/not-available.svg">
+                    <img src="/not-available.svg">
                     <div>
                       <div>哎呀</div>
                       <div>這個範本無法使用</div>
@@ -674,7 +674,7 @@
       <div class="modal-dialog modal-lg" style="max-width: 400px; margin: auto;">
         <div class="modal-content">
           <div class="modal-body" style="text-align: center; margin: 35px 0px;">
-            <img src="https://hackmd.io/delete-team.svg" width="85px" height="94.7px">
+            <img src="/delete-team.svg" width="85px" height="94.7px">
             <div style="font-size: 18px; margin-top: 20px;" class="delete-team-success-message" />
           </div>
         </div>
