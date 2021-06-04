@@ -209,7 +209,6 @@ import {
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import fileDownload from '../../utils/markdown-download'
-import { setOAuthRedirectUri } from '../../api/developer'
 import { hCaptchaDataProps, Notes, FleekIpfs } from '../../types/index.d'
 
 interface reposBranchesFnProps {
@@ -444,16 +443,6 @@ export default class Edidtor extends Vue {
       this.doINeedHCaptchaFn()
     }
   }
-
-  async jumpToMttkOAuth () {
-    try {
-      console.log('from', location)
-      await setOAuthRedirectUri(location.pathname)
-    } catch (error) {
-      console.log('error', error)
-    }
-    (window as any).location = process.env.REACT_APP_OAuthUrl
-  };
 
   async getContent (): Promise<void> {
     try {

@@ -25,6 +25,7 @@ import {
   Vue,
   Prop
 } from 'nuxt-property-decorator'
+import { setOAuthRedirectUri } from '../../api/developer'
 
 @Component({})
 export default class HeaderIpfs extends Vue {
@@ -47,6 +48,16 @@ export default class HeaderIpfs extends Vue {
       return ''
     }
   }
+
+  async jumpToMttkOAuth (): Promise<void> {
+    try {
+      console.log('from', location)
+      await setOAuthRedirectUri(location.pathname)
+    } catch (error) {
+      console.log('error', error)
+    }
+    (window as any).location = process.env.REACT_APP_OAuthUrl
+  };
 }
 </script>
 
