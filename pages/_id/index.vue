@@ -30,6 +30,7 @@
                 <file-upload
                   ref="upload"
                   v-model="filesMarkdown"
+                  input-id="import-file-md"
                   accept="text/markdown"
                   @input-filter="inputFilterMarkdown"
                 >
@@ -47,6 +48,7 @@
                 <file-upload
                   ref="upload"
                   v-model="files"
+                  input-id="import-user-data"
                   accept="application/json"
                   @input-filter="inputFilter"
                 >
