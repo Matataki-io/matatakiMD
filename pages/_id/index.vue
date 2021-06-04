@@ -200,7 +200,8 @@
         <div>
           <client-only>
             <vue-hcaptcha
-              v-if="doINeedHCaptcha"
+              v-if="!doINeedHCaptcha"
+              ref="hcaptchaRef"
               :sitekey="hCaptchaSiteKey"
               language="zh"
               @verify="onCaptchaVerify"
@@ -211,7 +212,7 @@
           </client-only>
         </div>
         <el-form-item>
-          <el-button v-loading="mtkUploadLoading" size="small" type="primary" @click="submitPublishMatatakiForm('publishMatatakiForm')">
+          <el-button v-loading="mtkUploadLoading" :disabled="isCaptchaOK" size="small" type="primary" @click="submitPublishMatatakiForm('publishMatatakiForm')">
             发布
           </el-button>
         </el-form-item>
@@ -269,7 +270,7 @@ import {
   push, pull, users,
   userStats, postPublish, usersRepos,
   reposBranches, reposContentsList, upload,
-  ipfsUpload, doINeedHCaptcha, postsImport
+  ipfsUpload, getDoINeedHCaptcha, postsImport
 } from '../../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
@@ -428,6 +429,17 @@ export default class Edidtor extends Vue {
     }
   }
 
+  get isCaptchaOK () {
+    // 如果是白名单
+    if (this.doINeedHCaptcha) { return false }
+
+    if ((!this.hCaptchaData.expired) && !!(this.hCaptchaData.token)) {
+      return false
+    } else {
+      return true
+    }
+  }
+
   @Watch('dialogAsyncGithub')
   onDialogAsyncGithubChangeed (val: boolean) {
     if (!val) {
@@ -448,8 +460,13 @@ export default class Edidtor extends Vue {
   }
 
   @Watch('dialogPublishMatataki')
-  onDialogPublishMatatakiChangeed () {
+  onDialogPublishMatatakiChangeed (val: boolean) {
     this.onCaptchaReset()
+    if (process.client) {
+      if (this.$refs.hcaptchaRef && !val) {
+        (this.$refs.hcaptchaRef as any).reset()
+      }
+    }
   }
 
   @Watch('files')
@@ -895,11 +912,17 @@ export default class Edidtor extends Vue {
 
   // 发布到 Matataki
   async postPublishFn () {
+    if (!this.publishMatatakiForm.title || !this.publishMatatakiForm.shortContent) {
+      this.$message.warning('標題和摘要不能為空！')
+      return
+    }
+
     const loading = this.$notify({
       title: '提示',
       message: '正在发布...',
       duration: 0
     })
+
     try {
       this.mtkUploadLoading = true
 
@@ -1182,9 +1205,9 @@ export default class Edidtor extends Vue {
 
   async doINeedHCaptchaFn () {
     try {
-      const res: any = await doINeedHCaptcha()
+      const res: any = await getDoINeedHCaptcha()
       if (res.code === 0) {
-        this.doINeedHCaptcha = !res.data.isInWhiteList
+        this.doINeedHCaptcha = res.data.isInWhiteList
       } else {
         throw new Error(res.message)
       }
