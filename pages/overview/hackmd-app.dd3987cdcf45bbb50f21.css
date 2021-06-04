@@ -201,7 +201,7 @@
 .tabs-container .tablist { display: flex; flex: 1; border: none; overflow-x: auto; overflow-y: hidden; padding-right: 10px; margin-bottom: -1px; }
 .tabs-container .tablist .tab:not(:last-child) { margin-right: 30px; }
 .tabs-container .tablist .tab:hover, .tabs-container .tablist .tab:focus { background: none; color: #333; border: none; }
-.tabs-container .tablist .tab .tab-item { padding: 0 !important; margin-right: 0; background: none; color: #333; border: none; display: flex; align-items: end; cursor: pointer; }
+.tabs-container .tablist .tab .tab-item { padding: 0 !important; margin-right: 0; background: none; color: #333; border: none; display: flex; align-items: flex-edn; cursor: pointer; }
 .tabs-container .tablist .tab .tab-item:hover,
 .tabs-container .tablist .tab .tab-item:focus { background: none; color: #333; border: none; }
 .tabs-container .tablist .tab .tab-item .tab-title { padding: 7px 2px 8px 2px; margin-bottom: 1px; color: #919191; }
