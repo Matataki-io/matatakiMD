@@ -920,6 +920,8 @@ export default class Edidtor extends Vue {
           ipfs
         })
         await (this as any).$localForage.setItem(this.$route.params.id, data)
+
+        await this.getContent()
       } else {
         throw new Error(res.message)
       }
