@@ -98,7 +98,7 @@
           <a class="more" href="https://matataki.io/" target="_blank">了解更多</a>
         </div>
         <a v-else ref="noopener noreferrer" :href="matatakiUrl" target="_blank" class="user-github-link">
-          Bind Github
+          Bind Github (Matataki 需要綁定 Github 賬號)
         </a>
       </div>
       <el-form
