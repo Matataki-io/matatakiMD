@@ -1,0 +1,67 @@
+<template>
+  <el-dialog
+    title="導入文章"
+    :visible.sync="dialogImportMatataki"
+    width="600px"
+  >
+    <div>
+      <p>基於 Matataki 的導入文章功能</p>
+      <div style="margin: 20px 0;">
+        <el-input v-model="dialogImportMatatakiInput" placeholder="請輸入文章地址" />
+      </div>
+      <div>
+        <el-button size="small" @click="dialogImportMatataki = false">
+          取消
+        </el-button>
+        <el-button v-loading="dialogImportMatatakiLoading" size="small" type="primary" @click="handlePostsImport">
+          导入
+        </el-button>
+      </div>
+    </div>
+  </el-dialog>
+</template>
+
+<script lang="ts">
+import {
+  Component,
+  Vue,
+  PropSync
+} from 'nuxt-property-decorator'
+import {
+  postsImport
+} from '../api/index'
+
+@Component({})
+export default class HeaderIpfs extends Vue {
+  @PropSync('visible', { type: Boolean, required: true })
+  dialogImportMatataki!: boolean
+
+  dialogImportMatatakiInput: string = ''
+  dialogImportMatatakiLoading: boolean = false
+
+  async handlePostsImport (): Promise<void> {
+    try {
+      this.dialogImportMatatakiLoading = true
+
+      if (!this.dialogImportMatatakiInput) {
+        this.$message.warning('URL 不能為空')
+        return
+      }
+
+      const res: any = await postsImport({ url: this.dialogImportMatatakiInput })
+      // console.log('res', res)
+      if (res.code === 0) {
+        this.$emit('import', res.data.content)
+        this.$message.success('導入成功')
+        this.dialogImportMatataki = false
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e) {
+      this.$message.error(e.toString())
+    } finally {
+      this.dialogImportMatatakiLoading = false
+    }
+  }
+}
+</script>

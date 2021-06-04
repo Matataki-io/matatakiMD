@@ -150,26 +150,7 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog
-      title="導入文章"
-      :visible.sync="dialogImportMatataki"
-      width="600px"
-    >
-      <div>
-        <p>基於 Matataki 的導入文章功能</p>
-        <div style="margin: 20px 0;">
-          <el-input v-model="dialogImportMatatakiInput" placeholder="請輸入文章地址" />
-        </div>
-        <div>
-          <el-button size="small" @click="dialogImportMatataki = false">
-            取消
-          </el-button>
-          <el-button v-loading="dialogImportMatatakiLoading" size="small" type="primary" @click="handlePostsImport">
-            导入
-          </el-button>
-        </div>
-      </div>
-    </el-dialog>
+    <ImportPosts :visible.sync="dialogImportMatataki" @import="val => markdownData = val" />
 
     <client-only>
       <mavon-editor
@@ -200,11 +181,12 @@ import moment from 'moment'
 import HeaderIpfs from '@/components/id-page/header-ipfs.vue'
 import HeaderMore from '@/components/id-page/header-more.vue'
 import HeaderUser from '@/components/id-page/header-user.vue'
+import ImportPosts from '@/components/import-posts.vue'
 import {
   push, pull, users,
   userStats, postPublish, usersRepos,
   reposBranches, reposContentsList, upload,
-  ipfsUpload, getDoINeedHCaptcha, postsImport
+  ipfsUpload, getDoINeedHCaptcha
 } from '../../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
@@ -242,7 +224,8 @@ if (process.client) {
     VueHcaptcha,
     HeaderIpfs,
     HeaderMore,
-    HeaderUser
+    HeaderUser,
+    ImportPosts
   }
 })
 export default class Edidtor extends Vue {
@@ -987,31 +970,6 @@ export default class Edidtor extends Vue {
       }
     } catch (e) {
       console.log(e.toString())
-    }
-  }
-
-  async handlePostsImport () {
-    try {
-      this.dialogImportMatatakiLoading = true
-
-      if (!this.dialogImportMatatakiInput) {
-        this.$message.warning('URL 不能為空')
-        return
-      }
-
-      const res: any = await postsImport({ url: this.dialogImportMatatakiInput })
-      // console.log('res', res)
-      if (res.code === 0) {
-        this.markdownData = res.data.content
-        this.dialogImportMatataki = false
-        this.$message.success('導入成功')
-      } else {
-        throw new Error(res.message)
-      }
-    } catch (e) {
-      this.$message.error(e.toString())
-    } finally {
-      this.dialogImportMatatakiLoading = false
     }
   }
 }
