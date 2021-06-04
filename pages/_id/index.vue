@@ -4,22 +4,22 @@
       <router-link to="/overview" class="navbar-title">
         <i class="fa fa-file-text" /><span class="hidden-xs"> MatatakiMD</span>
       </router-link>
-      <div v-if="isUser" class="user">
+      <div>
         <el-dropdown trigger="click" class="more-tooltip" @command="handleCommandMore">
           <span class="more-icon">
             <i class="el-icon-more" />
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-upload" command="async-github">
+            <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-github">
               同步到 GitHub
             </el-dropdown-item>
             <el-dropdown-item icon="el-icon-upload" command="async-ipfs">
               推送到 IPFS
             </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-upload" command="async-matataki">
+            <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-matataki">
               推送到 Matataki
             </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-download" command="posts-import">
+            <el-dropdown-item v-if="isUser" icon="el-icon-download" command="posts-import">
               导入文章
             </el-dropdown-item>
             <el-dropdown-item icon="el-icon-download" command="save-file-md" divided>
@@ -61,23 +61,25 @@
           </el-dropdown-menu>
         </el-dropdown>
 
-        <el-dropdown trigger="click" class="user-tooltip" @command="handleCommand">
-          <el-tooltip effect="dark" :content="usersData.nickname || usersData.username" placement="bottom">
-            <el-avatar :src="`https://ssimg.frontenduse.top/${usersData.avatar}`" :size="30" />
-          </el-tooltip>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-user" command="user">
-              <a ref="noopener noreferrer" :href="`${matatakiUrl}/user/${usersData.id}`" target="_blank" class="user-item">个人主页</a>
-            </el-dropdown-item>
-            <el-dropdown-item divided icon="el-icon-warning-outline" command="signout">
-              登出
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-      <div v-else class="user">
-        <div class="user-not-logged" @click="jumpToMttkOAuth">
-          登入
+        <div v-if="isUser" class="user">
+          <el-dropdown trigger="click" class="user-tooltip" @command="handleCommand">
+            <el-tooltip effect="dark" :content="usersData.nickname || usersData.username" placement="bottom">
+              <el-avatar :src="`https://ssimg.frontenduse.top/${usersData.avatar}`" :size="30" />
+            </el-tooltip>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-user" command="user">
+                <a ref="noopener noreferrer" :href="`${matatakiUrl}/user/${usersData.id}`" target="_blank" class="user-item">个人主页</a>
+              </el-dropdown-item>
+              <el-dropdown-item divided icon="el-icon-warning-outline" command="signout">
+                登出
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+        <div v-else class="user">
+          <div class="user-not-logged" @click="jumpToMttkOAuth">
+            登入
+          </div>
         </div>
       </div>
     </div>
@@ -1275,6 +1277,10 @@ export default class Edidtor extends Vue {
   color: #777;
   text-decoration: none;
 }
+.header-right {
+  display: flex;
+  align-items: center;
+}
 .item-file-upload {
   display: flex;
   align-items: center;
@@ -1298,7 +1304,7 @@ export default class Edidtor extends Vue {
 }
 .more-tooltip {
   .more-icon {
-    padding: 0 20px;
+    padding: 0 14px;
     font-size: 22px;
     &:hover {
       color: #333;
