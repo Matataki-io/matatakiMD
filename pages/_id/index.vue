@@ -87,7 +87,7 @@
       custom-class="async-giithub"
     >
       <div>
-        <div v-loading="githubLoading" class="async-github-loading" />
+        <!-- <div v-loading="githubLoading" class="async-github-loading" /> -->
         <div v-if="isUserGithub">
           <el-button size="small" @click="toggleMode('push')">
             推送至 GitHub
@@ -110,7 +110,7 @@
         class="async-github-form"
       >
         <el-form-item label="Repo" prop="repos">
-          <el-select v-model="asyncGithubFormPush.repos" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
+          <el-select v-model="asyncGithubFormPush.repos" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
             <el-option v-for="(item, idx) of repos" :key="idx" :value="item.full_name" :label="`${item.full_name}${item.private ? '(private)' : ''}`" />
           </el-select>
         </el-form-item>
@@ -120,7 +120,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Path" prop="path">
-          <el-select v-model="asyncGithubFormPush.path" style="width: 100%" placeholder="请选择 Path">
+          <el-select v-model="asyncGithubFormPush.path" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Path">
             <el-option v-for="(item, idx) of path" :key="idx" :value="item.name" :label="item.name" />
           </el-select>
         </el-form-item>
@@ -148,7 +148,7 @@
         class="async-github-form"
       >
         <el-form-item label="Repo" prop="repos">
-          <el-select v-model="asyncGithubFormPull.repos" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
+          <el-select v-model="asyncGithubFormPull.repos" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
             <el-option v-for="(item, idx) of repos" :key="idx" :value="item.full_name" :label="`${item.full_name}${item.private ? '(private)' : ''}`" />
           </el-select>
         </el-form-item>
@@ -158,7 +158,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Path" prop="path">
-          <el-select v-model="asyncGithubFormPull.path" style="width: 100%" placeholder="请选择 Path">
+          <el-select v-model="asyncGithubFormPull.path" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Path">
             <el-option v-for="(item, idx) of path" :key="idx" :value="item.name" :label="item.name" />
           </el-select>
         </el-form-item>
