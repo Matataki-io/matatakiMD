@@ -5,116 +5,9 @@
         <i class="fa fa-file-text" /><span class="hidden-xs"> MatatakiMD</span>
       </router-link>
       <div class="header-right">
-        <el-popover
-          placement="bottom-start"
-          width="360"
-          trigger="click"
-        >
-          <div class="ipfs-container">
-            <p class="ipfs-title">
-              IPFS 列表
-            </p>
-            <div v-if="ipfsList.length">
-              <div v-for="(item, idx) in ipfsList" :key="idx" class="ipfs-item">
-                <span>{{ shortHash(item.hash) }} <i class="el-icon-document-copy icon-copy" @click="copyHash(item.hash)" /></span>
-                <a :href="item.publicUrl" target="_blank">Fleek</a>
-                <a :href="`https://ipfs.io/ipfs/${item.hash}`" target="_blank">IPFS</a>
-              </div>
-            </div>
-            <p v-else class="ipfs-text">
-              沒有 Ipfs 記錄
-            </p>
-          </div>
-          <div slot="reference" class="header-right_icon">
-            <svg
-              t="1622783016906"
-              class="icon-ipfs"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="4541"
-              width="200"
-              height="200"
-            ><path d="M245.794 676.096L486.056 814.81V537.376L245.794 398.662z" fill="#5f6266" p-id="4542" /><path d="M271.729 353.733l240.262 138.714 240.273-138.714-240.273-138.72z" fill="#5f6266" p-id="4543" /><path d="M778.2 398.659L537.93 537.372v277.441L778.2 676.092z" fill="#5f6266" p-id="4544" /><path d="M882.897 220.377L583.506 47.53 511.999 6.244 442.823 46.18l-301.73 174.197-69.617 40.204V769.248l68.97 39.817 302.377 174.584 69.176 39.934 71.507-41.286 300.037-173.231 68.981-39.817V260.581l-69.627-40.204zM857.72 753.976c0 5.408 0.655 10.657 1.79 15.727L560.016 942.608c-12.561-10.805-28.864-17.385-46.738-17.385-18.354 0-35.037 6.953-47.733 18.295L164.48 769.702c1.137-5.069 1.787-10.318 1.787-15.727 0-31.542-20.387-58.269-48.68-67.879V342.764c28.292-9.609 48.68-36.332 48.68-67.878 0-5.103-0.556-10.083-1.565-14.879L465.544 86.31c12.697 11.341 29.379 18.293 47.733 18.293 17.874 0 34.178-6.577 46.738-17.386l299.273 172.789a72.374 72.374 0 0 0-1.569 14.879c0 31.546 20.388 58.27 48.683 67.878v343.333c-28.295 9.611-48.682 36.338-48.682 67.88" fill="#5f6266" p-id="4545" /></svg>
-          </div>
-        </el-popover>
-
-        <el-dropdown trigger="click" class="more-tooltip" @command="handleCommandMore">
-          <span class="more-icon">
-            <i class="el-icon-more" />
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-github">
-              同步到 GitHub
-            </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-upload" command="async-ipfs">
-              推送到 IPFS
-            </el-dropdown-item>
-            <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-matataki">
-              推送到 Matataki
-            </el-dropdown-item>
-            <el-dropdown-item v-if="isUser" icon="el-icon-download" command="posts-import">
-              导入文章
-            </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-download" command="save-file-md" divided>
-              导出 Markdown
-            </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-upload2" command="import-file-md" class="item-file-upload">
-              <client-only>
-                <file-upload
-                  ref="upload"
-                  v-model="filesMarkdown"
-                  input-id="import-file-md"
-                  accept="text/markdown"
-                  @input-filter="inputFilterMarkdown"
-                >
-                  <div class="item-file-upload_name">
-                    导入 Markdown
-                  </div>
-                </file-upload>
-              </client-only>
-            </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-download" command="save-user-data" divided>
-              导出用户数据
-            </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-upload2" command="import-user-data" class="item-file-upload">
-              <client-only>
-                <file-upload
-                  ref="upload"
-                  v-model="files"
-                  input-id="import-user-data"
-                  accept="application/json"
-                  @input-filter="inputFilter"
-                >
-                  <div class="item-file-upload_name">
-                    导入用户数据
-                  </div>
-                </file-upload>
-              </client-only>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-
-        <div v-if="isUser" class="user">
-          <el-dropdown trigger="click" class="user-tooltip" @command="handleCommand">
-            <el-tooltip effect="dark" :content="usersData.nickname || usersData.username" placement="bottom">
-              <el-avatar :src="`https://ssimg.frontenduse.top/${usersData.avatar}`" :size="30" />
-            </el-tooltip>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-user" command="user">
-                <a ref="noopener noreferrer" :href="`${matatakiUrl}/user/${usersData.id}`" target="_blank" class="user-item">个人主页</a>
-              </el-dropdown-item>
-              <el-dropdown-item divided icon="el-icon-warning-outline" command="signout">
-                登出
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-        <div v-else class="user">
-          <div class="user-not-logged" @click="jumpToMttkOAuth">
-            登入
-          </div>
-        </div>
+        <HeaderIpfs :ipfs-list="ipfsList" />
+        <HeaderMore :is-user="isUser" @handleCommandMore="handleCommandMore" @importMarkdown="val => markdownData = val" />
+        <HeaderUser :is-user="isUser" :users-data="usersData" @handleCommand="handleCommand" />
       </div>
     </div>
 
@@ -304,6 +197,9 @@ import {
 } from 'nuxt-property-decorator'
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
 import moment from 'moment'
+import HeaderIpfs from '@/components/id-page/header-ipfs.vue'
+import HeaderMore from '@/components/id-page/header-more.vue'
+import HeaderUser from '@/components/id-page/header-user.vue'
 import {
   push, pull, users,
   userStats, postPublish, usersRepos,
@@ -336,18 +232,18 @@ interface userProps {
 let mavonEditor: any = {
   mavonEditor: null
 }
-let VueUploadComponent = null
 
 if (process.client) {
   mavonEditor = require('@matataki/editor')
-  VueUploadComponent = require('vue-upload-component')
 }
 
 @Component({
   components: {
     'mavon-editor': mavonEditor.mavonEditor,
     VueHcaptcha,
-    FileUpload: VueUploadComponent
+    HeaderIpfs,
+    HeaderMore,
+    HeaderUser
   }
 })
 export default class Edidtor extends Vue {
@@ -410,9 +306,6 @@ export default class Edidtor extends Vue {
     eKey: '',
     error: ''
   }
-
-  files = [] // import user data file
-  filesMarkdown = [] // import markdown file
 
   get asyncGithubFormRules () {
     if (this.asyncGithubFormMode === 'push') {
@@ -514,16 +407,6 @@ export default class Edidtor extends Vue {
         (this.$refs.hcaptchaRef as any).reset()
       }
     }
-  }
-
-  @Watch('files')
-  onFilesChanged () {
-    this.handleFilesChange()
-  }
-
-  @Watch('filesMarkdown')
-  onFilesMarkdownChanged () {
-    this.handleFilesMarkdownChange()
   }
 
   mounted () {
@@ -1037,154 +920,6 @@ export default class Edidtor extends Vue {
     }
   }
 
-  /**
-     * Pretreatment
-     * @param  Object|undefined   newFile   读写
-     * @param  Object|undefined   oldFile   只读
-     * @param  Function           prevent   阻止回调
-     * @return undefined
-     */
-  inputFilter (newFile: any, oldFile: any, prevent: Function) {
-    if (newFile && !oldFile) {
-      // 过滤不是图片后缀的文件
-      if (!/\.(json)$/i.test(newFile.name)) {
-        this.$message.warning('只能上传 JSON 文件！')
-        return prevent()
-      }
-    }
-  }
-
-  /**
-     * Pretreatment
-     * @param  Object|undefined   newFile   读写
-     * @param  Object|undefined   oldFile   只读
-     * @param  Function           prevent   阻止回调
-     * @return undefined
-     */
-  inputFilterMarkdown (newFile: any, oldFile: any, prevent: Function) {
-    console.log('newFile', newFile)
-    if (newFile && !oldFile) {
-      // 过滤不是图片后缀的文件
-      if (!/\.(md)$/i.test(newFile.name)) {
-        this.$message.warning('只能上传 Markdown 文件！')
-        return prevent()
-      }
-    }
-  }
-
-  // files change
-  handleFilesChange () {
-    console.log('files', this.files)
-
-    if (this.files.length <= 0) {
-      return
-    }
-
-    const fileData: any = this.files[0]
-    if (isEmpty(fileData)) {
-      console.log('fileData', fileData)
-      return
-    }
-
-    const file = fileData.file
-    const reader = new FileReader()
-    reader.onload = (event: any) => {
-      console.log('读取结果：', event)
-      const result = event.target.result || event.currentTarget.result
-      const data = JSON.parse(result)
-      // console.log('data', data)
-      this.importUserData(data)
-    }
-    reader.onerror = (event: any) => {
-      console.log('event', event)
-      this.$message.error('文件读取发生错误')
-    }
-    reader.readAsText(file)
-  }
-
-  // import user data
-  importUserData (data: any) {
-    console.log('data', data)
-
-    // 询问是否导入 并且展示会影响到的数据内容
-    this.$confirm('该操作会覆盖本地的数据！是否导入？', '确认信息', {
-      distinguishCancelAndClose: true,
-      confirmButtonText: '保存',
-      cancelButtonText: '取消'
-    })
-      .then(() => {
-        this.mergedUserData(data.notes)
-        this.$message({
-          type: 'info',
-          message: '保存修改'
-        })
-      })
-      .catch(() => {})
-  }
-
-  // 合并用户数据
-  async mergedUserData (list: object[]) {
-    for (let i = 0; i < list.length; i++) {
-      const ele: { [key: string]: any } = list[i]
-      // console.log('ele', ele)
-      const key: any = Object.keys(ele)
-      try {
-        const itemResult = await (this as any).$localForage.getItem(key) || {}
-        const data = assign(itemResult, ele[key])
-        await (this as any).$localForage.setItem(key, data)
-      } catch (e) {
-        console.log(e.toString())
-      }
-    }
-  }
-
-  // files markdown change
-  handleFilesMarkdownChange () {
-    console.log('filesMarkdown', this.filesMarkdown)
-
-    if (this.filesMarkdown.length <= 0) {
-      return
-    }
-
-    const fileData: any = this.filesMarkdown[0]
-    if (isEmpty(fileData)) {
-      console.log('fileData', fileData)
-      return
-    }
-
-    const file = fileData.file
-    const reader = new FileReader()
-    reader.onload = (event: any) => {
-      console.log('读取结果：', event)
-      const data = event.target.result || event.currentTarget.result
-      // console.log('data', data)
-      this.importMarkdown(data)
-    }
-    reader.onerror = (event: any) => {
-      console.log('event', event)
-      this.$message.error('文件读取发生错误')
-    }
-    reader.readAsText(file)
-  }
-
-  // import markdown
-  importMarkdown (data: any) {
-    // 询问是否导入 并且展示会影响到的数据内容
-    this.$confirm('该操作会覆盖内容！是否导入？', '确认信息', {
-      distinguishCancelAndClose: true,
-      confirmButtonText: '保存',
-      cancelButtonText: '取消'
-    })
-      .then(() => {
-        this.markdownData = data
-        this.$message({
-          type: 'info',
-          message: '保存修改'
-        })
-      })
-      .catch(() => {})
-  }
-
   // 用户下拉处理
   handleCommand (command: string) {
     if (command === 'user') {
@@ -1290,20 +1025,6 @@ export default class Edidtor extends Vue {
       this.dialogImportMatatakiLoading = false
     }
   }
-
-  shortHash (hash: string): string {
-    if (!hash) { return '...' }
-    const len = 12
-    return `${hash.slice(0, len)}...${hash.slice(hash.length - len)}`
-  }
-
-  copyHash (hash: string): void {
-    (this as any).$copyText(hash).then(() => {
-      this.$message.success('複製成功')
-    }, () => {
-      this.$message.error('複製失敗')
-    })
-  }
 }
 </script>
 
@@ -1340,72 +1061,6 @@ export default class Edidtor extends Vue {
 .header-right {
   display: flex;
   align-items: center;
-}
-.header-right_icon {
-  width: 22px;
-  height: 22px;
-}
-.icon-ipfs {
-  width: 22px;
-  height: 22px;
-  font-size: 22px;
-  color: #5f6266;
-  cursor: pointer;
-}
-.ipfs-container {
-  padding: 10px;
-  color: #5f6266;
-}
-.ipfs-title {
-  font-size: 16px;
-  margin: 0 0 10px;
-}
-.ipfs-item {
-  margin: 10px 0;
-  span {
-    margin-right: 6px;
-  }
-  .icon-copy {
-    cursor: pointer;
-    margin-left: 6px;
-  }
-  a {
-    color: #5f6266;
-  }
-}
-.ipfs-text {
-  font-size: 14px;
-}
-
-.item-file-upload {
-  display: flex;
-  align-items: center;
-}
-.item-file-upload_name {
-  margin-left: 4px;
-}
-.user {
-  display: flex;
-  align-items: center;
-}
-.user-item {
-  font-size: 14px;
-  color: #606266;
-  text-decoration: none;
-}
-.user-tooltip {
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-}
-.more-tooltip {
-  .more-icon {
-    padding: 0 14px;
-    font-size: 22px;
-    &:hover {
-      color: #333;
-    }
-  }
 }
 
 .async-github-form {
