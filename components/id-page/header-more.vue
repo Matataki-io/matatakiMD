@@ -268,7 +268,7 @@ export default class HeaderIpfs extends Vue {
 <style lang="less" scoped>
 .more-tooltip {
   .more-icon {
-    padding: 0 14px;
+    padding: 0 20px;
     font-size: 22px;
     &:hover {
       color: #333;
