@@ -11,7 +11,7 @@ interface PublishProps {
 }
 
 export function users () {
-  return client.get('/api/users')
+  return client.get('/api/users', { cache: true })
 }
 export function push (data: any) {
   return client.put('/api/push', data)
@@ -20,13 +20,13 @@ export function pull (params: any) {
   return client.get('/api/pull', { params })
 }
 export function usersRepos (params: any) {
-  return client.get('/api/users/repos', { params })
+  return client.get('/api/users/repos', { params, cache: true })
 }
 export function reposBranches (params: any) {
-  return client.get('/api/repos/branches', { params })
+  return client.get('/api/repos/branches', { params, cache: true })
 }
 export function reposContentsList (params: any) {
-  return client.get('/api/repos/contents/list', { params })
+  return client.get('/api/repos/contents/list', { params, cache: true })
 }
 
 // image upload
@@ -50,7 +50,7 @@ export function ipfsUpload (data: { title: string, content: string }) {
 
 // MTK API
 export function userStats () {
-  return client.get('/api/user/stats')
+  return client.get('/api/user/stats', { cache: true })
 }
 export function postPublish (data: PublishProps) {
   return client.post('/api/post/publish', data)

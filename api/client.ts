@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios, { AxiosAdapter } from 'axios'
+import { cacheAdapterEnhancer, throttleAdapterEnhancer } from 'axios-extensions'
 import { getCookie } from '../utils/cookie'
 // axios.defaults.withCredentials = true
 
@@ -7,12 +8,16 @@ import { getCookie } from '../utils/cookie'
 //   data: any
 // }
 
+const options = {
+  enabledByDefault: false
+}
+
 const client = axios.create({
   baseURL: process.env.APP_API_URL,
   timeout: 1000 * 60,
-  headers: {
-  },
-  withCredentials: true
+  withCredentials: true,
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, options))
 })
 
 // Just copy from matataki-fe

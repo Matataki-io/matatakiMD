@@ -220,9 +220,7 @@ export default class HeaderIpfs extends Vue {
 
   toggleMode (mode: string): void {
     this.asyncGithubFormMode = mode
-    if (!this.repos.length) { // 暂时减少请求
-      this.usersReposFn()
-    }
+    this.usersReposFn()
   }
 
   async usersFn (): Promise<void> {
