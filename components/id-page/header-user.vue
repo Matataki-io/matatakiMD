@@ -75,5 +75,14 @@ export default class HeaderIpfs extends Vue {
   color: #606266;
   text-decoration: none;
 }
-
+.user-not-logged {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #606266;
+  cursor: pointer;
+}
 </style>

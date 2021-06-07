@@ -22,8 +22,15 @@ export default class AuthGithubCallback extends Vue {
 
 <style lang="less" scoped>
 .wrapper {
-  margin: 100px auto 0;
+  width: 100%;
+  height: 100vh;
+  background: #333;
+  color: #fff;
   font-size: 20px;
+  padding: 100px 0 0 0;
   text-align: center;
+  a {
+    color: #fff;
+  }
 }
 </style>

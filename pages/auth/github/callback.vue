@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     github callback
     <n-link :to="{ name: 'index' }">
       Go Home
@@ -23,3 +23,11 @@ export default class AuthGithubCallback extends Vue {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.wrapper {
+  width: 100%;
+  height: 100vh;
+  background: #333;
+}
+</style>

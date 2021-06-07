@@ -409,15 +409,4 @@ export default class Edidtor extends Vue {
   align-items: center;
 }
 
-.user-not-logged {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: bold;
-  color: #606266;
-  cursor: pointer;
-}
-
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     matataki callback...
     <n-link :to="{ name: 'index' }">
       Go Home
@@ -28,3 +28,17 @@ export default class AuthGithubCallback extends Vue {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.wrapper {
+  width: 100%;
+  height: 100vh;
+  background: #333;
+  color: #fff;
+  font-size: 16px;
+  a {
+    color: #fff;
+    font-size: 16px;
+  }
+}
+</style>
