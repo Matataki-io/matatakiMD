@@ -30,3 +30,11 @@ export interface Notes {
   'create_time': number
   'update_time': number
 }
+
+interface userProps {
+  avatar: string
+  id: number
+  nickname: string
+  platform: string
+  username: string
+}
