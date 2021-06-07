@@ -151,7 +151,7 @@ export default class HeaderIpfs extends Vue {
   }
 
   // 获取白名单状态
-  async doINeedHCaptchaFn () {
+  async doINeedHCaptchaFn (): Promise<void> {
     try {
       const res: any = await getDoINeedHCaptcha()
       if (res.code === 0) {
@@ -164,21 +164,21 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  onCaptchaVerify (token: string, eKey: string) {
+  onCaptchaVerify (token: string, eKey: string): void {
     this.hCaptchaData = { token, eKey, expired: false, error: '' }
   }
 
-  onExpire () {
+  onExpire (): void {
     this.hCaptchaData = { token: '', eKey: '', expired: true, error: 'current token expires.' }
   }
 
-  onError (e: any) {
+  onError (e: any): void {
     this.hCaptchaData = { token: '', eKey: '', expired: true, error: e }
     console.error('captcha error: ', e)
   }
 
   // 当hCaptcha状态重置时，重置hCaptchaData对象的值
-  onCaptchaReset () {
+  onCaptchaReset (): void {
     this.hCaptchaData = {
       expired: false,
       token: '',
@@ -188,7 +188,7 @@ export default class HeaderIpfs extends Vue {
   }
 
   // 提交表单
-  submitPublishMatatakiForm (formName: string) {
+  submitPublishMatatakiForm (formName: string): void {
     (this as any).$refs[formName].validate((valid: boolean) => {
       if (valid) {
         this.postPublishFn()

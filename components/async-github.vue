@@ -1,0 +1,426 @@
+<template>
+  <el-dialog
+    title="同步到 GitHub"
+    :visible.sync="dialogAsyncGithub"
+    width="600px"
+    custom-class="async-giithub"
+  >
+    <div>
+      <!-- <div v-loading="githubLoading" class="async-github-loading" /> -->
+      <div v-if="isUserGithub">
+        <el-button size="small" @click="toggleMode('push')">
+          推送至 GitHub
+        </el-button>
+        <el-button size="small" @click="toggleMode('pull')">
+          从 GitHub 拉取
+        </el-button>
+        <a class="more" href="https://matataki.io/" target="_blank">了解更多</a>
+      </div>
+      <a v-else ref="noopener noreferrer" :href="matatakiUrl" target="_blank" class="user-github-link">
+        Bind Github (Matataki 需要綁定 Github 賬號)
+      </a>
+    </div>
+    <el-form
+      v-if="asyncGithubFormMode === 'push'"
+      ref="asyncGithubFormPush"
+      :model="asyncGithubFormPush"
+      :rules="asyncGithubFormRules"
+      label-width="80px"
+      class="async-github-form"
+    >
+      <el-form-item label="Repo" prop="repos">
+        <el-select v-model="asyncGithubFormPush.repos" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
+          <el-option v-for="(item, idx) of repos" :key="idx" :value="item.full_name" :label="`${item.full_name}${item.private ? '(private)' : ''}`" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Branch" prop="branches">
+        <el-select v-model="asyncGithubFormPush.branches" style="width: 100%" placeholder="请选择 Branches" disabled>
+          <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Path" prop="path">
+        <el-select v-model="asyncGithubFormPush.path" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Path">
+          <el-option v-for="(item, idx) of path" :key="idx" :value="item.name" :label="item.name" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Commit" prop="commit">
+        <el-input v-model="asyncGithubFormPush.commit" type="textarea" placeholder="请输入 Commit(可选)" />
+      </el-form-item>
+      <el-form-item>
+        <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPush')">
+          确定
+        </el-button>
+        <a v-if="asyncGithubFormPush.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPush.repos}`">
+          <el-button size="small">
+            View Repo
+          </el-button>
+        </a>
+      </el-form-item>
+    </el-form>
+
+    <el-form
+      v-if="asyncGithubFormMode === 'pull'"
+      ref="asyncGithubFormPull"
+      :model="asyncGithubFormPull"
+      :rules="asyncGithubFormRules"
+      label-width="80px"
+      class="async-github-form"
+    >
+      <el-form-item label="Repo" prop="repos">
+        <el-select v-model="asyncGithubFormPull.repos" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Repo" @change="handleChangeRepos">
+          <el-option v-for="(item, idx) of repos" :key="idx" :value="item.full_name" :label="`${item.full_name}${item.private ? '(private)' : ''}`" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Branch" prop="branches">
+        <el-select v-model="asyncGithubFormPull.branches" style="width: 100%" placeholder="请选择 Branches" disabled>
+          <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Path" prop="path">
+        <el-select v-model="asyncGithubFormPull.path" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Path">
+          <el-option v-for="(item, idx) of path" :key="idx" :value="item.name" :label="item.name" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPull')">
+          确定
+        </el-button>
+        <a v-if="asyncGithubFormPull.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPull.repos}`">
+          <el-button size="small">
+            View Repo
+          </el-button>
+        </a>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+</template>
+
+<script lang="ts">
+import {
+  Component,
+  Vue,
+  Prop,
+  PropSync,
+  Watch
+} from 'nuxt-property-decorator'
+import { isEmpty } from 'lodash'
+import { reposBranchesFnProps, reposContentsListProps } from '../types/index.d'
+
+import {
+  push, pull, users,
+  usersRepos,
+  reposBranches, reposContentsList
+} from '../api/index'
+import { getCookie, setCookie } from '../utils/cookie'
+
+@Component({})
+export default class HeaderIpfs extends Vue {
+  @Prop({
+    type: String,
+    required: true
+  })
+  readonly markdownData!: string
+
+  @PropSync('visible', { type: Boolean, required: true })
+  dialogAsyncGithub!: boolean
+
+  dialogImportMatatakiInput: string = ''
+  dialogImportMatatakiLoading: boolean = false
+  usersGithubData: object = {}
+  repos: Array<object> = []
+  branches= []
+  path= []
+  asyncGithubFormMode: string = '' // push pull
+    asyncGithubFormPush = {
+      repos: '',
+      branches: '',
+      path: '',
+      commit: ''
+    }
+
+  asyncGithubFormPull = {
+    repos: '',
+    branches: '',
+    path: ''
+  }
+
+  githubUploadLoading = false
+  githubLoading = false
+
+  get asyncGithubFormRules () {
+    if (this.asyncGithubFormMode === 'push') {
+      return {
+        repos: [
+          { required: true, message: '请选择 Repo', trigger: 'change' }
+        ],
+        branches: [
+          { required: true, message: '请选择 Branches', trigger: 'change' }
+        ],
+        path: [
+          { required: true, message: '请选择 Path', trigger: 'change' }
+        ]
+      }
+    } else if (this.asyncGithubFormMode === 'pull') {
+      return {
+        repos: [
+          { required: true, message: '请选择 Repo', trigger: 'change' }
+        ],
+        branches: [
+          { required: true, message: '请选择 Branches', trigger: 'change' }
+        ],
+        path: [
+          { required: true, message: '请选择 Path', trigger: 'change' }
+        ]
+      }
+    } else {
+      return {}
+    }
+  }
+
+  get isUserGithub () {
+    return !isEmpty(this.usersGithubData)
+  }
+
+  get matatakiUrl () {
+    if (process.client) {
+      return process.env.APP_MATATAKI_URL
+    } else {
+      return ''
+    }
+  }
+
+  @Watch('dialogAsyncGithub')
+  onDialogAsyncGithubChangeed (val: boolean) {
+    if (!val) {
+      if (this.asyncGithubFormMode === 'push') {
+        this.resetForm('asyncGithubFormPush')
+      } else if (this.asyncGithubFormMode === 'pull') {
+        this.resetForm('asyncGithubFormPull')
+      }
+
+      this.asyncGithubFormMode = ''
+    }
+  }
+
+  mounted () {
+    // 编辑文章不会自动保存
+    if (process.browser) {
+      try {
+        const usersDataStore = getCookie('users-github') || ''
+        if (usersDataStore) {
+          this.usersGithubData = JSON.parse(usersDataStore)
+        } else {
+          this.usersFn()
+        }
+      } catch (e) {
+        console.log('e', e)
+      }
+    }
+  }
+
+  toggleMode (mode: string) {
+    this.asyncGithubFormMode = mode
+    if (!this.repos.length) { // 暂时减少请求
+      this.usersReposFn()
+    }
+  }
+
+  async usersFn (): Promise<void> {
+    const res: any = await users()
+    if (res.code === 0) {
+      setCookie('users-github', JSON.stringify(res.data), 1)
+      this.usersGithubData = res.data
+    }
+  }
+
+  async usersReposFn (): Promise<void> {
+    this.githubLoading = true
+    try {
+      const res: any = await usersRepos({
+        username: (this as any).usersGithubData.login
+      })
+      if (res.code === 0) {
+        this.repos = res.data
+        this.asyncGithubFormPush.repos = res.data[0].full_name
+        this.asyncGithubFormPull.repos = res.data[0].full_name
+
+        const [owner, repo] = (res.data[0].full_name).split('/')
+        this.reposBranchesFn({
+          owner,
+          repo
+        })
+      }
+    } catch (e) {
+      console.warn(e.toString())
+    } finally {
+      this.githubLoading = false
+    }
+  }
+
+  async reposBranchesFn ({ owner, repo }: reposBranchesFnProps): Promise<void> {
+    this.githubLoading = true
+
+    try {
+      const res: any = await reposBranches({
+        owner,
+        repo
+      })
+      if (res.code === 0) {
+        this.branches = res.data
+        this.asyncGithubFormPush.branches = res.data[0].name
+        this.asyncGithubFormPull.branches = res.data[0].name
+
+        this.reposContentsListFn({
+          owner,
+          repo
+        })
+      }
+    } catch (e) {
+      console.warn(e)
+    } finally {
+      this.githubLoading = false
+    }
+  }
+
+  async reposContentsListFn ({ owner, repo }: reposContentsListProps): Promise<void> {
+    this.githubLoading = true
+
+    try {
+      const res: any = await reposContentsList({
+        owner,
+        repo
+      })
+      if (res.code === 0) {
+        this.path = res.data
+        this.asyncGithubFormPush.path = res.data[0].name
+        this.asyncGithubFormPull.path = res.data[0].name
+      }
+    } catch (e) {
+      console.warn(e.toString())
+    } finally {
+      this.githubLoading = false
+    }
+  }
+
+  handleChangeRepos (e: any) {
+    console.log('item', e)
+    const [owner, repo] = e.split('/')
+    this.reposBranchesFn({
+      owner,
+      repo
+    })
+  }
+
+  async handPushEvent (): Promise<void> {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在推送...',
+      duration: 0
+    })
+
+    try {
+      console.log(this.asyncGithubFormPush)
+
+      this.githubUploadLoading = true
+      const [owner, repo] = this.asyncGithubFormPush.repos.split('/')
+      const res: any = await push({
+        contents: this.markdownData,
+        owner,
+        path: this.asyncGithubFormPush.path,
+        branch: this.asyncGithubFormPush.branches,
+        repo,
+        commit: this.asyncGithubFormPush.commit
+      })
+      if (res.code === 0) {
+        this.$message.success('推送成功')
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e: any) {
+      this.$message.error(`推送失败: ${e.toString()}`)
+    } finally {
+      this.githubUploadLoading = false
+      loading.close()
+    }
+  }
+
+  async handPullEvent (): Promise<void> {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在拉取...',
+      duration: 0
+    })
+
+    try {
+      this.githubUploadLoading = true
+
+      const [owner, repo] = this.asyncGithubFormPull.repos.split('/')
+
+      const res: any = await pull({
+        owner,
+        path: this.asyncGithubFormPull.path,
+        branch: this.asyncGithubFormPull.branches,
+        repo
+      })
+      if (res.code === 0) {
+        this.$message.success('拉取成功')
+        this.$emit('pull', res.data.content)
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e: any) {
+      this.$message.error(`拉取失败: ${e.toString()}`)
+    } finally {
+      this.githubUploadLoading = false
+      loading.close()
+    }
+  }
+
+  submitAsyncGithubForm (formName: string) {
+    (this as any).$refs[formName].validate((valid: boolean) => {
+      if (valid) {
+        if (this.asyncGithubFormMode === 'push') {
+          this.handPushEvent()
+        } else if (this.asyncGithubFormMode === 'pull') {
+          this.handPullEvent()
+        } else {
+          this.$message('other submit')
+        }
+      } else {
+        console.log('error submit!!')
+        return false
+      }
+    })
+  }
+
+  resetForm (formName: string) {
+    (this as any).$refs[formName].resetFields()
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.async-github {
+  position: relative;
+}
+.async-github-form {
+  margin-top: 20px;
+}
+.user-github-link {
+  font-size: 14px;
+  color: #606266;
+  text-decoration: underline;
+}
+.async-github-loading {
+  position: absolute;
+  right: 60px;
+  bottom: 40px;
+}
+.more {
+  margin-left: 10px;
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+</style>

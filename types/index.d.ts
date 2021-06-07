@@ -31,10 +31,19 @@ export interface Notes {
   'update_time': number
 }
 
-interface userProps {
+export interface userProps {
   avatar: string
   id: number
   nickname: string
   platform: string
   username: string
+}
+
+export interface reposBranchesFnProps {
+  owner: string
+  repo: string
+}
+export interface reposContentsListProps {
+  owner: string
+  repo: string
 }
