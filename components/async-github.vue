@@ -218,7 +218,7 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  toggleMode (mode: string) {
+  toggleMode (mode: string): void {
     this.asyncGithubFormMode = mode
     if (!this.repos.length) { // 暂时减少请求
       this.usersReposFn()
@@ -302,7 +302,7 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  handleChangeRepos (e: any) {
+  handleChangeRepos (e: any): void {
     console.log('item', e)
     const [owner, repo] = e.split('/')
     this.reposBranchesFn({
@@ -376,7 +376,7 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  submitAsyncGithubForm (formName: string) {
+  submitAsyncGithubForm (formName: string): void {
     (this as any).$refs[formName].validate((valid: boolean) => {
       if (valid) {
         if (this.asyncGithubFormMode === 'push') {
@@ -393,7 +393,7 @@ export default class HeaderIpfs extends Vue {
     })
   }
 
-  resetForm (formName: string) {
+  resetForm (formName: string): void {
     (this as any).$refs[formName].resetFields()
   }
 }

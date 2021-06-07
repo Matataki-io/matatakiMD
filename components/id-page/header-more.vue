@@ -3,7 +3,10 @@
     <span class="more-icon">
       <i class="el-icon-more" />
     </span>
-    <el-dropdown-menu slot="dropdown">
+    <el-dropdown-menu slot="dropdown" class="dropdown-menu-container">
+      <li class="dropdown-header">
+        選項
+      </li>
       <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-github">
         同步到 GitHub
       </el-dropdown-item>
@@ -13,11 +16,22 @@
       <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-matataki">
         推送到 Matataki
       </el-dropdown-item>
-      <el-dropdown-item v-if="isUser" icon="el-icon-download" command="posts-import">
-        导入文章
-      </el-dropdown-item>
-      <el-dropdown-item icon="el-icon-download" command="save-file-md" divided>
+
+      <li class="divder" />
+      <li class="dropdown-header">
+        匯出
+      </li>
+
+      <el-dropdown-item icon="el-icon-download" command="save-file-md">
         导出 Markdown
+      </el-dropdown-item>
+
+      <li class="divder" />
+      <li class="dropdown-header">
+        匯入
+      </li>
+      <el-dropdown-item v-if="isUser" icon="el-icon-upload2" command="posts-import">
+        导入文章(Matataki 功能)
       </el-dropdown-item>
       <el-dropdown-item icon="el-icon-upload2" command="import-file-md" class="item-file-upload">
         <client-only>
@@ -34,7 +48,12 @@
           </file-upload>
         </client-only>
       </el-dropdown-item>
-      <el-dropdown-item icon="el-icon-download" command="save-user-data" divided>
+
+      <li class="divder" />
+      <li class="dropdown-header">
+        數據
+      </li>
+      <el-dropdown-item icon="el-icon-download" command="save-user-data">
         导出用户数据
       </el-dropdown-item>
       <el-dropdown-item icon="el-icon-upload2" command="import-user-data" class="item-file-upload">
@@ -263,5 +282,22 @@ export default class HeaderIpfs extends Vue {
 }
 .item-file-upload_name {
   margin-left: 4px;
+}
+.dropdown-header {
+  color: #888;
+  display: block;
+  padding: 3px 20px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.42857143;
+  white-space: nowrap;
+  user-select: none;
+}
+.divder {
+  height: 1px;
+  margin: 10px 0;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  border-bottom: 1px solid #e3e3e3;
 }
 </style>
