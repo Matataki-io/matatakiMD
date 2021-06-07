@@ -46,4 +46,5 @@ export interface reposBranchesFnProps {
 export interface reposContentsListProps {
   owner: string
   repo: string
+  branch: string
 }

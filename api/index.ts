@@ -26,7 +26,7 @@ export function reposBranches (params: any) {
   return client.get('/api/repos/branches', { params, cache: true })
 }
 export function reposContentsList (params: any) {
-  return client.get('/api/repos/contents/list', { params, cache: true })
+  return client.get('/api/repos/contents/list', { params, cache: false })
 }
 
 // image upload

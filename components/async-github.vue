@@ -34,7 +34,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="Branch" prop="branches">
-        <el-select v-model="asyncGithubFormPush.branches" style="width: 100%" placeholder="请选择 Branches" disabled>
+        <el-select v-model="asyncGithubFormPush.branches" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Branches" @change="val => handleChangeBranches(val, asyncGithubFormPush.repos)">
           <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
         </el-select>
       </el-form-item>
@@ -47,7 +47,7 @@
         <el-input v-model="asyncGithubFormPush.commit" type="textarea" placeholder="请输入 Commit(可选)" />
       </el-form-item>
       <el-form-item>
-        <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPush')">
+        <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitForm('asyncGithubFormPush')">
           确定
         </el-button>
         <a v-if="asyncGithubFormPush.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPush.repos}`">
@@ -72,7 +72,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="Branch" prop="branches">
-        <el-select v-model="asyncGithubFormPull.branches" style="width: 100%" placeholder="请选择 Branches" disabled>
+        <el-select v-model="asyncGithubFormPull.branches" v-loading="githubLoading" style="width: 100%" placeholder="请选择 Branches" @change="val => handleChangeBranches(val, asyncGithubFormPull.repos)">
           <el-option v-for="(item, idx) of branches" :key="idx" :value="item.name" :label="item.name" />
         </el-select>
       </el-form-item>
@@ -82,7 +82,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitAsyncGithubForm('asyncGithubFormPull')">
+        <el-button v-loading="githubUploadLoading" size="small" type="primary" @click="submitForm('asyncGithubFormPull')">
           确定
         </el-button>
         <a v-if="asyncGithubFormPull.repos" target="_blank" rel="noopener noreferrer" :href="`https://github.com/${asyncGithubFormPull.repos}`">
@@ -218,11 +218,13 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
+  // 切换模式
   toggleMode (mode: string): void {
     this.asyncGithubFormMode = mode
     this.usersReposFn()
   }
 
+  // 获取 GitHub 信息
   async usersFn (): Promise<void> {
     const res: any = await users()
     if (res.code === 0) {
@@ -231,6 +233,7 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
+  // 获取 Repo 信息
   async usersReposFn (): Promise<void> {
     this.githubLoading = true
     try {
@@ -255,6 +258,7 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
+  // 获取分支信息
   async reposBranchesFn ({ owner, repo }: reposBranchesFnProps): Promise<void> {
     this.githubLoading = true
 
@@ -270,7 +274,8 @@ export default class HeaderIpfs extends Vue {
 
         this.reposContentsListFn({
           owner,
-          repo
+          repo,
+          branch: this.asyncGithubFormPush.branches
         })
       }
     } catch (e) {
@@ -280,13 +285,15 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  async reposContentsListFn ({ owner, repo }: reposContentsListProps): Promise<void> {
+  // 获取文件列表
+  async reposContentsListFn ({ owner, repo, branch }: reposContentsListProps): Promise<void> {
     this.githubLoading = true
 
     try {
       const res: any = await reposContentsList({
         owner,
-        repo
+        repo,
+        branch
       })
       if (res.code === 0) {
         this.path = res.data
@@ -300,15 +307,29 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  handleChangeRepos (e: any): void {
-    console.log('item', e)
-    const [owner, repo] = e.split('/')
+  // Repo 切换
+  handleChangeRepos (val: string): void {
+    console.log('item', val)
+    const [owner, repo] = val.split('/')
     this.reposBranchesFn({
       owner,
       repo
     })
   }
 
+  // branches 切换
+  handleChangeBranches (val: string, repos: string): void {
+    console.log('item', val)
+    const [owner, repo] = repos.split('/')
+
+    this.reposContentsListFn({
+      owner,
+      repo,
+      branch: val
+    })
+  }
+
+  // push 操作
   async handPushEvent (): Promise<void> {
     const loading = this.$notify({
       title: '提示',
@@ -342,6 +363,7 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
+  // pull 操作
   async handPullEvent (): Promise<void> {
     const loading = this.$notify({
       title: '提示',
@@ -374,7 +396,8 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  submitAsyncGithubForm (formName: string): void {
+  // 提交 GitHub form
+  submitForm (formName: string): void {
     (this as any).$refs[formName].validate((valid: boolean) => {
       if (valid) {
         if (this.asyncGithubFormMode === 'push') {
@@ -391,6 +414,7 @@ export default class HeaderIpfs extends Vue {
     })
   }
 
+  // 重置 form
   resetForm (formName: string): void {
     (this as any).$refs[formName].resetFields()
   }
