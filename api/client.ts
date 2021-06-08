@@ -1,12 +1,7 @@
-import axios, { AxiosAdapter } from 'axios'
+import axios, { AxiosAdapter, AxiosResponse } from 'axios'
 import { cacheAdapterEnhancer, throttleAdapterEnhancer } from 'axios-extensions'
 import { getCookie } from '../utils/cookie'
 // axios.defaults.withCredentials = true
-
-// interface ApiResult {
-//   code: number,
-//   data: any
-// }
 
 const options = {
   enabledByDefault: false
@@ -35,7 +30,7 @@ client.interceptors.request.use(
 )
 
 client.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     // if(loadingInstance) loadingInstance.close();
     return response.data
   },

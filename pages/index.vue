@@ -1146,7 +1146,7 @@ export default class Home extends Vue {
 
   // 获取用户信息
   async userStatsFn (): Promise<void> {
-    const res: any = await userStats()
+    const res = await userStats()
     if (res.code === 0) {
       setCookie('users', JSON.stringify(res.data), 1)
       this.usersData = res.data

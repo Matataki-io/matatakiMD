@@ -153,7 +153,7 @@ export default class HeaderIpfs extends Vue {
   // 获取白名单状态
   async doINeedHCaptchaFn (): Promise<void> {
     try {
-      const res: any = await getDoINeedHCaptcha()
+      const res = await getDoINeedHCaptcha()
       if (res.code === 0) {
         this.doINeedHCaptcha = res.data.isInWhiteList
       } else {
@@ -215,7 +215,7 @@ export default class HeaderIpfs extends Vue {
     try {
       this.mtkUploadLoading = true
 
-      const res: any = await postPublish({
+      const res = await postPublish({
         title: this.publishMatatakiForm.title,
         content: this.markdownData,
         shortContent: this.publishMatatakiForm.shortContent,

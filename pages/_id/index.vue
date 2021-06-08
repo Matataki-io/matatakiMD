@@ -176,7 +176,7 @@ export default class Edidtor extends Vue {
 
   // 获取用户信息
   async userStatsFn (): Promise<void> {
-    const res: any = await userStats()
+    const res = await userStats()
     if (res.code === 0) {
       setCookie('users', JSON.stringify(res.data), 1)
       this.usersData = res.data
@@ -186,7 +186,7 @@ export default class Edidtor extends Vue {
   // 图片上传的回调方法
   async imageUploadFn (file: File) {
     try {
-      const res: any = await upload(file)
+      const res = await upload(file)
       if (res.code === 0) {
         return `https://ssimg.frontenduse.top/${res.data}`
       } else {
@@ -213,7 +213,7 @@ export default class Edidtor extends Vue {
 
       this.ipfsUploadLoading = true
 
-      const res: any = await ipfsUpload({
+      const res = await ipfsUpload({
         title,
         content: ipfsHtmlTemp({ title, content })
       })
@@ -299,7 +299,7 @@ export default class Edidtor extends Vue {
     const _shortContent = generateShortContent('#previewContent p')
 
     try {
-      const draftSaveResult: any = await draftSave({
+      const draftSaveResult = await draftSave({
         title,
         content: this.markdownData,
         shortContent: _shortContent
@@ -309,7 +309,7 @@ export default class Edidtor extends Vue {
         throw new Error(draftSaveResult.message)
       }
 
-      const previewResult: any = await preview({ id: draftSaveResult.data })
+      const previewResult = await preview({ id: draftSaveResult.data })
 
       if (previewResult.code === 0) {
         this.$notify({

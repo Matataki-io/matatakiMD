@@ -1,4 +1,5 @@
 import {
+  HttpResponse,
   IpfsUploadProps,
   PublishProps, PushProps, PullProps,
   UsersReposProps, ReposBranchesProps, ReposContentsListProps,
@@ -11,8 +12,8 @@ import client from './client'
  * GitHub 用户信息
  * @returns
  */
-export function users () {
-  return client.get('/api/users', { cache: true })
+export const users = async (): Promise<HttpResponse> => {
+  return await client.get('/api/users', { cache: true })
 }
 
 /**
@@ -20,8 +21,8 @@ export function users () {
  * @param data
  * @returns
  */
-export function push (data: PushProps) {
-  return client.put('/api/push', data)
+export const push = async (data: PushProps) : Promise<HttpResponse> => {
+  return await client.put('/api/push', data)
 }
 
 /**
@@ -29,8 +30,8 @@ export function push (data: PushProps) {
  * @param params
  * @returns
  */
-export function pull (params: PullProps) {
-  return client.get('/api/pull', { params })
+export const pull = async (params: PullProps) : Promise<HttpResponse> => {
+  return await client.get('/api/pull', { params })
 }
 
 /**
@@ -38,8 +39,8 @@ export function pull (params: PullProps) {
  * @param params
  * @returns
  */
-export function usersRepos (params: UsersReposProps) {
-  return client.get('/api/users/repos', { params, cache: true })
+export const usersRepos = async (params: UsersReposProps) : Promise<HttpResponse> => {
+  return await client.get('/api/users/repos', { params, cache: true })
 }
 
 /**
@@ -47,8 +48,8 @@ export function usersRepos (params: UsersReposProps) {
  * @param params
  * @returns
  */
-export function reposBranches (params: ReposBranchesProps) {
-  return client.get('/api/repos/branches', { params, cache: true })
+export const reposBranches = async (params: ReposBranchesProps) : Promise<HttpResponse> => {
+  return await client.get('/api/repos/branches', { params, cache: true })
 }
 
 /**
@@ -56,8 +57,8 @@ export function reposBranches (params: ReposBranchesProps) {
  * @param params
  * @returns
  */
-export function reposContentsList (params: ReposContentsListProps) {
-  return client.get('/api/repos/contents/list', { params, cache: false })
+export const reposContentsList = async (params: ReposContentsListProps) : Promise<HttpResponse> => {
+  return await client.get('/api/repos/contents/list', { params, cache: false })
 }
 
 /**
@@ -65,14 +66,10 @@ export function reposContentsList (params: ReposContentsListProps) {
  * @param file
  * @returns
  */
-export function upload (file: File) {
+export const upload = async (file: File) : Promise<HttpResponse> => {
   const formdata = new FormData()
   formdata.append('file', file)
-  return client({
-    url: '/api/upload',
-    method: 'POST',
-    data: formdata
-  })
+  return await client.post('/api/upload', formdata)
 }
 
 /**
@@ -80,12 +77,8 @@ export function upload (file: File) {
  * @param data
  * @returns
  */
-export function ipfsUpload (data: IpfsUploadProps) {
-  return client({
-    url: '/api/ipfs/upload',
-    method: 'POST',
-    data
-  })
+export const ipfsUpload = async (data: IpfsUploadProps) : Promise<HttpResponse> => {
+  return await client.post('/api/ipfs/upload', data)
 }
 
 // MTK API
@@ -94,8 +87,8 @@ export function ipfsUpload (data: IpfsUploadProps) {
  * MTK 用户信息
  * @returns
  */
-export function userStats () {
-  return client.get('/api/user/stats', { cache: true })
+export const userStats = async () : Promise<HttpResponse> => {
+  return await client.get('/api/user/stats', { cache: true })
 }
 
 /**
@@ -103,16 +96,16 @@ export function userStats () {
  * @param data
  * @returns
  */
-export function postPublish (data: PublishProps) {
-  return client.post('/api/post/publish', data)
+export const postPublish = async (data: PublishProps) : Promise<HttpResponse> => {
+  return await client.post('/api/post/publish', data)
 }
 
 /**
  * MTK 验证码白名单
  * @returns
  */
-export function getDoINeedHCaptcha () {
-  return client.get('/api/captcha/doINeedHCaptcha')
+export const getDoINeedHCaptcha = async () : Promise<HttpResponse> => {
+  return await client.get('/api/captcha/doINeedHCaptcha')
 }
 
 /**
@@ -120,8 +113,8 @@ export function getDoINeedHCaptcha () {
  * @param data
  * @returns
  */
-export function postsImport (data: PostsImportProps) {
-  return client.post('/api/posts/importer', data)
+export const postsImport = async (data: PostsImportProps) : Promise<HttpResponse> => {
+  return await client.post('/api/posts/importer', data)
 }
 
 /**
@@ -129,8 +122,8 @@ export function postsImport (data: PostsImportProps) {
  * @param data
  * @returns
  */
-export function draftSave (data: DraftSaveProps) {
-  return client.post('/api/draft/save', data)
+export const draftSave = async (data: DraftSaveProps) : Promise<HttpResponse> => {
+  return await client.post('/api/draft/save', data)
 }
 
 /**
@@ -138,6 +131,6 @@ export function draftSave (data: DraftSaveProps) {
  * @param data
  * @returns
  */
-export function preview (data: PreviewProps) {
-  return client.post('/api/preview', data)
+export const preview = async (data: PreviewProps) : Promise<HttpResponse> => {
+  return await client.post('/api/preview', data)
 }

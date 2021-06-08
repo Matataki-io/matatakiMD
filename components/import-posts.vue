@@ -49,7 +49,7 @@ export default class HeaderIpfs extends Vue {
         return
       }
 
-      const res: any = await postsImport({ url: this.dialogImportMatatakiInput })
+      const res = await postsImport({ url: this.dialogImportMatatakiInput })
       // console.log('res', res)
       if (res.code === 0) {
         this.$emit('import', res.data.content)

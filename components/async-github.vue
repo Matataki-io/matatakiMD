@@ -226,7 +226,7 @@ export default class HeaderIpfs extends Vue {
 
   // 获取 GitHub 信息
   async usersFn (): Promise<void> {
-    const res: any = await users()
+    const res = await users()
     if (res.code === 0) {
       setCookie('users-github', JSON.stringify(res.data), 1)
       this.usersGithubData = res.data
@@ -237,7 +237,7 @@ export default class HeaderIpfs extends Vue {
   async usersReposFn (): Promise<void> {
     this.githubLoading = true
     try {
-      const res: any = await usersRepos({
+      const res = await usersRepos({
         username: (this as any).usersGithubData.login
       })
       if (res.code === 0) {
@@ -263,7 +263,7 @@ export default class HeaderIpfs extends Vue {
     this.githubLoading = true
 
     try {
-      const res: any = await reposBranches({
+      const res = await reposBranches({
         owner,
         repo
       })
@@ -290,7 +290,7 @@ export default class HeaderIpfs extends Vue {
     this.githubLoading = true
 
     try {
-      const res: any = await reposContentsList({
+      const res = await reposContentsList({
         owner,
         repo,
         branch
@@ -342,7 +342,7 @@ export default class HeaderIpfs extends Vue {
 
       this.githubUploadLoading = true
       const [owner, repo] = this.asyncGithubFormPush.repos.split('/')
-      const res: any = await push({
+      const res = await push({
         contents: this.markdownData,
         owner,
         path: this.asyncGithubFormPush.path,
@@ -355,7 +355,7 @@ export default class HeaderIpfs extends Vue {
       } else {
         throw new Error(res.message)
       }
-    } catch (e: any) {
+    } catch (e) {
       this.$message.error(`推送失败: ${e.toString()}`)
     } finally {
       this.githubUploadLoading = false
@@ -376,7 +376,7 @@ export default class HeaderIpfs extends Vue {
 
       const [owner, repo] = this.asyncGithubFormPull.repos.split('/')
 
-      const res: any = await pull({
+      const res = await pull({
         owner,
         path: this.asyncGithubFormPull.path,
         branch: this.asyncGithubFormPull.branches,
@@ -388,7 +388,7 @@ export default class HeaderIpfs extends Vue {
       } else {
         throw new Error(res.message)
       }
-    } catch (e: any) {
+    } catch (e) {
       this.$message.error(`拉取失败: ${e.toString()}`)
     } finally {
       this.githubUploadLoading = false

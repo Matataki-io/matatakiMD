@@ -1,9 +1,11 @@
 declare module 'lodash';
 
-export interface ApiResult {
-  code: number,
-  data: any
+export interface HttpResponse {
+  code: number
+  message: string
+  data?: any
 }
+
 export interface FleekIpfs {
   bucket: string
   hash:string
