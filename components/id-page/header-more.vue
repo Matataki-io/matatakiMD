@@ -16,6 +16,9 @@
       <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-matataki">
         推送到 Matataki
       </el-dropdown-item>
+      <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="preview-matataki">
+        预览 (Matataki 功能)
+      </el-dropdown-item>
 
       <li class="divder" />
       <li class="dropdown-header">
@@ -31,7 +34,7 @@
         匯入
       </li>
       <el-dropdown-item v-if="isUser" icon="el-icon-upload2" command="posts-import">
-        导入文章(Matataki 功能)
+        导入文章 (Matataki 功能)
       </el-dropdown-item>
       <el-dropdown-item icon="el-icon-upload2" command="import-file-md" class="item-file-upload">
         <client-only>

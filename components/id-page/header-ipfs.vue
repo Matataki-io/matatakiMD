@@ -47,12 +47,14 @@ export default class HeaderIpfs extends Vue {
   @Prop({ type: Array, required: true })
   readonly ipfsList!: Array<FleekIpfs>
 
+  // 短 hash
   shortHash (hash: string): string {
     if (!hash) { return '...' }
     const len = 12
     return `${hash.slice(0, len)}...${hash.slice(hash.length - len)}`
   }
 
+  // 复制 hash
   copyHash (hash: string): void {
     (this as any).$copyText(hash).then(() => {
       this.$message.success('複製成功')

@@ -1094,8 +1094,7 @@
 <script lang="ts">
 import {
   Component,
-  Vue,
-  Watch
+  Vue
 } from 'nuxt-property-decorator'
 import { isEmpty } from 'lodash'
 import { setOAuthRedirectUri } from '../api/developer'
@@ -1115,45 +1114,47 @@ import { userStats } from '../api/index'
   }
 })
 export default class Home extends Vue {
-    usersData: object = {}
+  usersData: object = {}
 
-    get isLogin () {
-      return !isEmpty(this.usersData)
-    }
+  get isLogin () {
+    return !isEmpty(this.usersData)
+  }
 
-    mounted () {
-    // 编辑文章不会自动保存
-      if (process.browser) {
-        try {
-          const usersDataStore = getCookie('users') || ''
-          if (usersDataStore) {
-            this.usersData = JSON.parse(usersDataStore)
-          } else {
-            this.userStatsFn()
-          }
-        } catch (e) {
-          console.log('e', e)
-        }
-      }
-    }
-
-    async userStatsFn (): Promise<void> {
-      const res: any = await userStats()
-      if (res.code === 0) {
-        setCookie('users', JSON.stringify(res.data), 1)
-        this.usersData = res.data
-      }
-    }
-
-    async jumpToMttkOAuth () {
+  mounted () {
+  // 编辑文章不会自动保存
+    if (process.browser) {
       try {
-        console.log('from', location)
-        await setOAuthRedirectUri(location.pathname)
-      } catch (error) {
-        console.log('error', error)
+        const usersDataStore = getCookie('users') || ''
+        if (usersDataStore) {
+          this.usersData = JSON.parse(usersDataStore)
+        } else {
+          this.userStatsFn()
+        }
+      } catch (e) {
+        console.log('e', e)
       }
-      (window as any).location = process.env.REACT_APP_OAuthUrl
-    };
+    }
+  }
+
+  // 获取用户信息
+  async userStatsFn (): Promise<void> {
+    const res: any = await userStats()
+    if (res.code === 0) {
+      setCookie('users', JSON.stringify(res.data), 1)
+      this.usersData = res.data
+    }
+  }
+
+  // 跳转登录
+  async jumpToMttkOAuth () {
+    try {
+      console.log('from', location)
+      await setOAuthRedirectUri(location.pathname)
+    } catch (error) {
+      console.log('error', error)
+    }
+    (window as any).location = process.env.REACT_APP_OAuthUrl
+  };
 }
 </script>
 

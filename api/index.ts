@@ -61,3 +61,9 @@ export function getDoINeedHCaptcha () {
 export function postsImport (data: { url: string }) {
   return client.post('/api/posts/importer', data)
 }
+export function draftSave (data: { title: string, content: string, shortContent: string }) {
+  return client.post('/api/draft/save', data)
+}
+export function preview (data: { id: number }) {
+  return client.post('/api/preview', data)
+}

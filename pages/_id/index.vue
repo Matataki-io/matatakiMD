@@ -47,13 +47,14 @@ import ImportPosts from '@/components/import-posts.vue'
 import PublishMatataki from '@/components/publish-matataki.vue'
 import AsyncGithub from '@/components/async-github.vue'
 import {
-  userStats, upload, ipfsUpload
+  userStats, upload, ipfsUpload,
+  draftSave, preview
 } from '../../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import fileDownload from '../../utils/markdown-download'
 import { Notes, FleekIpfs, userProps } from '../../types/index.d'
-import { generateTitle } from '../../utils/index'
+import { generateTitle, ipfsHtmlTemp, generateShortContent } from '../../utils/index'
 
 let mavonEditor: any = {
   mavonEditor: null
@@ -102,7 +103,6 @@ export default class Edidtor extends Vue {
   }
 
   @Watch('markdownData')
-  // oldVal: string
   onMdChangeed (val: string) {
     this.asyncContent(val)
   }
@@ -174,6 +174,7 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 获取用户信息
   async userStatsFn (): Promise<void> {
     const res: any = await userStats()
     if (res.code === 0) {
@@ -198,58 +199,7 @@ export default class Edidtor extends Vue {
     }
   }
 
-  ipfsHtmlTemp ({ title, content }: { title: string, content: string }) {
-    const htmlTemp =
-`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="apple-touch-icon" sizes="180x180" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-
-    <meta name="copyright" property="copyright" content="Copyright © 2018-2021 ANDOROMEDA TECH.ltd">
-    <meta name="description" content="Matataki Editor">
-    <meta name="keywords" content="Matataki Editor,仙女座科技,瞬MATATAKI,Fan票">
-
-    <meta name="twitter:card" property="twitter:card" content="summary">
-    <meta name="twitter:site" property="twitter:site" content="Matataki Editor">
-    <meta name="twitter:title" property="twitter:title" content="Matataki Editor">
-    <meta name="twitter:image" property="twitter:image" content="https://ssimg.frontenduse.top/material/matataki_logo.png">
-    <meta name="twitter:description" property="twitter:description" content="Matataki Editor">
-
-    <meta name="og:type" property="og:type" content="website">
-    <meta name="og:site_name" property="og:site_name" content="Matataki Editor">
-    <meta name="og:title" property="og:title" content="Matataki Editor">
-    <meta name="og:image" property="og:image" content="https://ssimg.frontenduse.top/material/matataki_logo.png">
-    <meta name="og:site_name" property="og:site_name" content="Matataki Editor">
-    <meta name="og:description" property="og:description" content="Matataki Editor">
-
-  <title>${title}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
-  <style>
-    .markdown-body {
-      max-width: 860px;
-      margin: 0 auto;
-    }
-  </style>
-</head>
-<body>
-  <article class="markdown-body">
-    ${content}
-  </article>
-</body>
-</html>`
-    return htmlTemp
-  }
-
+  // ipfs 上传
   async ipfsUploadFn () {
     const loading = this.$notify({
       title: '提示',
@@ -265,7 +215,7 @@ export default class Edidtor extends Vue {
 
       const res: any = await ipfsUpload({
         title,
-        content: this.ipfsHtmlTemp({ title, content })
+        content: ipfsHtmlTemp({ title, content })
       })
 
       if (res.code === 0) {
@@ -337,6 +287,56 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 预览方法
+  async previewFn (): Promise<void> {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在发布...',
+      duration: 0
+    })
+
+    const title = generateTitle('#previewContent h1')
+    const _shortContent = generateShortContent('#previewContent p')
+
+    try {
+      const draftSaveResult: any = await draftSave({
+        title,
+        content: this.markdownData,
+        shortContent: _shortContent
+      })
+
+      if (draftSaveResult.code !== 0) {
+        throw new Error(draftSaveResult.message)
+      }
+
+      const previewResult: any = await preview({ id: draftSaveResult.data })
+
+      if (previewResult.code === 0) {
+        this.$notify({
+          title: '发布成功',
+          message: `Preview: ${process.env.APP_MATATAKI_URL}/preview/${draftSaveResult.data}`
+        })
+      } else {
+        throw new Error(previewResult.message)
+      }
+    } catch (e) {
+      this.$message.error(e.toString())
+    } finally {
+      loading.close()
+    }
+  }
+
+  // 确认预览框
+  confirmPreview (): void {
+    this.$confirm('該操作會在 Matataki 生成一篇草稿！是否繼續？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      this.previewFn()
+    }).catch(() => {})
+  }
+
   // 用户下拉处理
   handleCommand (command: string) {
     if (command === 'user') {
@@ -355,6 +355,8 @@ export default class Edidtor extends Vue {
       this.ipfsUploadFn()
     } else if (command === 'async-matataki') {
       this.dialogPublishMatataki = true
+    } else if (command === 'preview-matataki') {
+      this.confirmPreview()
     } else if (command === 'posts-import') {
       this.dialogImportMatataki = true
     } else if (command === 'save-file-md') {

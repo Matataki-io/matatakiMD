@@ -95,11 +95,11 @@
                   <div v-show="toggleUserModal" class="dismiss-overlay" @click="toggleUserModal = false" />
                   <div v-show="toggleUserModal" class="menu-container base-menu position-top" style="transform: translate(0, calc(-100% + -46px)); left: 15px; right: 1680px; min-width: 200px;max-height: 835px;">
                     <small class="menu-title">我的帳戶</small>
-                    <a href="/settings#general" style="text-decoration: none;">
+                    <!-- <a href="/settings#general" style="text-decoration: none;">
                       <div class="menu-item" style="padding-left: 40px;"><i class="fa fa-cog fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />設定</div></a>
                     <a href="/@It_nJKeNS-ieRL2hcUZRTg" style="text-decoration: none;"><div class="menu-item" style="padding-left: 40px;"><i class="fa fa-user-circle-o fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />個人公開頁</div></a>
                     <a class="menu-item" history="[object Object]" match="[object Object]" href="/?nav=myTeams" style="padding: 0px;"><div class="menu-item" style="padding-left: 22px;"><img src="/images/team-icon.svg" width="14" height="14" style="margin: 0px 4px 2px 2px; vertical-align: text-bottom;">我參與的團隊</div></a>
-                    <a class="menu-item" history="[object Object]" match="[object Object]" href="/?nav=billing" style="padding: 0px;"><div class="menu-item" style="padding-left: 40px;"><i class="fa fa-credit-card fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />付費</div></a>
+                    <a class="menu-item" history="[object Object]" match="[object Object]" href="/?nav=billing" style="padding: 0px;"><div class="menu-item" style="padding-left: 40px;"><i class="fa fa-credit-card fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />付費</div></a> -->
                     <div class="divider" />
                     <div class="menu-item" style="padding-left: 40px;" @click="signOut">
                       <i class="fa fa-sign-out fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" />登出
@@ -113,15 +113,20 @@
                 </div>
                 <div v-show="toggleHelpModal" class="dismiss-overlay" @click="toggleHelpModal = false" />
                 <div v-show="toggleHelpModal" class="menu-container base-menu position-top" style="    transform: translate(0, calc(-100% + -46px));left: 60px; width: 200px;max-height: 835px;">
-                  <div class="sub-menu-container">
+                  <!-- <div class="sub-menu-container">
                     <div class="menu-item" style="padding-left: 40px; padding-right: 30px;">
                       <i class="fa fa-language fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /><span>語言</span><i class="fa fa-angle-right" aria-hidden="true" style="position: absolute; right: 15px; top: 6px;" />
                     </div>
-                  </div>
+                  </div> -->
                   <a class="menu-item" href="https://hackmd.io/c/tutorials-tw" style="padding-left: 40px;"><i class="fa fa-question-circle fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> 教學手冊 </a><div class="divider" /><small class="menu-title">聯絡我們</small><a class="menu-item" href="https://www.facebook.com/hackmdio" target="_blank" style="padding-left: 40px;"><i class="fa fa-facebook-square fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Facebook </a><a class="menu-item" href="https://twitter.com/hackmdio" target="_blank" style="padding-left: 40px;"><i class="fa fa-twitter fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Twitter </a><div class="menu-item" style="padding-left: 40px;">
                     <i class="fa fa-paper-plane fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> 使用回饋
                   </div>
-                  <a class="menu-item" href="mailto:support@hackmd.io" style="padding-left: 40px;"><i class="fa fa-envelope-o fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> support@hackmd.io </a><div class="divider" /><small class="menu-title">資源</small><a class="menu-item" href="https://hackmd.io/s/release-notes" style="padding-left: 22px;"> 版本記錄 </a><a class="menu-item" href="https://hackmd.io/pricing" style="padding-left: 22px;"> 收費方案 </a><a class="menu-item" href="https://hackmd.io/c/news" target="_blank" style="padding-left: 22px;"> 部落格 </a><div class="divider" /><small class="menu-title">政策</small><a class="menu-item" href="https://hackmd.io/s/terms" style="padding-left: 22px;"> 條款 </a><a class="menu-item" href="https://hackmd.io/s/privacy" style="padding-left: 22px;"> 隱私權政策 </a>
+                  <a class="menu-item" href="mailto:support@hackmd.io" style="padding-left: 40px;"><i class="fa fa-envelope-o fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> support@hackmd.io </a>
+                  <div class="divider" /><small class="menu-title">資源</small><a class="menu-item" href="https://hackmd.io/s/release-notes" style="padding-left: 22px;"> 版本記錄 </a>
+                  <a class="menu-item" href="https://hackmd.io/pricing" style="padding-left: 22px;"> 收費方案 </a>
+                  <!-- <a class="menu-item" href="https://hackmd.io/c/news" target="_blank" style="padding-left: 22px;"> 部落格 </a> -->
+                  <div class="divider" /><small class="menu-title">政策</small><a class="menu-item" href="https://hackmd.io/s/terms" style="padding-left: 22px;"> 條款 </a>
+                  <a class="menu-item" href="https://hackmd.io/s/privacy" style="padding-left: 22px;"> 隱私權政策 </a>
                 </div>
               </div>
             </div>
@@ -804,6 +809,7 @@ export default class Home extends Vue {
     }
   }
 
+  // 用户跳转
   async jumpToMttkOAuth () {
     try {
       console.log('from', location)
@@ -814,6 +820,7 @@ export default class Home extends Vue {
     (window as any).location = process.env.REACT_APP_OAuthUrl
   };
 
+  // 用户信息
   async userStatsFn (): Promise<void> {
     const res: any = await userStats()
     if (res.code === 0) {
@@ -822,10 +829,12 @@ export default class Home extends Vue {
     }
   }
 
+  // time format
   time (val: number) {
     return moment(val).fromNow()
   }
 
+  // 获取全部
   async getAll () :Promise<void> {
     try {
       const keys = await (this as any).$localForage.keys()
@@ -848,6 +857,7 @@ export default class Home extends Vue {
     }
   }
 
+  // 创建笔记
   async handleSubmit () :Promise<void> {
     const time = Date.now()
     await (this as any).$localForage.setItem(time, {
@@ -862,6 +872,7 @@ export default class Home extends Vue {
     this.$router.push(`/${time}`)
   }
 
+  // 删除笔记
   async removeNotes (key: string) {
     try {
       await (this as any).$localForage.removeItem(key)
@@ -871,6 +882,7 @@ export default class Home extends Vue {
     }
   }
 
+  // 切换收藏
   async toggleBookmark ({ id, idx, value }: { id: string, idx: number, value: boolean }) {
     try {
       console.log('id', id, idx)
@@ -884,6 +896,7 @@ export default class Home extends Vue {
     }
   }
 
+  // 退出登录
   signOut () {
     removeCookie('access-token')
     removeCookie('users-github')

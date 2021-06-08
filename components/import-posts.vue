@@ -39,6 +39,7 @@ export default class HeaderIpfs extends Vue {
   dialogImportMatatakiInput: string = ''
   dialogImportMatatakiLoading: boolean = false
 
+  // 导入文章处理
   async handlePostsImport (): Promise<void> {
     try {
       this.dialogImportMatatakiLoading = true
