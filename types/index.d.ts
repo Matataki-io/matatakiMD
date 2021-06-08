@@ -4,14 +4,6 @@ export interface ApiResult {
   code: number,
   data: any
 }
-
-export interface hCaptchaDataProps {
-  expired:boolean
-  token: string
-  eKey: string
-  error: string
-}
-
 export interface FleekIpfs {
   bucket: string
   hash:string
@@ -31,6 +23,12 @@ export interface Notes {
   'update_time': number
 }
 
+export interface IpfsUploadProps {
+  title: string
+  content: string
+}
+
+// Github
 export interface userProps {
   avatar: string
   id: number
@@ -47,4 +45,63 @@ export interface reposContentsListProps {
   owner: string
   repo: string
   branch: string
+}
+export interface PushProps {
+  contents: string
+  owner: string
+  path: string
+  branch: string
+  repo: string
+  commit: string
+}
+
+export interface PullProps {
+  owner: string
+  path: string
+  branch: string
+  repo: string
+}
+export interface UsersReposProps {
+  username: string
+}
+
+export interface ReposBranchesProps {
+  owner: string
+  repo: string
+}
+
+export interface ReposContentsListProps {
+  owner: string
+  repo: string
+  branch: string
+}
+
+// MTK
+export interface hCaptchaDataProps {
+  expired:boolean
+  token: string
+  eKey: string
+  error: string
+}
+
+export interface PublishProps {
+  title: string
+  content: string
+  shortContent: string
+  platform: string
+  author: string
+  hCaptchaData: hCaptchaDataProps
+}
+export interface PostsImportProps {
+  url: string
+}
+
+export interface DraftSaveProps {
+  title: string
+  content: string
+  shortContent: string
+}
+
+export interface PreviewProps {
+  id: number
 }
