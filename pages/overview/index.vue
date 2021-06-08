@@ -74,10 +74,10 @@
                 </li>
                 <!-- <li><a class="sidenav-menu-link" history="[object Object]" match="[object Object]" href="/?nav=collab"><span class="item-icon"><i class="fa fa-users fa-fw" /></span> 協作筆記</a></li> -->
                 <li style="position: absolute; bottom: 96px; left: 0px; right: 0px; z-index: 2;">
-                  <a class="sidenav-menu-link" href="/"><span class="item-icon"><i class="fa fa-bookmark fa-fw" /></span> 收藏</a>
+                  <a class="sidenav-menu-link" href="javascript:;"><span class="item-icon"><i class="fa fa-bookmark fa-fw" /></span> 收藏</a>
                 </li>
                 <li style="position: absolute; bottom: 56px; left: 0px; right: 0px; z-index: 2;">
-                  <a class="sidenav-menu-link" href="/"><span class="item-icon"><i class="fa fa-clock-o fa-fw" /></span> 最近瀏覽</a>
+                  <a class="sidenav-menu-link" href="javascript:;"><span class="item-icon"><i class="fa fa-clock-o fa-fw" /></span> 最近瀏覽</a>
                 </li>
               </ul>
             </div>
@@ -118,15 +118,30 @@
                       <i class="fa fa-language fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /><span>語言</span><i class="fa fa-angle-right" aria-hidden="true" style="position: absolute; right: 15px; top: 6px;" />
                     </div>
                   </div> -->
-                  <a class="menu-item" href="https://hackmd.io/c/tutorials-tw" style="padding-left: 40px;"><i class="fa fa-question-circle fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> 教學手冊 </a><div class="divider" /><small class="menu-title">聯絡我們</small><a class="menu-item" href="https://www.facebook.com/hackmdio" target="_blank" style="padding-left: 40px;"><i class="fa fa-facebook-square fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Facebook </a><a class="menu-item" href="https://twitter.com/hackmdio" target="_blank" style="padding-left: 40px;"><i class="fa fa-twitter fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Twitter </a><div class="menu-item" style="padding-left: 40px;">
+                  <a class="menu-item" :href="tutorial" target="_blank" style="padding-left: 40px;">
+                    <i class="fa fa-question-circle fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> 教學手冊 </a>
+                  <div class="divider" />
+                  <small class="menu-title">聯絡我們</small>
+                  <!-- <a class="menu-item" href="https://www.facebook.com/hackmdio" target="_blank" style="padding-left: 40px;">
+                    <i class="fa fa-facebook-square fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Facebook </a> -->
+                  <a class="menu-item" href="https://twitter.com/realMetaNetwork" target="_blank" style="padding-left: 40px;">
+                    <i class="fa fa-twitter fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Twitter(Meta Network)</a>
+                  <a class="menu-item" href="https://twitter.com/realmatataki" target="_blank" style="padding-left: 40px;">
+                    <i class="fa fa-twitter fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Twitter(瞬Matataki)</a>
+                  <a class="menu-item" href="https://t.me/metanetwork" target="_blank" style="padding-left: 40px;">
                     <i class="fa fa-paper-plane fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> 使用回饋
-                  </div>
-                  <a class="menu-item" href="mailto:support@hackmd.io" style="padding-left: 40px;"><i class="fa fa-envelope-o fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> support@hackmd.io </a>
-                  <div class="divider" /><small class="menu-title">資源</small><a class="menu-item" href="https://hackmd.io/s/release-notes" style="padding-left: 22px;"> 版本記錄 </a>
-                  <a class="menu-item" href="https://hackmd.io/pricing" style="padding-left: 22px;"> 收費方案 </a>
+                  </a>
+                  <!-- <a class="menu-item" href="mailto:support@hackmd.io" style="padding-left: 40px;">
+                    <i class="fa fa-envelope-o fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> support@hackmd.io </a> -->
+                  <div class="divider" />
+                  <small class="menu-title">資源</small>
+                  <a class="menu-item" :href="releaseNotes" target="_blank" style="padding-left: 22px;"> 版本記錄 </a>
+                  <!-- <a class="menu-item" href="https://hackmd.io/pricing" style="padding-left: 22px;"> 收費方案 </a> -->
                   <!-- <a class="menu-item" href="https://hackmd.io/c/news" target="_blank" style="padding-left: 22px;"> 部落格 </a> -->
-                  <div class="divider" /><small class="menu-title">政策</small><a class="menu-item" href="https://hackmd.io/s/terms" style="padding-left: 22px;"> 條款 </a>
-                  <a class="menu-item" href="https://hackmd.io/s/privacy" style="padding-left: 22px;"> 隱私權政策 </a>
+                  <div class="divider" />
+                  <small class="menu-title">政策</small>
+                  <a class="menu-item" href="javascript:;" style="padding-left: 22px;"> 條款 </a>
+                  <a class="menu-item" href="javascript:;" style="padding-left: 22px;"> 隱私權政策 </a>
                 </div>
               </div>
             </div>
@@ -787,6 +802,22 @@ export default class Home extends Vue {
 
   get isUser () {
     return !isEmpty(this.usersData)
+  }
+
+  get releaseNotes () {
+    if (process.client) {
+      return process.env.APP_MATATAKI_RELEASE_NOTES
+    } else {
+      return ''
+    }
+  }
+
+  get tutorial () {
+    if (process.client) {
+      return process.env.APP_MATATAKI_TUTORIAL
+    } else {
+      return ''
+    }
   }
 
   mounted () {
