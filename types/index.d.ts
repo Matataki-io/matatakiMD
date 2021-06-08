@@ -1,12 +1,14 @@
 declare module 'lodash';
 
-interface This {
-  '$copyText': Promise<{
-    action: string,
-    text: string,
-    trigger: String | HTMLElement | HTMLCollection | NodeList,
-    clearSelection: () => void
-  }>
+declare global {
+  interface This {
+    '$copyText': Promise<{
+      action: string,
+      text: string,
+      trigger: String | HTMLElement | HTMLCollection | NodeList,
+      clearSelection: () => void
+    }>
+  }
 }
 
 export interface HttpResponse {
