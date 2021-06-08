@@ -1,4 +1,4 @@
-import axios, { AxiosAdapter, AxiosResponse } from 'axios'
+import axios, { AxiosAdapter, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { cacheAdapterEnhancer, throttleAdapterEnhancer } from 'axios-extensions'
 import { getCookie } from '../utils/cookie'
 // axios.defaults.withCredentials = true
@@ -17,7 +17,7 @@ const client = axios.create({
 
 // Just copy from matataki-fe
 client.interceptors.request.use(
-  (config) => {
+  (config: AxiosRequestConfig) => {
     const token = getCookie('access-token')
     if (token) { config.headers['access-token'] = token }
     // console.warn('request config:',config)

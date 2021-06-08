@@ -5,7 +5,7 @@ export const generateShortContent = (name: string): string => {
       throw new Error('not document name')
     }
 
-    const dom: any = document.querySelectorAll(name) // 有些导入的文章是 Section 等标签包裹的，所以选择所有 P
+    const dom: any = document.querySelectorAll<HTMLElement>(name) // 有些导入的文章是 Section 等标签包裹的，所以选择所有 P
     const domList = [...dom].filter(i => !!(i.innerText.trim())) // 过滤一些没有内容的
     const str = domList.reduce((t, c) => {
       return `${t} ${c.innerText}`
@@ -25,7 +25,7 @@ export const generateTitle = (name: string): string => {
       throw new Error('not document name')
     }
 
-    const titleDom = (document as any).querySelector(name)
+    const titleDom = document.querySelector<HTMLElement>(name)
     return titleDom ? titleDom.innerText : 'Untitled'
   } catch (e) {
     console.log(e.toString())

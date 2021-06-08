@@ -1,5 +1,14 @@
 declare module 'lodash';
 
+interface This {
+  '$copyText': Promise<{
+    action: string,
+    text: string,
+    trigger: String | HTMLElement | HTMLCollection | NodeList,
+    clearSelection: () => void
+  }>
+}
+
 export interface HttpResponse {
   code: number
   message: string
