@@ -282,7 +282,7 @@
                                     @click="toggleBookmark({ id: item.id_str, idx: index, value: !item.bookmark })"
                                   >
                                     <i class="fa" aria-hidden="true" :class="item.bookmark ? 'fa-bookmark' : 'fa-bookmark-o'" /></span>
-                                  <div class="overview-card-menu-container" @click="item.more = !item.more">
+                                  <div class="overview-card-menu-container" @click="e => remoteNotes(e, index, !item.more)">
                                     <div class="overview-card-menu menu-component white">
                                       <div
                                         class="overview-card-menu-icon"
@@ -793,6 +793,12 @@ import { isEmpty } from 'lodash'
 import { userStats } from '../../api/index'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import { setOAuthRedirectUri } from '../../api/developer'
+import { Notes } from '../../types/index.d'
+
+interface MarkdownItemProps extends Notes {
+  key: string
+  more: boolean
+}
 
 @Component({
   head () {
@@ -808,7 +814,7 @@ import { setOAuthRedirectUri } from '../../api/developer'
 })
 export default class Home extends Vue {
   usersData: object = {}
-  markdownItem: string[] = []
+  markdownItem: MarkdownItemProps[] = []
   toggleUserModal = false
   toggleHelpModal = false
 
@@ -835,8 +841,6 @@ export default class Home extends Vue {
   mounted () {
     // 编辑文章不会自动保存
     if (process.browser) {
-      console.log('APP_API_URL', process.env.APP_API_URL)
-
       this.getAll()
 
       try {
@@ -849,7 +853,27 @@ export default class Home extends Vue {
       } catch (e) {
         console.log('e', e)
       }
+
+      document.addEventListener('click', this.hideRemoteNotes, false)
     }
+  }
+
+  destroyed () {
+    document.removeEventListener('click', this.hideRemoteNotes)
+  }
+
+  // 隐藏所有删除笔记按钮
+  hideRemoteNotes () {
+    this.markdownItem.forEach((i: MarkdownItemProps) => {
+      i.more = false
+    })
+  }
+
+  // 删除笔记
+  remoteNotes (e: any, i: number, value: boolean) {
+    e.stopPropagation()
+    this.hideRemoteNotes()
+    this.markdownItem[i].more = value
   }
 
   // 用户跳转
