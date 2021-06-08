@@ -256,10 +256,22 @@
                         <h1><span>全部文垱</span></h1><ul class="list inline-flex flex-row flex-wrap justify-content-start list-style-none pl-0 w-100">
                           <li v-for="(item, index) of markdownItem" :key="index" class="col-xs-12 col-sm-6 col-md-6 col-lg-4 list-style-none">
                             <div class="overview-card-container">
-                              <router-link class="card-anchor" :to="`/${item.id}`" /><div class="item">
-                                <div class="ui-overview-pin fa fa-thumb-tack fa-fw" /><div class="content text-left pt-1 pr-3/2 pl-3">
-                                  <a href="https://hackmd.io/mHm4D2tQRsuDY2d0008_8A"><h4 class="ml-0 mt-0 mb-1/2 text flex items-end" title="Untitled"><span class="title">{{ item.title || 'Untitled' }}</span></h4></a><a href="https://hackmd.io/mHm4D2tQRsuDY2d0008_8A"><p class="time" title="2021年5月27日星期四 11:28"><i><i class="fa fa-clock-o" /> 變更於 </i><i class="fromNow">{{ time(item.update_time || item.create_time) }}</i></p></a>
-                                </div><div class="card-action-items-container w-100 h-3 flex justify-end items-end" style="position: absolute; bottom: 0px; right: 0px;">
+                              <router-link class="card-anchor" :to="`/${item.id}`" />
+                              <div class="item">
+                                <div class="ui-overview-pin fa fa-thumb-tack fa-fw" />
+                                <div class="content text-left pt-1 pr-3/2 pl-3">
+                                  <router-link :to="`/${item.id}`">
+                                    <h4 class="ml-0 mt-0 mb-1/2 text flex items-end" title="Untitled">
+                                      <span class="title">{{ item.title || 'Untitled' }}</span>
+                                    </h4>
+                                  </router-link>
+                                  <router-link :to="`/${item.id}`">
+                                    <p class="time" title="2021年5月27日星期四 11:28">
+                                      <i><i class="fa fa-clock-o" /> 變更於 </i><i class="fromNow">{{ time(item.update_time || item.create_time) }}</i>
+                                    </p>
+                                  </router-link>
+                                </div>
+                                <div class="card-action-items-container w-100 h-3 flex justify-end items-end" style="position: absolute; bottom: 0px; right: 0px;">
                                   <span
                                     class="bookmark-button flex items-center justify-center"
                                     data-toggle="tooltip"
