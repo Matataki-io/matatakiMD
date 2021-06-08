@@ -1001,12 +1001,12 @@
 
                 <ul class="list-unstyled">
                   <li class="pv-1/4">
-                    <a href="https://hackmd.io/c/tutorials-tw/%2Fs%2Fquick-start-tw" class="text-gray-lighter">
+                    <a :href="tutorial" target="_blank" class="text-gray-lighter">
                       快速入門
                     </a>
                   </li>
                   <li class="pv-1/4">
-                    <a href="https://hackmd.io/c/tutorials-tw" class="text-gray-lighter">
+                    <a :href="tutorial" target="_blank" class="text-gray-lighter">
                       教學手冊
                     </a>
                   </li>
@@ -1018,13 +1018,13 @@
                 </h4>
 
                 <ul class="list-unstyled">
-                  <li class="pv-1/4">
-                    <a href="https://hackmd.io/pricing" class="text-gray-lighter">
+                  <!-- <li class="pv-1/4">
+                    <a href="javascript:;" class="text-gray-lighter">
                       收費方案
                     </a>
-                  </li>
+                  </li> -->
                   <li class="pv-1/4">
-                    <a href="https://hackmd.io/s/release-notes" class="text-gray-lighter">
+                    <a :href="releaseNotes" target="_blank" class="text-gray-lighter">
                       版本記錄
                     </a>
                   </li>
@@ -1037,12 +1037,12 @@
 
                 <ul class="list-unstyled">
                   <li class="pv-1/4">
-                    <a href="https://hackmd.io/s/terms" target="_blank" class="text-gray-lighter">
+                    <a href="javascript:;" target="_blank" class="text-gray-lighter">
                       條款
                     </a>
                   </li>
                   <li class="pv-1/4">
-                    <a href="https://hackmd.io/s/privacy" target="_blank" class="text-gray-lighter">
+                    <a href="javascript:;" target="_blank" class="text-gray-lighter">
                       隱私權政策
                     </a>
                   </li>
@@ -1054,19 +1054,29 @@
                 </h4>
 
                 <ul class="list-unstyled">
-                  <li class="pv-1/4">
+                  <!-- <li class="pv-1/4">
                     <a href="mailto:support@hackmd.io" class="text-gray-lighter">
                       <i class="fa fa-fw fa-envelope" /> support@hackmd.io
                     </a>
-                  </li>
-                  <li class="pv-1/4">
+                  </li> -->
+                  <!-- <li class="pv-1/4">
                     <a href="https://facebook.com/hackmdio" class="text-gray-lighter" target="_blank">
                       <i class="fa fa-fw fa-facebook-square" /> MatatakiMD
                     </a>
+                  </li> -->
+                  <li class="pv-1/4">
+                    <a href="https://twitter.com/realMetaNetwork" class="text-gray-lighter" target="_blank">
+                      <i class="fa fa-fw fa-twitter" /> @Meta Network
+                    </a>
                   </li>
                   <li class="pv-1/4">
-                    <a href="https://twitter.com/hackmdio" class="text-gray-lighter" target="_blank">
-                      <i class="fa fa-fw fa-twitter" /> @hackmdio
+                    <a href="https://twitter.com/realmatataki" class="text-gray-lighter" target="_blank">
+                      <i class="fa fa-fw fa-twitter" /> @瞬Matataki
+                    </a>
+                  </li>
+                  <li class="pv-1/4">
+                    <a href="https://t.me/metanetwork" class="text-gray-lighter" target="_blank">
+                      <i class="fa fa-fw fa-paper-plane" /> @Meta Network
                     </a>
                   </li>
                 </ul>
@@ -1118,6 +1128,14 @@ export default class Home extends Vue {
 
   get isLogin () {
     return !isEmpty(this.usersData)
+  }
+
+  get releaseNotes () {
+    if (process.client) {
+      return process.env.APP_MATATAKI_RELEASE_NOTES
+    } else {
+      return ''
+    }
   }
 
   get tutorial () {
