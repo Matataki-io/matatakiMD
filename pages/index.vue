@@ -17,7 +17,7 @@
                     <img src="/images/home/group.svg" class="pull-right">
                   </li>
                   <li>
-                    <a target="_blank" href="https://hackmd.io/c/tutorials-tw">使用教學</a>
+                    <a target="_blank" :href="tutorial">使用教學</a>
                   </li>
                   <li class="divider visible-xs" style="margin: 12px 0px; background-color: #4f4f4f;" />
                   <li class="ui-home-login">
@@ -1118,6 +1118,14 @@ export default class Home extends Vue {
 
   get isLogin () {
     return !isEmpty(this.usersData)
+  }
+
+  get tutorial () {
+    if (process.client) {
+      return process.env.APP_MATATAKI_TUTORIAL
+    } else {
+      return ''
+    }
   }
 
   mounted () {

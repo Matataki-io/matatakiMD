@@ -108,7 +108,7 @@ export function postPublish (data: PublishProps) {
 }
 
 /**
- * MTK 获取发布文章白名单权限
+ * MTK 验证码白名单
  * @returns
  */
 export function getDoINeedHCaptcha () {
