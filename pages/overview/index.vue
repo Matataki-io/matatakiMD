@@ -70,11 +70,15 @@
             <div class="ui-next-sidenav-pages sidenav-menu" style="margin-top: 15px;">
               <ul>
                 <li>
-                  <a aria-current="page" class="sidenav-menu-link active" history="[object Object]" match="[object Object]" href="/overview"><span class="item-icon"><i class="fa fa-lock fa-fw" /></span> 我的筆記</a>
+                  <router-link aria-current="page" class="sidenav-menu-link active" history="[object Object]" match="[object Object]" to="/overview">
+                    <span class="item-icon"><i class="fa fa-lock fa-fw" /></span> 我的筆記
+                  </router-link>
                 </li>
                 <!-- <li><a class="sidenav-menu-link" history="[object Object]" match="[object Object]" href="/?nav=collab"><span class="item-icon"><i class="fa fa-users fa-fw" /></span> 協作筆記</a></li> -->
                 <li style="position: absolute; bottom: 96px; left: 0px; right: 0px; z-index: 2;">
-                  <a class="sidenav-menu-link" href="javascript:;"><span class="item-icon"><i class="fa fa-bookmark fa-fw" /></span> 收藏</a>
+                  <router-link class="sidenav-menu-link" :to="{ name: 'overview', query: { nav: 'bookmark' } }">
+                    <span class="item-icon"><i class="fa fa-bookmark fa-fw" /></span> 收藏
+                  </router-link>
                 </li>
                 <li style="position: absolute; bottom: 56px; left: 0px; right: 0px; z-index: 2;">
                   <a class="sidenav-menu-link" href="javascript:;"><span class="item-icon"><i class="fa fa-clock-o fa-fw" /></span> 最近瀏覽</a>
@@ -786,10 +790,11 @@
 <script lang="ts">
 import {
   Component,
-  Vue
+  Vue,
+  Watch
 } from 'nuxt-property-decorator'
 import moment from 'moment'
-import { isEmpty } from 'lodash'
+import { isEmpty, cloneDeep } from 'lodash'
 import { userStats } from '../../api/index'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import { setOAuthRedirectUri } from '../../api/developer'
@@ -836,6 +841,11 @@ export default class Home extends Vue {
     } else {
       return ''
     }
+  }
+
+  @Watch('$route')
+  onRouteChanged () {
+    this.getAll()
   }
 
   mounted () {
@@ -916,7 +926,16 @@ export default class Home extends Vue {
         list.push(res)
       }
 
-      const mdItem = list.sort((a: any, b: any) => b.update_time - a.update_time)
+      // 收藏 暂时用 url query， 如果功能更复杂可以抽离 Layout 模版
+      const { nav } = this.$route.query
+      let notes = []
+      if (nav && nav === 'bookmark') {
+        notes = list.filter(i => !!i.bookmark)
+      } else {
+        notes = cloneDeep(list)
+      }
+
+      const mdItem = notes.sort((a: any, b: any) => b.update_time - a.update_time)
 
       this.markdownItem = mdItem
     } catch (e) {
