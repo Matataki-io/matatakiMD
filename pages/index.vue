@@ -45,23 +45,23 @@
           <div class="row mb-18">
             <div class="col-xs-12">
               <h1 class="cover-heading ma-0">
-                用 Markdown 即時協作知識庫
+                用 Markdown 即時創作發佈到 Web3
               </h1>
               <p class="lead ma-0" style="max-width: 680px; margin: auto; margin-bottom: 30px;">
-                用即時協作的 Markdown 編輯器書寫
+                用開箱即用的 Markdown 編輯器書寫 並發佈到
                 <span class="typewriter-container inline-flex justify-center en">
-                  <span class="typewriter-text text-1">專案</span>
-                  <span class="typewriter-text text-2">團隊</span>
-                  <span class="typewriter-text text-3">技術</span>
-                  <span class="typewriter-text text-4">個人</span>
+                  <span class="typewriter-text text-1">IPFS</span>
+                  <span class="typewriter-text text-2">Github</span>
+                  <span class="typewriter-text text-3">Matataki</span>
+                  <!-- <span class="typewriter-text text-4">個人</span> -->
                 </span>
-                文件，讓你快速協作、輕鬆紀錄想法、隨時共享知識。
+                ，让你快速记录想法、随时发布到永存网络。
               </p>
 
-              <form action="https://hackmd.io/join" class="input-group mt-3" method="get" style="display: flex; max-width: 680px; margin: auto;">
-                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email">
+              <form action="" class="input-group mt-3" method="get" style="display: flex; max-width: 680px; margin: auto;">
+                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email" disabled>
                 <div class="input-group-append">
-                  <button type="submit" class="btn btn-success btn-lg ui-home-join">
+                  <button type="button" class="btn btn-success btn-lg ui-home-join" @click="openMtk">
                     立即註冊
                   </button>
                 </div>
@@ -70,12 +70,12 @@
           </div>
         </div>
 
-        <div class="home-container bg-white">
+        <div v-if="true" class="home-container bg-white">
           <div id="carouselFirstIndicators" class="carousel slide row" data-ride="carousel">
             <div class="col-xs-12 visible-xs">
               <h1 class="section-title">
-                <div>高效率團隊協作</div>
-                <div>權限設定控管隱私</div>
+                <div>高效率創造內容</div>
+                <div>支持離線編輯</div>
               </h1>
             </div>
             <div class="col-xs-12 col-md-6 mb-3-xs mb-0-md">
@@ -93,18 +93,18 @@
             </div>
             <div class="col-xs-12 col-md-6 text-left">
               <h1 class="section-title hidden-xs">
-                <div>高效率團隊協作</div>
-                <div>權限設定控管隱私</div>
+                <div>高效率創造內容</div>
+                <div>支持離線編輯</div>
               </h1>
               <div class="carousel-indicators">
                 <div class="carousel-item" data-target="#carouselFirstIndicators" data-slide-to="0">
                   <img src="/images/home/index-team-value-01.svg" class="icon">
                   <div>
                     <div class="title">
-                      跨越時空協作
+                      跨越地區協作
                     </div>
                     <div class="content">
-                      超快即時協作，讓遠端團隊感覺近在咫尺。文件更新通知，讓您跨越時間同步進度
+                      可通過 GitHub 達到協作編輯
                     </div>
                   </div>
                 </div>
@@ -112,10 +112,10 @@
                   <img src="/images/home/index-team-value-02.svg" class="icon">
                   <div>
                     <div class="title">
-                      輕鬆共享知識
+                      輕鬆分享筆記
                     </div>
                     <div class="content">
-                      共享所有團隊文件，讓知識及進度一目瞭然，共用團隊範本讓文件格式保持一致
+                      可通過 Matataki、IPFS、Github 分享筆記
                     </div>
                   </div>
                 </div>
@@ -123,10 +123,10 @@
                   <img src="/images/home/index-team-value-03.svg" class="icon">
                   <div>
                     <div class="title">
-                      分級保護隱私
+                      保護用戶隱私
                     </div>
                     <div class="content">
-                      依照需求為內部或外部夥伴細緻設定不同權限，私人圖床更保護機密
+                      所有筆記存儲在本地，服務端不會保存用戶筆記
                     </div>
                   </div>
                 </div>
@@ -136,12 +136,14 @@
 
           <div class="row pt-2">
             <div class="col-xs-12 text-right button-container">
-              <a href="https://hackmd.io/join?create-team=true" class="ui-home-create-team btn btn-lg btn-primary" style="min-width: 145px;">建立免費團隊</a>
+              <router-link to="/overview" class="ui-home-create-team btn btn-lg btn-primary" style="min-width: 145px;">
+                立即使用
+              </router-link>
             </div>
           </div>
         </div>
 
-        <div class="home-container bg-white pt-0">
+        <div v-if="false" class="home-container bg-white pt-0">
           <div id="carouselSecondIndicators" class="carousel reverse slide row" data-ride="carousel">
             <div class="col-xs-12 visible-xs">
               <h1 class="section-title">
@@ -226,7 +228,7 @@
                 特色功能
               </h2>
               <div style="margin-bottom: 25px; font-size: 20px;">
-                提高效能於無形之中
+                提高效率於無形之中
               </div>
             </div>
           </div>
@@ -234,93 +236,113 @@
             <div class="col-xs-12" /> <!-- hack for safari -->
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="/images/home/feature-01.svg" class="icon">
+                <img src="/images/home/feature-ipfs.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>VSCode 擴充功能</strong>
+                  <strong>IPFS 功能</strong>
                 </p>
                 <div class="subtitle">
-                  用 VSCode 來瀏覽或寫作所有 MatatakiMD 支援的 Markdown 語法
+                  將 Markdown 筆記渲染成 HTML 發送到 IPFS
                 </div>
                 <div class="feature-button-container">
-                  <a class="learn-more" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=HackMD.vscode-hackmd">立即安裝<i class="fa fa-angle-right" aria-hidden="true" /></a>
+                  <router-link class="learn-more" target="_blank" to="/overview">
+                    了解更多
+                    <i class="fa fa-angle-right" aria-hidden="true" />
+                  </router-link>
                 </div>
               </div>
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="/images/home/feature-02.svg" class="icon">
+                <img src="/images/home/feature-github.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>GitHub 整合</strong>
+                  <strong>GitHub 功能</strong>
                 </p>
                 <div class="subtitle">
-                  用您最熟悉的 GitHub 流程控制版本及交付您的文件
+                  用您最熟悉的 GitHub 協作編輯
                 </div>
                 <div class="feature-button-container">
-                  <a class="learn-more" target="_blank" href="https://hackmd.io/c/tutorials-tw/%2Fs%2Flink-with-github-tw">了解更多<i class="fa fa-angle-right" aria-hidden="true" /></a>
+                  <router-link class="learn-more" target="_blank" to="/overview">
+                    了解更多
+                    <i class="fa fa-angle-right" aria-hidden="true" />
+                  </router-link>
                 </div>
               </div>
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="/images/home/feature-03.svg" class="icon">
+                <img src="/images/home/feature-matataki.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>瀏覽器擴充功能</strong>
+                  <strong>Matataki 功能</strong>
                 </p>
                 <div class="subtitle">
-                  用快速鍵迅速找到並打開您的文件，捕捉瞬間的想法，並保持在心流之中
+                  將筆記快速發布/預覽到 Matataki，支持導入文章功能
                 </div>
                 <div class="feature-button-container">
-                  <a class="learn-more" target="_blank" href="https://hackmd.io/c/tutorials-tw/%2Fs%2Fhackmd-it-tw">立即安裝<i class="fa fa-angle-right" aria-hidden="true" /></a>
+                  <router-link class="learn-more" target="_blank" to="/overview">
+                    了解更多
+                    <i class="fa fa-angle-right" aria-hidden="true" />
+                  </router-link>
                 </div>
               </div>
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="/images/home/feature-04.svg" class="icon">
+                <img src="/images/home/feature-offline.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>MathJax 及 UML</strong>
+                  <strong>離線編輯</strong>
                 </p>
                 <div class="subtitle">
-                  用純文字繪製 UML 圖表及數學式，一個工具搞定專業內容數位出版
+                  沒有網絡的情況下也能正常記錄筆記
                 </div>
                 <div class="feature-button-container">
-                  <a class="learn-more" target="_blank" href="https://hackmd.io/c/tutorials-tw/%2Fs%2FMathJax-and-UML-tw">了解更多<i class="fa fa-angle-right" aria-hidden="true" /></a>
+                  <router-link class="learn-more" target="_blank" to="/overview">
+                    了解更多
+                    <i class="fa fa-angle-right" aria-hidden="true" />
+                  </router-link>
                 </div>
               </div>
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="/images/home/feature-05.svg" class="icon">
+                <img src="/images/home/feature-transfer.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>簡報模式</strong>
+                  <strong>導入/導出功能</strong>
                 </p>
                 <div class="subtitle">
-                  輕鬆製作簡報，幾分鐘內就可以上台。用章節組織簡報，精準控制時間
+                  支持導入/導出 Markdown 文件
                 </div>
                 <div class="feature-button-container">
-                  <a class="learn-more" target="_blank" href="https://hackmd.io/c/tutorials-tw/%2Fs%2Fhow-to-create-slide-deck-tw">了解更多<i class="fa fa-angle-right" aria-hidden="true" /></a>
+                  <router-link class="learn-more" target="_blank" to="/overview">
+                    了解更多
+                    <i class="fa fa-angle-right" aria-hidden="true" />
+                  </router-link>
                 </div>
               </div>
             </div>
             <div class="col-xs-12 col-md-4 ph-3/2 feature-card mb-3">
               <div class="content">
-                <img src="/images/home/feature-06.svg" class="icon">
+                <img src="/images/home/feature-data.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>書本模式</strong>
+                  <strong>用戶數據</strong>
                 </p>
                 <div class="subtitle">
-                  依照主題快速編排筆記合集、主次標題整理章節，一次分享所有相關內容
+                  用戶所有筆記數據都存儲在本地，可以導入/導出備份或遷移
                 </div>
                 <div class="feature-button-container">
-                  <a class="learn-more" target="_blank" href="https://hackmd.io/c/tutorials-tw/%2Fs%2Fhow-to-create-book-tw">了解更多<i class="fa fa-angle-right" aria-hidden="true" /></a>
+                  <router-link class="learn-more" target="_blank" to="/overview">
+                    了解更多
+                    <i class="fa fa-angle-right" aria-hidden="true" />
+                  </router-link>
                 </div>
               </div>
             </div>
           </div>
-          <a class="btn btn-default btn-lg btn-outline" target="_blank" href="https://hackmd.io/c/tutorials-tw/%2Fs%2Ftutorials-tw">更多功能</a>
+          <router-link class="btn btn-default btn-lg btn-outline" target="_blank" to="/overview">
+            更多功能
+          </router-link>
         </div>
 
-        <div class="home-container pt-0">
+        <div v-if="false" class="home-container pt-0">
           <div class="row">
             <div class="col-xs-12">
               <h2 class="home-heading">
@@ -389,7 +411,7 @@
           </div>
         </div>
 
-        <div class="home-container bg-white">
+        <div v-if="false" class="home-container bg-white">
           <div class="row">
             <div class="col-xs-12">
               <h2 class="home-heading">
@@ -444,12 +466,12 @@
           <div class="row">
             <div class="col-xs-12">
               <p class="h3 mt-0 mb-3" style="font-size: 30px;">
-                加入 MatatakiMD 的 400,000+ 名使用者，一用就愛上 ❤️
+                加入 MatatakiMD 的使用者，一用就愛上 ❤️
               </p>
-              <form action="https://hackmd.io/join" class="input-group" method="get" style="display: flex; max-width: 680px; margin: auto;">
-                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email">
+              <form action="" class="input-group" method="get" style="display: flex; max-width: 680px; margin: auto;">
+                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email" disabled>
                 <div class="input-group-append">
-                  <button type="submit" class="btn btn-success btn-lg ui-home-join">
+                  <button type="button" class="btn btn-success btn-lg ui-home-join" @click="openMtk">
                     立即註冊
                   </button>
                 </div>
@@ -1181,6 +1203,12 @@ export default class Home extends Vue {
     }
     (window as any).location = process.env.REACT_APP_OAuthUrl
   };
+
+  openMtk () {
+    if (process.browser) {
+      window.open(process.env.APP_MATATAKI_URL, '_blank')
+    }
+  }
 }
 </script>
 
@@ -1197,4 +1225,28 @@ p.lead {
 .home-container {
   text-align: center;
 }
+@keyframes typing1 {
+  0% { width: 0%; }
+  5% { width: 100%; }
+  29% { width: 100%; }
+  30%, 100% { width: 0%; }
+}
+@keyframes typing2 {
+  0% { width: 0%; }
+  30% { width: 0%; }
+  35% { width: 100%; }
+  59% { width: 100%; }
+  60%, 100% { width: 0%; }
+}
+@keyframes typing3 {
+  0% { width: 0%; }
+  60% { width: 0%; }
+  65% { width: 100%; }
+  99% { width: 100%; }
+  100% { width: 0%; }
+}
+
+.typewriter-container.en .typewriter-text.text-1 { max-width: 3.8em; animation: typing1 14s steps( 7 ) infinite; }
+.typewriter-container.en .typewriter-text.text-2 { max-width: 4.6em; animation: typing2 14s steps( 4 ) infinite; }
+.typewriter-container.en .typewriter-text.text-3 { max-width: 4.8em; animation: typing3 14s steps( 9 ) infinite; }
 </style>

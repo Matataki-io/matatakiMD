@@ -116,7 +116,7 @@
                   <span class="item-icon"> <i class="fa fa-question fa-fw" aria-hidden="true" /> </span>
                 </div>
                 <div v-show="toggleHelpModal" class="dismiss-overlay" @click="toggleHelpModal = false" />
-                <div v-show="toggleHelpModal" class="menu-container base-menu position-top" style="    transform: translate(0, calc(-100% + -46px));left: 60px; width: 200px;max-height: 835px;">
+                <div v-show="toggleHelpModal" class="menu-container base-menu position-top" style="    transform: translate(0, calc(-100% + -46px));left: 60px; width: 220px;max-height: 835px;">
                   <!-- <div class="sub-menu-container">
                     <div class="menu-item" style="padding-left: 40px; padding-right: 30px;">
                       <i class="fa fa-language fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /><span>語言</span><i class="fa fa-angle-right" aria-hidden="true" style="position: absolute; right: 15px; top: 6px;" />
@@ -133,7 +133,7 @@
                   <a class="menu-item" href="https://twitter.com/realmatataki" target="_blank" style="padding-left: 40px;">
                     <i class="fa fa-twitter fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Twitter(瞬Matataki)</a>
                   <a class="menu-item" href="https://t.me/metanetwork" target="_blank" style="padding-left: 40px;">
-                    <i class="fa fa-paper-plane fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> 使用回饋
+                    <i class="fa fa-paper-plane fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> Telegram(Meta Network)
                   </a>
                   <!-- <a class="menu-item" href="mailto:support@hackmd.io" style="padding-left: 40px;">
                     <i class="fa fa-envelope-o fa-fw menu-fa-icon" style="position: absolute; left: 20px; top: 6px;" /> support@hackmd.io </a> -->
