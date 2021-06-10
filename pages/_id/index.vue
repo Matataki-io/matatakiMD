@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { throttle, debounce, isEmpty, isArray, assign } from 'lodash'
+import { throttle, debounce, isEmpty, isArray, assign, cloneDeep } from 'lodash'
 import {
   Component,
   Vue,
@@ -54,7 +54,7 @@ import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import fileDownload from '../../utils/markdown-download'
 import { Notes, FleekIpfs, userProps } from '../../types/index.d'
-import { generateTitle, ipfsHtmlTemp, generateShortContent } from '../../utils/index'
+import { generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, blobUrl } from '../../utils/index'
 
 let mavonEditor: any = {
   mavonEditor: null
@@ -185,17 +185,44 @@ export default class Edidtor extends Vue {
 
   // 图片上传的回调方法
   async imageUploadFn (file: File) {
-    try {
-      const res = await upload(file)
-      if (res.code === 0) {
-        return `https://ssimg.frontenduse.top/${res.data}`
-      } else {
-        console.log(res.message)
-        throw new Error('fail...')
+    if (this.$nuxt.isOnline) {
+      try {
+        const res = await upload(file)
+        if (res.code === 0) {
+          return `https://ssimg.frontenduse.top/${res.data}`
+        } else {
+          console.log(res.message)
+          throw new Error('fail...')
+        }
+      } catch (e) {
+        console.log(e)
+        return 'fail...'
       }
-    } catch (e) {
-      console.log(e)
-      return 'fail...'
+    } else {
+      console.log('file', file)
+      const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+      const resData = cloneDeep(res)
+      const base64 = await fileToBase64(file)
+      if (isEmpty(resData.images)) {
+        resData.images = []
+      }
+      if (resData.images) {
+        resData.images.push({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          base64
+        })
+      }
+
+      await (this as any).$localForage.setItem(this.$route.params.id, resData)
+
+      // 转 base64 存本地
+
+      // 本地读取所有 img 获取 key
+
+      // key 获取 base64 转 bolb 获取 url 写入
+      return `${blobUrl(file)}`
     }
   }
 

@@ -26,7 +26,8 @@
                     </router-link>
                   </li>
                   <li class="ui-home-login">
-                    <a v-if="!isLogin" href="javascript:;" @click="jumpToMttkOAuth">登入</a>
+                    <a v-if="$nuxt.isOffline" href="javascript:;">已离线</a>
+                    <a v-else-if="!isLogin" href="javascript:;" @click="jumpToMttkOAuth">登入</a>
                     <a v-else href="javascript:;">已登入</a>
                   </li>
                 </ul>

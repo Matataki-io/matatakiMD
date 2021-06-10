@@ -1,6 +1,9 @@
 <template>
   <div class="user">
-    <el-dropdown v-if="isUser" trigger="click" class="user-tooltip" @command="val => $emit('handleCommand', val)">
+    <div v-if="$nuxt.isOffline" class="user-not-logged">
+      已离线
+    </div>
+    <el-dropdown v-else-if="isUser" trigger="click" class="user-tooltip" @command="val => $emit('handleCommand', val)">
       <el-tooltip effect="dark" :content="usersData.nickname || usersData.username" placement="bottom">
         <el-avatar :src="`https://ssimg.frontenduse.top/${usersData.avatar}`" :size="30" />
       </el-tooltip>

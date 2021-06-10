@@ -34,6 +34,12 @@ export interface Notes {
   title: string
   'create_time': number
   'update_time': number
+  images?: Array<{
+    name: string
+    type: string
+    size: number
+    base64: unknown
+  }>
 }
 
 export interface IpfsUploadProps {

@@ -85,3 +85,35 @@ export const ipfsHtmlTemp = ({ title, content }: { title: string, content: strin
 </html>`
   return htmlTemp
 }
+
+/**
+ * file to base64
+ * @param file FIle
+ * @returns base64
+ */
+export const fileToBase64 = (file: File) => new Promise((resolve, reject) => {
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onload = () => resolve(reader.result)
+  reader.onerror = error => reject(error)
+})
+
+/**
+ * 上传图片 返回 blob url
+ * @param blob 上传的图片
+ * @returns 返回的 blob url
+ */
+export const blobUrl = (blob: Blob): string => {
+  try {
+    const URL = window.URL || window.webkitURL
+    if (!(URL && URL.createObjectURL)) {
+      console.log('No URL OR URL.createObjectURL')
+      return 'fail...'
+    }
+
+    return URL.createObjectURL(blob)
+  } catch (e) {
+    console.log(e.toString())
+    return 'fail...'
+  }
+}

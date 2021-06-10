@@ -85,7 +85,12 @@
                 </li>
               </ul>
             </div>
-            <div v-if="isUser" class="ui-next-sidenav-bottom-menu">
+            <div v-if="$nuxt.isOffline" class="ui-next-sidenav-bottom-menu">
+              <div class="user-not-logged">
+                已离线
+              </div>
+            </div>
+            <div v-else-if="isUser" class="ui-next-sidenav-bottom-menu">
               <div class="ui-next-sidenav-profile">
                 <div class="sidenav-item-action menu-component" style="position: relative;">
                   <div class="ui-next-sidenav-profile-container">
