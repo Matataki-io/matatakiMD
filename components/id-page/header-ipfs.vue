@@ -16,7 +16,7 @@
         </div>
       </div>
       <p v-else class="ipfs-text">
-        沒有 Ipfs 記錄
+        没有 Ipfs 记录
       </p>
     </div>
     <div slot="reference" class="header-right_icon">

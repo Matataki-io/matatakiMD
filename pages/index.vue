@@ -17,7 +17,7 @@
                     <img src="/images/home/group.svg" class="pull-right">
                   </li>
                   <li>
-                    <a target="_blank" :href="tutorial">使用教學</a>
+                    <a target="_blank" :href="tutorial">使用教学</a>
                   </li>
                   <li class="divider visible-xs" style="margin: 12px 0px; background-color: #4f4f4f;" />
                   <li class="ui-home-login">
@@ -45,10 +45,10 @@
           <div class="row mb-18">
             <div class="col-xs-12">
               <h1 class="cover-heading ma-0">
-                用 Markdown 即時創作發佈到 Web3
+                用 Markdown 即时创作发布到 Web3
               </h1>
               <p class="lead ma-0" style="max-width: 680px; margin: auto; margin-bottom: 30px;">
-                用開箱即用的 Markdown 編輯器書寫 並發佈到
+                用开箱即用的 Markdown 编辑器书写 并发布到
                 <span class="typewriter-container inline-flex justify-center en">
                   <span class="typewriter-text text-1">IPFS</span>
                   <span class="typewriter-text text-2">Github</span>
@@ -59,10 +59,10 @@
               </p>
 
               <form action="" class="input-group mt-3" method="get" style="display: flex; max-width: 680px; margin: auto;">
-                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email" disabled>
+                <input type="email" name="email" class="form-control ui-home-email" placeholder="请输入您的 Email" disabled>
                 <div class="input-group-append">
                   <button type="button" class="btn btn-success btn-lg ui-home-join" @click="openMtk">
-                    立即註冊
+                    立即注册
                   </button>
                 </div>
               </form>
@@ -74,8 +74,8 @@
           <div id="carouselFirstIndicators" class="carousel slide row" data-ride="carousel">
             <div class="col-xs-12 visible-xs">
               <h1 class="section-title">
-                <div>高效率創造內容</div>
-                <div>支持離線編輯</div>
+                <div>高效率创造内容</div>
+                <div>支持离线编辑</div>
               </h1>
             </div>
             <div class="col-xs-12 col-md-6 mb-3-xs mb-0-md">
@@ -93,18 +93,18 @@
             </div>
             <div class="col-xs-12 col-md-6 text-left">
               <h1 class="section-title hidden-xs">
-                <div>高效率創造內容</div>
-                <div>支持離線編輯</div>
+                <div>高效率创造内容</div>
+                <div>支持离线编辑</div>
               </h1>
               <div class="carousel-indicators">
                 <div class="carousel-item" data-target="#carouselFirstIndicators" data-slide-to="0">
                   <img src="/images/home/index-team-value-01.svg" class="icon">
                   <div>
                     <div class="title">
-                      跨越地區協作
+                      跨越地区协作
                     </div>
                     <div class="content">
-                      可通過 GitHub 達到協作編輯
+                      可通过 GitHub 达到协作编辑
                     </div>
                   </div>
                 </div>
@@ -112,10 +112,10 @@
                   <img src="/images/home/index-team-value-02.svg" class="icon">
                   <div>
                     <div class="title">
-                      輕鬆分享筆記
+                      轻松分享笔记
                     </div>
                     <div class="content">
-                      可通過 Matataki、IPFS、Github 分享筆記
+                      可通过 Matataki、IPFS、Github 分享笔记
                     </div>
                   </div>
                 </div>
@@ -123,10 +123,10 @@
                   <img src="/images/home/index-team-value-03.svg" class="icon">
                   <div>
                     <div class="title">
-                      保護用戶隱私
+                      保护用户隐私
                     </div>
                     <div class="content">
-                      所有筆記存儲在本地，服務端不會保存用戶筆記
+                      所有笔记存储在本地，服务端不会保存用户笔记
                     </div>
                   </div>
                 </div>
@@ -228,7 +228,7 @@
                 特色功能
               </h2>
               <div style="margin-bottom: 25px; font-size: 20px;">
-                提高效率於無形之中
+                提高效率于无形之中
               </div>
             </div>
           </div>
@@ -241,7 +241,7 @@
                   <strong>IPFS 功能</strong>
                 </p>
                 <div class="subtitle">
-                  將 Markdown 筆記渲染成 HTML 發送到 IPFS
+                  将 Markdown 笔记渲染成 HTML 发送到 IPFS
                 </div>
                 <div class="feature-button-container">
                   <router-link class="learn-more" target="_blank" to="/overview">
@@ -258,7 +258,7 @@
                   <strong>GitHub 功能</strong>
                 </p>
                 <div class="subtitle">
-                  用您最熟悉的 GitHub 協作編輯
+                  用您最熟悉的 GitHub 协作编辑
                 </div>
                 <div class="feature-button-container">
                   <router-link class="learn-more" target="_blank" to="/overview">
@@ -275,7 +275,7 @@
                   <strong>Matataki 功能</strong>
                 </p>
                 <div class="subtitle">
-                  將筆記快速發布/預覽到 Matataki，支持導入文章功能
+                  将笔记快速发布/预览到 Matataki，支持导入文章功能
                 </div>
                 <div class="feature-button-container">
                   <router-link class="learn-more" target="_blank" to="/overview">
@@ -289,10 +289,10 @@
               <div class="content">
                 <img src="/images/home/feature-offline.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>離線編輯</strong>
+                  <strong>离线编辑</strong>
                 </p>
                 <div class="subtitle">
-                  沒有網絡的情況下也能正常記錄筆記
+                  没有网络的情况下也能正常记录笔记
                 </div>
                 <div class="feature-button-container">
                   <router-link class="learn-more" target="_blank" to="/overview">
@@ -306,10 +306,10 @@
               <div class="content">
                 <img src="/images/home/feature-transfer.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>導入/導出功能</strong>
+                  <strong>导入/导出功能</strong>
                 </p>
                 <div class="subtitle">
-                  支持導入/導出 Markdown 文件
+                  支持导入/导出 Markdown 文件
                 </div>
                 <div class="feature-button-container">
                   <router-link class="learn-more" target="_blank" to="/overview">
@@ -323,10 +323,10 @@
               <div class="content">
                 <img src="/images/home/feature-data.svg" class="icon">
                 <p class="title mb-3/2 mt-2">
-                  <strong>用戶數據</strong>
+                  <strong>用户数据</strong>
                 </p>
                 <div class="subtitle">
-                  用戶所有筆記數據都存儲在本地，可以導入/導出備份或遷移
+                  用户所有笔记数据都存储在本地，可以导入/导出备份或迁移
                 </div>
                 <div class="feature-button-container">
                   <router-link class="learn-more" target="_blank" to="/overview">
@@ -466,13 +466,13 @@
           <div class="row">
             <div class="col-xs-12">
               <p class="h3 mt-0 mb-3" style="font-size: 30px;">
-                加入 MatatakiMD 的使用者，一用就愛上 ❤️
+                加入 MatatakiMD 的使用者，一用就爱上 ❤️
               </p>
               <form action="" class="input-group" method="get" style="display: flex; max-width: 680px; margin: auto;">
-                <input type="email" name="email" class="form-control ui-home-email" placeholder="請輸入您的 Email" disabled>
+                <input type="email" name="email" class="form-control ui-home-email" placeholder="请输入您的 Email" disabled>
                 <div class="input-group-append">
                   <button type="button" class="btn btn-success btn-lg ui-home-join" @click="openMtk">
-                    立即註冊
+                    立即注册
                   </button>
                 </div>
               </form>
@@ -866,7 +866,7 @@
                     name="email"
                     class="form-control col-sm-9"
                     aria-describedby="helpId"
-                    placeholder="請輸入您的 Email"
+                    placeholder="请输入您的 Email"
                     required=""
                   >
                 </div>
@@ -1018,25 +1018,25 @@
             <div class="row mb-1">
               <div class="col-xs-12 col-sm-6 col-md-3 ph-2 mb-3 mb-0-md">
                 <h4 class="mt-0 pb-1/4">
-                  使用教學
+                  使用教学
                 </h4>
 
                 <ul class="list-unstyled">
                   <li class="pv-1/4">
                     <a :href="tutorial" target="_blank" class="text-gray-lighter">
-                      快速入門
+                      快速入门
                     </a>
                   </li>
                   <li class="pv-1/4">
                     <a :href="tutorial" target="_blank" class="text-gray-lighter">
-                      教學手冊
+                      教学手册
                     </a>
                   </li>
                 </ul>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3 ph-2 mb-3 mb-0-md">
                 <h4 class="mt-0 pb-1/4">
-                  資源
+                  资源
                 </h4>
 
                 <ul class="list-unstyled">
@@ -1047,7 +1047,7 @@
                   </li> -->
                   <li class="pv-1/4">
                     <a :href="releaseNotes" target="_blank" class="text-gray-lighter">
-                      版本記錄
+                      版本记录
                     </a>
                   </li>
                 </ul>
@@ -1060,19 +1060,19 @@
                 <ul class="list-unstyled">
                   <li class="pv-1/4">
                     <a href="javascript:;" target="_blank" class="text-gray-lighter">
-                      條款
+                      条款
                     </a>
                   </li>
                   <li class="pv-1/4">
                     <a href="javascript:;" target="_blank" class="text-gray-lighter">
-                      隱私權政策
+                      隐私权政策
                     </a>
                   </li>
                 </ul>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3 ph-2 mb-3 mb-0-md">
                 <h4 class="mt-0 pb-1/4">
-                  聯絡我們
+                  联络我们
                 </h4>
 
                 <ul class="list-unstyled">

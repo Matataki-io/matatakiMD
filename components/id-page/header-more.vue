@@ -5,7 +5,7 @@
     </span>
     <el-dropdown-menu slot="dropdown" class="dropdown-menu-container">
       <li class="dropdown-header">
-        選項
+        选项
       </li>
       <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-github">
         同步到 GitHub
@@ -22,7 +22,7 @@
 
       <li class="divder" />
       <li class="dropdown-header">
-        匯出
+        汇出
       </li>
 
       <el-dropdown-item icon="el-icon-download" command="save-file-md">
@@ -31,7 +31,7 @@
 
       <li class="divder" />
       <li class="dropdown-header">
-        匯入
+        汇入
       </li>
       <el-dropdown-item v-if="isUser" icon="el-icon-upload2" command="posts-import">
         导入文章 (Matataki 功能)
@@ -54,7 +54,7 @@
 
       <li class="divder" />
       <li class="dropdown-header">
-        數據
+        数据
       </li>
       <el-dropdown-item icon="el-icon-download" command="save-user-data">
         导出用户数据

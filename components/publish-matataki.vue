@@ -10,8 +10,8 @@
       :model="publishMatatakiForm"
       :rules="publishMatatakiFormRules"
     >
-      <el-form-item label="標題" prop="title">
-        <el-input v-model="publishMatatakiForm.title" placeholder="请输入標題" />
+      <el-form-item label="标题" prop="title">
+        <el-input v-model="publishMatatakiForm.title" placeholder="请输入标题" />
       </el-form-item>
       <el-form-item label="摘要" prop="shortContent">
         <el-input
@@ -89,7 +89,7 @@ export default class HeaderIpfs extends Vue {
   // publish form rules
   publishMatatakiFormRules = {
     title: [
-      { required: true, message: '请输入標題', trigger: 'blur' }
+      { required: true, message: '请输入标题', trigger: 'blur' }
     ],
     shortContent: [
       { required: true, message: '请输入摘要', trigger: 'blur' }
@@ -202,7 +202,7 @@ export default class HeaderIpfs extends Vue {
   // 发布到 Matataki
   async postPublishFn (): Promise<void> {
     if (!this.publishMatatakiForm.title || !this.publishMatatakiForm.shortContent) {
-      this.$message.warning('標題和摘要不能為空！')
+      this.$message.warning('标题和摘要不能为空！')
       return
     }
 
@@ -227,7 +227,7 @@ export default class HeaderIpfs extends Vue {
       if (res.code === 0) {
         this.$notify({
           title: '提示',
-          message: `發布成功:${process.env.APP_MATATAKI_URL}/p/${res.data}`
+          message: `View:${process.env.APP_MATATAKI_URL}/p/${res.data}`
         })
         this.dialogPublishMatataki = false
       } else {

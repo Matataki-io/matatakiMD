@@ -1,13 +1,13 @@
 <template>
   <el-dialog
-    title="導入文章"
+    title="导入文章"
     :visible.sync="dialogImportMatataki"
     width="600px"
   >
     <div>
-      <p>基於 Matataki 的導入文章功能</p>
+      <p>基于 Matataki 的导入文章功能</p>
       <div style="margin: 20px 0;">
-        <el-input v-model="dialogImportMatatakiInput" placeholder="請輸入文章地址" />
+        <el-input v-model="dialogImportMatatakiInput" placeholder="请输入文章地址" />
       </div>
       <div>
         <el-button size="small" @click="dialogImportMatataki = false">
@@ -45,7 +45,7 @@ export default class HeaderIpfs extends Vue {
       this.dialogImportMatatakiLoading = true
 
       if (!this.dialogImportMatatakiInput) {
-        this.$message.warning('URL 不能為空')
+        this.$message.warning('URL 不能为空')
         return
       }
 
@@ -53,7 +53,7 @@ export default class HeaderIpfs extends Vue {
       // console.log('res', res)
       if (res.code === 0) {
         this.$emit('import', res.data.content)
-        this.$message.success('導入成功')
+        this.$message.success('导入成功')
         this.dialogImportMatataki = false
       } else {
         throw new Error(res.message)
