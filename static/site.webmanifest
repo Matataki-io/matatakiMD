@@ -1,6 +1,7 @@
 {
     "name": "MatatakiMD",
     "short_name": "MatatakiMD",
+    "description": "MatatakiMD",
     "icons": [
         {
             "src": "/android-chrome-96x96.png",
@@ -8,6 +9,7 @@
             "type": "image/png"
         }
     ],
+    "start_url": "/",
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
     "display": "standalone"
