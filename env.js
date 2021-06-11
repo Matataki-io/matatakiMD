@@ -8,6 +8,7 @@ export default {
     APP_MATATAKI_URL: 'https://test.matataki.io',
     APP_MATATAKI_RELEASE_NOTES: 'https://www.matataki.io/p/9195',
     APP_MATATAKI_TUTORIAL: 'https://www.matataki.io/p/9196',
+    APP_SSIMG: 'https://ssimg.frontenduse.top',
     // # Matataki OAuth Related config
     REACT_APP_OAuthUrl: 'https://developer.matataki.io/app/905ac873d9d71038/oauth?network=test',
     REACT_APP_OAuthClientId: '401523152384315',
@@ -22,6 +23,7 @@ export default {
     APP_MATATAKI_URL: 'https://matataki.io',
     APP_MATATAKI_RELEASE_NOTES: 'https://www.matataki.io/p/9195',
     APP_MATATAKI_TUTORIAL: 'https://www.matataki.io/p/9196',
+    APP_SSIMG: 'https://ssimg.frontenduse.top',
     // # Matataki OAuth Related config
     REACT_APP_OAuthUrl: 'https://developer.matataki.io/app/f1d77cd8b16bd25f/oauth',
     REACT_APP_OAuthClientId: '582657204820772',

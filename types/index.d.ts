@@ -25,6 +25,13 @@ export interface FleekIpfs {
   publicUrl: string
 }
 
+export interface NotesImages {
+  name: string
+  type: string
+  size: number
+  base64: unknown
+  time: number
+}
 export interface Notes {
   id: number
   'id_str': string
@@ -34,12 +41,7 @@ export interface Notes {
   title: string
   'create_time': number
   'update_time': number
-  images?: Array<{
-    name: string
-    type: string
-    size: number
-    base64: unknown
-  }>
+  images?: Array<NotesImages>
 }
 
 export interface IpfsUploadProps {

@@ -117,3 +117,15 @@ export const blobUrl = (blob: Blob): string => {
     return 'fail...'
   }
 }
+/**
+ * base64 to file
+ * @param base64
+ * @param fileName
+ * @param type
+ * @returns
+ */
+export async function base64ToFile (base64: string, fileName: string, type: string): Promise<File> {
+  const res: Response = await fetch(base64)
+  const blob: Blob = await res.blob()
+  return new File([blob], fileName, { type: type || 'image/png' })
+}

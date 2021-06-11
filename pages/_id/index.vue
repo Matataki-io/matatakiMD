@@ -53,8 +53,8 @@ import {
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import fileDownload from '../../utils/markdown-download'
-import { Notes, FleekIpfs, userProps } from '../../types/index.d'
-import { generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, blobUrl } from '../../utils/index'
+import { Notes, FleekIpfs, userProps, NotesImages } from '../../types/index.d'
+import { generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, base64ToFile } from '../../utils/index'
 
 let mavonEditor: any = {
   mavonEditor: null
@@ -156,6 +156,11 @@ export default class Edidtor extends Vue {
       console.log('data', data)
 
       await (this as any).$localForage.setItem(this.$route.params.id, data)
+
+      this.$nextTick(async () => {
+        await this.processOfflineImage()
+        await this.processOfflineUploadImage()
+      })
     } catch (e) {
       console.log(e)
     }
@@ -183,26 +188,32 @@ export default class Edidtor extends Vue {
     }
   }
 
-  // 图片上传的回调方法
-  async imageUploadFn (file: File) {
-    if (this.$nuxt.isOnline) {
-      try {
-        const res = await upload(file)
-        if (res.code === 0) {
-          return `https://ssimg.frontenduse.top/${res.data}`
-        } else {
-          console.log(res.message)
-          throw new Error('fail...')
-        }
-      } catch (e) {
-        console.log(e)
-        return 'fail...'
+  async uploadFn (file: File): Promise<string|false> {
+    try {
+      const res = await upload(file)
+      if (res.code === 0) {
+        return `${process.env.APP_SSIMG}${res.data}`
+      } else {
+        console.log(res.message)
+        throw new Error('fail...')
       }
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
+
+  // 图片上传的回调方法
+  async imageUploadFn (file: File): Promise<string> {
+    if (this.$nuxt.isOnline) {
+      const url = await this.uploadFn(file)
+      return url || 'fail...'
     } else {
-      console.log('file', file)
+      // console.log('file', file)
       const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
       const resData = cloneDeep(res)
       const base64 = await fileToBase64(file)
+      const time = Date.now()
       if (isEmpty(resData.images)) {
         resData.images = []
       }
@@ -211,18 +222,15 @@ export default class Edidtor extends Vue {
           name: file.name,
           type: file.type,
           size: file.size,
-          base64
+          base64,
+          time
         })
       }
 
       await (this as any).$localForage.setItem(this.$route.params.id, resData)
 
-      // 转 base64 存本地
-
-      // 本地读取所有 img 获取 key
-
-      // key 获取 base64 转 bolb 获取 url 写入
-      return `${blobUrl(file)}`
+      // id-time
+      return `${this.$route.params.id}-${time}`
     }
   }
 
@@ -393,6 +401,87 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 处理离线上传图片 用 base64 替换
+  async processOfflineImage () {
+    const imgList = document.querySelectorAll<HTMLImageElement>('#previewContent img')
+    const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+    const images: NotesImages[] = res.images || ([] as NotesImages[])
+
+    imgList.forEach((el: HTMLImageElement) => {
+      const imgSrc = el.src
+
+      // 如果是 cdn 图片 不处理
+      // 其他图片会在 filter 过滤掉
+      if (imgSrc.includes(process.env.APP_SSIMG as string)) {
+        return
+      }
+
+      // noteId-time to id、time
+      const [noteId, time] = imgSrc.split('-')
+      const imageData: NotesImages[] = images.filter((i: NotesImages) => Number(i.time) === Number(time))
+      if (!isEmpty(imageData)) {
+        const { base64 } = imageData[0]
+        const id = noteId.replace(`${window.location.origin}/`, '')
+
+        el.src = (base64 as string)
+        el.setAttribute('data-id', id)
+        el.setAttribute('data-time', time)
+      }
+    })
+  }
+
+  // 处理离线上传按钮事件
+  async processOfflineImageButtonEvent ({ id, time }: { id: string, time: number }): Promise<void> {
+    const res: Notes = await (this as any).$localForage.getItem(id)
+    const images: NotesImages[] = res.images || ([] as NotesImages[])
+    const imageData: NotesImages[] = images.filter((i: NotesImages) => Number(i.time) === Number(time))
+
+    if (isEmpty(imageData)) {
+      this.$message.warning('没有图片信息！')
+      return
+    }
+
+    const { base64, name, type } = imageData[0]
+    let file = null
+    try {
+      file = await base64ToFile(base64 as string, name, type)
+    } catch (e) {
+      console.log(e)
+    }
+
+    if (!file) {
+      this.$message.warning('转换图片文件失败')
+      return
+    }
+
+    this.$message.info('Uploading...')
+    const url = await this.uploadFn(file)
+    if (url) {
+      this.$message.success('Upload success')
+      const content = this.markdownData.replace(`${id}-${time}`, url)
+      this.markdownData = content
+    }
+  }
+
+  // 处理离线上传按钮
+  processOfflineUploadImage () {
+    const imgList = document.querySelectorAll<HTMLImageElement>('#previewContent img')
+    imgList.forEach((el: HTMLImageElement) => {
+      const time = el.getAttribute('data-time')
+      // const id = el.getAttribute('data-id')
+
+      if (time) {
+        const btn = document.createElement('button')
+        btn.innerText = 'Upload'
+        btn.className = 'upload-image-btn'
+        btn.addEventListener('click', () => {
+          this.processOfflineImageButtonEvent({ id: this.$route.params.id, time: Number(time) || 0 })
+        }, false)
+        el.parentNode?.appendChild(btn)
+      }
+    })
+  }
+
   // 退出登录
   signOut () {
     removeCookie('access-token')
@@ -438,4 +527,17 @@ export default class Edidtor extends Vue {
   align-items: center;
 }
 
+</style>
+
+<style lang="less">
+.upload-image-btn {
+  padding: 10px 20px;
+  border: 1px solid #878787;
+  background: transparent;
+  font-size: 14px;
+  border-radius: 0;
+  cursor: pointer;
+  outline: none;
+  display: block;
+}
 </style>
