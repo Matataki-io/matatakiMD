@@ -69,6 +69,7 @@ export default class HeaderIpfs extends Vue {
 .header-right_icon {
   width: 22px;
   height: 22px;
+  margin: 0 10px;
 }
 .icon-ipfs {
   width: 22px;

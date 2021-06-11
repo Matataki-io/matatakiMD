@@ -5,6 +5,7 @@
         <i class="fa fa-file-text" /><span class="hidden-xs"> MatatakiMD</span>
       </router-link>
       <div class="header-right">
+        <HeaderImages />
         <HeaderIpfs :ipfs-list="ipfsList" />
         <HeaderMore :is-user="isUser" @handleCommandMore="handleCommandMore" @importMarkdown="val => markdownData = val" />
         <HeaderUser :is-user="isUser" :users-data="usersData" @handleCommand="handleCommand" />
@@ -43,6 +44,7 @@ import moment from 'moment'
 import HeaderIpfs from '@/components/id-page/header-ipfs.vue'
 import HeaderMore from '@/components/id-page/header-more.vue'
 import HeaderUser from '@/components/id-page/header-user.vue'
+import HeaderImages from '@/components/id-page/header-images.vue'
 import ImportPosts from '@/components/import-posts.vue'
 import PublishMatataki from '@/components/publish-matataki.vue'
 import AsyncGithub from '@/components/async-github.vue'
@@ -70,6 +72,7 @@ if (process.client) {
     HeaderIpfs,
     HeaderMore,
     HeaderUser,
+    HeaderImages,
     ImportPosts,
     PublishMatataki,
     AsyncGithub
