@@ -305,6 +305,26 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 处理发布到 IPFS 事件
+  handleUploadIpfs () : void {
+    if (this.isOfflineUploadImages()) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '提示',
+        message: h('div', null as any, [
+          h('p', null as any, '文垱内有离线上传的图片！是否继续？')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.ipfsUploadFn()
+      })
+    } else {
+      this.ipfsUploadFn()
+    }
+  }
+
   // 下载为 Markdown
   downloadMd (): void {
     try {
@@ -476,7 +496,7 @@ export default class Edidtor extends Vue {
     if (command === 'async-github') {
       this.dialogAsyncGithub = !this.dialogAsyncGithub
     } else if (command === 'async-ipfs') {
-      this.ipfsUploadFn()
+      this.handleUploadIpfs()
     } else if (command === 'async-matataki') {
       this.dialogPublishMatataki = true
     } else if (command === 'preview-matataki') {
