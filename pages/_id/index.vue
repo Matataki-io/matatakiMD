@@ -254,7 +254,7 @@ export default class Edidtor extends Vue {
   }
 
   // ipfs 上传
-  async ipfsUploadFn () {
+  async ipfsUploadFn (): Promise<void> {
     const loading = this.$notify({
       title: '提示',
       message: '正在发布...',
@@ -306,12 +306,32 @@ export default class Edidtor extends Vue {
   }
 
   // 下载为 Markdown
-  downloadMd () {
+  downloadMd (): void {
     try {
       const title = generateTitle('#previewContent h1')
       fileDownload({ content: this.markdownData, name: `${title}.md` })
     } catch (e) {
       this.$message.error(`下载失败：${e.toString()}`)
+    }
+  }
+
+  // 处理保存文件为 Markdown 事件
+  handleSaveFileMd (): void {
+    if (this.isOfflineUploadImages()) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '提示',
+        message: h('div', null as any, [
+          h('p', null as any, '文垱内有离线上传的图片！是否继续？')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.downloadMd()
+      })
+    } else {
+      this.downloadMd()
     }
   }
 
@@ -347,7 +367,7 @@ export default class Edidtor extends Vue {
   }
 
   // 处理保存用户数据事件
-  handleSaveUserData () {
+  handleSaveUserData (): void {
     const h = this.$createElement
     const self = this
     this.$msgbox({
@@ -448,7 +468,7 @@ export default class Edidtor extends Vue {
     } else if (command === 'posts-import') {
       this.dialogImportMatataki = true
     } else if (command === 'save-file-md') {
-      this.downloadMd()
+      this.handleSaveFileMd()
     } else if (command === 'save-user-data') {
       this.handleSaveUserData()
     }
@@ -566,6 +586,12 @@ export default class Edidtor extends Vue {
         el.parentNode?.appendChild(btn)
       }
     })
+  }
+
+  // 是否还有离线上传的图片
+  isOfflineUploadImages (): boolean {
+    const btnList = document.querySelectorAll<HTMLImageElement>('#previewContent img[data-time]')
+    return !!btnList.length
   }
 
   // 退出登录
