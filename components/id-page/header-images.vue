@@ -28,7 +28,7 @@
                   <span>{{ itemImage.name }}</span>
                 </div>
 
-                <div class="item-icon" @click="clearImages({ id: item.id_str || String(item.id), index: idx })">
+                <div class="item-icon" @click="handleClear({ id: item.id_str || String(item.id), index: idx })">
                   <i class="el-icon-close" />
                 </div>
               </div>

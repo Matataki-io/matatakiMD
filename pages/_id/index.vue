@@ -110,6 +110,22 @@ export default class Edidtor extends Vue {
     this.asyncContent(val)
   }
 
+  @Watch('$nuxt.isOffline')
+  onNuxtOfflineChangeed (val: boolean) {
+    console.log('val', val)
+    if (val) {
+      this.processOfflineUploadImage()
+    }
+  }
+
+  @Watch('$nuxt.isOnline')
+  onNuxtOnlineChangeed (val: boolean) {
+    console.log('val', val)
+    if (val) {
+      this.hideOfflineUploadImage()
+    }
+  }
+
   mounted () {
     // 编辑文章不会自动保存
     if (process.browser) {
@@ -435,6 +451,11 @@ export default class Edidtor extends Vue {
 
   // 处理离线上传按钮事件
   async processOfflineImageButtonEvent ({ id, time }: { id: string, time: number }): Promise<void> {
+    if (this.$nuxt.isOffline) {
+      this.$message.info('离线状态下不可上传')
+      return
+    }
+
     const res: Notes = await (this as any).$localForage.getItem(id)
     const images: NotesImages[] = res.images || ([] as NotesImages[])
     const imageData: NotesImages[] = images.filter((i: NotesImages) => Number(i.time) === Number(time))
@@ -466,8 +487,21 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 隐藏离线上传按钮
+  hideOfflineUploadImage () {
+    const btnList = document.querySelectorAll<HTMLImageElement>('#previewContent .upload-image-btn')
+    btnList.forEach((el: HTMLImageElement) => {
+      el.remove()
+    })
+  }
+
   // 处理离线上传按钮
   processOfflineUploadImage () {
+    if (this.$nuxt.isOnline) {
+      console.log('在线不需要渲染离线上传按钮')
+      return
+    }
+
     const imgList = document.querySelectorAll<HTMLImageElement>('#previewContent img')
     imgList.forEach((el: HTMLImageElement) => {
       const time = el.getAttribute('data-time')
