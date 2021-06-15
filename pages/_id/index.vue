@@ -56,7 +56,7 @@ import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import fileDownload from '../../utils/markdown-download'
 import { Notes, FleekIpfs, userProps, NotesImages } from '../../types/index.d'
-import { generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, base64ToFile } from '../../utils/index'
+import { generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, base64ToFile, isOfflineUploadImages } from '../../utils/index'
 
 let mavonEditor: any = {
   mavonEditor: null
@@ -307,7 +307,7 @@ export default class Edidtor extends Vue {
 
   // 处理发布到 IPFS 事件
   handleUploadIpfs (): void {
-    if (this.isOfflineUploadImages()) {
+    if (isOfflineUploadImages()) {
       const h = this.$createElement
       this.$msgbox({
         title: '提示',
@@ -327,7 +327,7 @@ export default class Edidtor extends Vue {
 
   // 处理发布到 Matataki 事件
   handleUploadMatataki (): void {
-    if (this.isOfflineUploadImages()) {
+    if (isOfflineUploadImages()) {
       const h = this.$createElement
       this.$msgbox({
         title: '提示',
@@ -357,7 +357,7 @@ export default class Edidtor extends Vue {
 
   // 处理保存文件为 Markdown 事件
   handleSaveFileMd (): void {
-    if (this.isOfflineUploadImages()) {
+    if (isOfflineUploadImages()) {
       const h = this.$createElement
       this.$msgbox({
         title: '提示',
@@ -476,7 +476,7 @@ export default class Edidtor extends Vue {
 
   // 确认预览框
   handleConfirmPreview (): void {
-    if (this.isOfflineUploadImages()) {
+    if (isOfflineUploadImages()) {
       const h = this.$createElement
       this.$msgbox({
         title: '提示',
@@ -642,12 +642,6 @@ export default class Edidtor extends Vue {
         el.parentNode?.appendChild(btn)
       }
     })
-  }
-
-  // 是否还有离线上传的图片
-  isOfflineUploadImages (): boolean {
-    const btnList = document.querySelectorAll<HTMLImageElement>('#previewContent img[data-time]')
-    return !!btnList.length
   }
 
   // 退出登录

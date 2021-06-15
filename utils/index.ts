@@ -129,3 +129,9 @@ export async function base64ToFile (base64: string, fileName: string, type: stri
   const blob: Blob = await res.blob()
   return new File([blob], fileName, { type: type || 'image/png' })
 }
+
+// 是否还有离线上传的图片
+export const isOfflineUploadImages = (): boolean => {
+  const btnList = document.querySelectorAll<HTMLImageElement>('#previewContent img[data-time]')
+  return !!btnList.length
+}

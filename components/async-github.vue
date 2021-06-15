@@ -105,7 +105,7 @@ import {
 } from 'nuxt-property-decorator'
 import { isEmpty } from 'lodash'
 import { reposBranchesFnProps, reposContentsListProps } from '../types/index.d'
-
+import { isOfflineUploadImages } from '../utils/index'
 import {
   push, pull, users,
   usersRepos,
@@ -330,7 +330,7 @@ export default class HeaderIpfs extends Vue {
   }
 
   // push 操作
-  async handPushEvent (): Promise<void> {
+  async pushEvent (): Promise<void> {
     const loading = this.$notify({
       title: '提示',
       message: '正在推送...',
@@ -360,6 +360,26 @@ export default class HeaderIpfs extends Vue {
     } finally {
       this.githubUploadLoading = false
       loading.close()
+    }
+  }
+
+  // 处理 Push 事件
+  handPush (): void {
+    if (isOfflineUploadImages()) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '提示',
+        message: h('div', null as any, [
+          h('p', null as any, '文垱内有离线上传的图片！是否继续？')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.pushEvent()
+      })
+    } else {
+      this.pushEvent()
     }
   }
 
@@ -401,7 +421,7 @@ export default class HeaderIpfs extends Vue {
     (this as any).$refs[formName].validate((valid: boolean) => {
       if (valid) {
         if (this.asyncGithubFormMode === 'push') {
-          this.handPushEvent()
+          this.handPush()
         } else if (this.asyncGithubFormMode === 'pull') {
           this.handPullEvent()
         } else {
