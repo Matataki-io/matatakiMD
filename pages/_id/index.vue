@@ -93,6 +93,7 @@ export default class Edidtor extends Vue {
   encryption= '\n\n[read hold="SYMBOL amount"]\n\n隐藏内容\n\n暂仅在Matataki上使用\n\n> [📔使用说明](https://www.yuque.com/matataki/matataki/giw9u4)\n\n[else]\n\n预览内容\n\n[/read]\n'
   ipfsUploadLoading = false
   offlineUploadLoading = false
+  saveOfflineUploadImagesChecked = false
 
   get isUser () {
     return !isEmpty(this.usersData)
@@ -323,6 +324,11 @@ export default class Edidtor extends Vue {
         const ele = keys[i]
         const res = await (this as any).$localForage.getItem(ele)
         const key = res.id_str || ele // 用字符串 id
+
+        if (!this.saveOfflineUploadImagesChecked) {
+          delete res.images
+        }
+
         list.push({
           [key]: res
         })
@@ -338,6 +344,35 @@ export default class Edidtor extends Vue {
     } catch (e) {
       this.$message.error(`下载失败：${e.toString()}`)
     }
+  }
+
+  // 处理保存用户数据事件
+  handleSaveUserData () {
+    const h = this.$createElement
+    const self = this
+    this.$msgbox({
+      title: '提示',
+      message: h('div', null as any, [
+        h('p', null as any, '该操作将会下载用户所有数据！是否继续？'),
+        h('div', { style: { margin: '10px 0 0 0' } }, [
+          h('el-checkbox', {
+            domProps: {
+              value: self.saveOfflineUploadImagesChecked
+            },
+            on: {
+              input (value: boolean) {
+                self.saveOfflineUploadImagesChecked = value
+              }
+            }
+          }, '保存离线上传图片数据')
+        ])
+      ]),
+      showCancelButton: true,
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    }).then(() => {
+      this.downloadUserData()
+    })
   }
 
   // 预览方法
@@ -415,7 +450,7 @@ export default class Edidtor extends Vue {
     } else if (command === 'save-file-md') {
       this.downloadMd()
     } else if (command === 'save-user-data') {
-      this.downloadUserData()
+      this.handleSaveUserData()
     }
   }
 
