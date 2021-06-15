@@ -435,14 +435,30 @@ export default class Edidtor extends Vue {
   }
 
   // 确认预览框
-  confirmPreview (): void {
-    this.$confirm('該操作會在 Matataki 生成一篇草稿！是否繼續？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      this.previewFn()
-    }).catch(() => {})
+  handleConfirmPreview (): void {
+    if (this.isOfflineUploadImages()) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '提示',
+        message: h('div', null as any, [
+          h('p', null as any, '文垱内有离线上传的图片！是否继续？'),
+          h('p', null as any, '该操作会在 Matataki 生成一篇草稿！是否继续？')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.downloadMd()
+      })
+    } else {
+      this.$confirm('该操作会在 Matataki 生成一篇草稿！是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.previewFn()
+      }).catch(() => {})
+    }
   }
 
   // 用户下拉处理
@@ -464,7 +480,7 @@ export default class Edidtor extends Vue {
     } else if (command === 'async-matataki') {
       this.dialogPublishMatataki = true
     } else if (command === 'preview-matataki') {
-      this.confirmPreview()
+      this.handleConfirmPreview()
     } else if (command === 'posts-import') {
       this.dialogImportMatataki = true
     } else if (command === 'save-file-md') {
