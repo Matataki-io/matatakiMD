@@ -92,6 +92,7 @@ export default class Edidtor extends Vue {
   // 加密语法
   encryption= '\n\n[read hold="SYMBOL amount"]\n\n隐藏内容\n\n暂仅在Matataki上使用\n\n> [📔使用说明](https://www.yuque.com/matataki/matataki/giw9u4)\n\n[else]\n\n预览内容\n\n[/read]\n'
   ipfsUploadLoading = false
+  offlineUploadLoading = false
 
   get isUser () {
     return !isEmpty(this.usersData)
@@ -112,17 +113,15 @@ export default class Edidtor extends Vue {
 
   @Watch('$nuxt.isOffline')
   onNuxtOfflineChangeed (val: boolean) {
-    console.log('val', val)
     if (val) {
-      this.processOfflineUploadImage()
+      this.hideOfflineUploadImage()
     }
   }
 
   @Watch('$nuxt.isOnline')
   onNuxtOnlineChangeed (val: boolean) {
-    console.log('val', val)
     if (val) {
-      this.hideOfflineUploadImage()
+      this.processOfflineUploadImage()
     }
   }
 
@@ -456,6 +455,11 @@ export default class Edidtor extends Vue {
       return
     }
 
+    if (this.offlineUploadLoading) {
+      this.$message.info('上一个上传图片任务未完成')
+      return
+    }
+
     const res: Notes = await (this as any).$localForage.getItem(id)
     const images: NotesImages[] = res.images || ([] as NotesImages[])
     const imageData: NotesImages[] = images.filter((i: NotesImages) => Number(i.time) === Number(time))
@@ -478,12 +482,22 @@ export default class Edidtor extends Vue {
       return
     }
 
-    this.$message.info('Uploading...')
+    const loading = this.$notify({
+      title: '提示',
+      message: 'Uploading...',
+      duration: 0
+    })
+    this.offlineUploadLoading = true
     const url = await this.uploadFn(file)
+    this.offlineUploadLoading = false
+    loading.close()
+
     if (url) {
       this.$message.success('Upload success')
       const content = this.markdownData.replace(`${id}-${time}`, url)
       this.markdownData = content
+    } else {
+      this.$message.error('Upload fail!')
     }
   }
 
@@ -497,8 +511,8 @@ export default class Edidtor extends Vue {
 
   // 处理离线上传按钮
   processOfflineUploadImage () {
-    if (this.$nuxt.isOnline) {
-      console.log('在线不需要渲染离线上传按钮')
+    if (this.$nuxt.isOffline) {
+      console.log('离线不需要渲染离线上传按钮')
       return
     }
 
