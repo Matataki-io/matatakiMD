@@ -306,7 +306,7 @@ export default class Edidtor extends Vue {
   }
 
   // 处理发布到 IPFS 事件
-  handleUploadIpfs () : void {
+  handleUploadIpfs (): void {
     if (this.isOfflineUploadImages()) {
       const h = this.$createElement
       this.$msgbox({
@@ -322,6 +322,26 @@ export default class Edidtor extends Vue {
       })
     } else {
       this.ipfsUploadFn()
+    }
+  }
+
+  // 处理发布到 Matataki 事件
+  handleUploadMatataki (): void {
+    if (this.isOfflineUploadImages()) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '提示',
+        message: h('div', null as any, [
+          h('p', null as any, '文垱内有离线上传的图片！是否继续？')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.dialogPublishMatataki = true
+      })
+    } else {
+      this.dialogPublishMatataki = true
     }
   }
 
@@ -498,7 +518,7 @@ export default class Edidtor extends Vue {
     } else if (command === 'async-ipfs') {
       this.handleUploadIpfs()
     } else if (command === 'async-matataki') {
-      this.dialogPublishMatataki = true
+      this.handleUploadMatataki()
     } else if (command === 'preview-matataki') {
       this.handleConfirmPreview()
     } else if (command === 'posts-import') {
