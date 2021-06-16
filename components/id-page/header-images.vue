@@ -23,6 +23,7 @@
                   <el-image
                     style="width: 60px; height: 60px; flex: 0 0 60px;"
                     :src="itemImage.base64"
+                    fit="cover"
                   />
                   <div class="item-info">
                     <span>{{ itemImage.name }}</span>
