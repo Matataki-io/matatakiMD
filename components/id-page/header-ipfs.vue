@@ -57,9 +57,9 @@ export default class HeaderIpfs extends Vue {
   // 复制 hash
   copyHash (hash: string): void {
     this.$copyText(hash).then(() => {
-      this.$message.success('複製成功')
+      this.$message.success('复制成功')
     }, () => {
-      this.$message.error('複製失敗')
+      this.$message.error('复制失败')
     })
   }
 }

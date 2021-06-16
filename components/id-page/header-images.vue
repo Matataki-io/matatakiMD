@@ -19,13 +19,14 @@
           <div>
             <template v-if="item.images">
               <div v-for="(itemImage, idx) in item.images || []" :key="`${idx}-${itemImage.time}`" class="item">
-                <el-image
-                  style="width: 60px; height: 60px; flex: 0 0 60px;"
-                  :src="itemImage.base64"
-                  fit="cover"
-                />
-                <div class="item-info">
-                  <span>{{ itemImage.name }}</span>
+                <div class="item-image" @click="copyFn({ id: String(item.id_str || item.id), time: String(itemImage.time) })">
+                  <el-image
+                    style="width: 60px; height: 60px; flex: 0 0 60px;"
+                    :src="itemImage.base64"
+                  />
+                  <div class="item-info">
+                    <span>{{ itemImage.name }}</span>
+                  </div>
                 </div>
 
                 <div class="item-icon" @click="handleClear({ id: item.id_str || String(item.id), index: idx })">
@@ -69,7 +70,7 @@ export default class HeaderImages extends Vue {
   }
 
   // 清除所有图片
-  async clearAllImages () {
+  async clearAllImages (): Promise<void> {
     try {
       const keys = await (this as any).$localForage.keys()
       // console.log('keys', keys)
@@ -88,7 +89,7 @@ export default class HeaderImages extends Vue {
   }
 
   // 清除图片
-  async clearImages ({ id, index }: { id: string, index: number }) {
+  async clearImages ({ id, index }: { id: string, index: number }): Promise<void> {
     try {
       const res: Notes = await (this as any).$localForage.getItem(id)
       const note: Notes = cloneDeep(res)
@@ -102,7 +103,7 @@ export default class HeaderImages extends Vue {
   }
 
   // 处理清除全部事件
-  handleAllClear () {
+  handleAllClear (): void {
     this.$confirm('此操作将清除所有离线上传的文件，并且会影响到笔记内离线上传的图片, 是否继续?', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -113,7 +114,7 @@ export default class HeaderImages extends Vue {
   }
 
   // 处理清除事件
-  handleClear ({ id, index }: { id: string, index: number }) {
+  handleClear ({ id, index }: { id: string, index: number }): void {
     this.$confirm('此操作将清除离线上传的文件，并且会影响到笔记内离线上传的图片, 是否继续?', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -139,6 +140,23 @@ export default class HeaderImages extends Vue {
       this.notes = notesList.sort((a: any, b: any) => b.update_time - a.update_time)
     } catch (e) {
       console.log(e.toString())
+    }
+  }
+
+  copy (hash: string): void {
+    this.$copyText(hash).then(() => {
+      this.$message.success('复制成功')
+    }, () => {
+      this.$message.error('复制失败')
+    })
+  }
+
+  // 复制方法
+  copyFn ({ id, time }: { id: string, time: string}): void {
+    if (id === this.$route.params.id) {
+      this.copy(`${id}-${time}`)
+    } else {
+      this.$message.info('暂不支持使用其他笔记的离线图片')
     }
   }
 }
@@ -194,6 +212,11 @@ export default class HeaderImages extends Vue {
   align-items: center;
   margin: 4px 0;
   border-bottom: 1px solid #f1f1f1;
+}
+.item-image {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 .item-info {
   margin-left: 10px;
