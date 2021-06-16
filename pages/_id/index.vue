@@ -152,6 +152,7 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 获取笔记/笔记内容
   async getContent (): Promise<void> {
     try {
       const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
@@ -164,9 +165,10 @@ export default class Edidtor extends Vue {
     }
   }
 
-  asyncContent = debounce(async (val: string) => {
+  // 更新笔记数据
+  asyncContent = debounce(async (val: string): Promise<void> => {
     try {
-      console.log('val', val)
+      // console.log('val', val)
       const title = generateTitle('#previewContent h1')
       const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
       const data = assign(res, {
@@ -188,6 +190,7 @@ export default class Edidtor extends Vue {
     }
   }, 1000)
 
+  // 处理屏幕缩放事件
   handleResizeEditor (): void {
     try {
       const clientHeight = document.body.clientHeight || document.documentElement.clientHeight
@@ -210,6 +213,7 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 上传图片方法
   async uploadFn (file: File): Promise<string|false> {
     try {
       const res = await upload(file)
@@ -505,7 +509,7 @@ export default class Edidtor extends Vue {
   }
 
   // 用户下拉处理
-  handleCommand (command: string) {
+  handleCommand (command: string): void {
     if (command === 'user') {
       //
     } else if (command === 'signout') {
@@ -515,7 +519,7 @@ export default class Edidtor extends Vue {
   }
 
   // 更多下拉处理
-  handleCommandMore (command: string) {
+  handleCommandMore (command: string): void {
     if (command === 'async-github') {
       this.dialogAsyncGithub = !this.dialogAsyncGithub
     } else if (command === 'async-ipfs') {
@@ -534,7 +538,7 @@ export default class Edidtor extends Vue {
   }
 
   // 处理离线上传图片 用 base64 替换
-  async processOfflineImage () {
+  async processOfflineImage (): Promise<void> {
     const imgList = document.querySelectorAll<HTMLImageElement>('#previewContent img')
     const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
     const images: NotesImages[] = res.images || ([] as NotesImages[])
@@ -616,7 +620,7 @@ export default class Edidtor extends Vue {
   }
 
   // 隐藏离线上传按钮
-  hideOfflineUploadImage () {
+  hideOfflineUploadImage (): void {
     const btnList = document.querySelectorAll<HTMLImageElement>('#previewContent .upload-image-btn')
     btnList.forEach((el: HTMLImageElement) => {
       el.remove()
@@ -624,7 +628,7 @@ export default class Edidtor extends Vue {
   }
 
   // 处理离线上传按钮
-  processOfflineUploadImage () {
+  processOfflineUploadImage (): void {
     if (this.$nuxt.isOffline) {
       console.log('离线不需要渲染离线上传按钮')
       return
@@ -664,7 +668,7 @@ export default class Edidtor extends Vue {
   }
 
   // 退出登录
-  signOut () {
+  signOut (): void {
     removeCookie('access-token')
     removeCookie('users-github')
     removeCookie('users')
