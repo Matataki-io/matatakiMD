@@ -22,17 +22,19 @@
             :show-file-list="false"
             accept="image/jpeg, image/png"
             :on-success="handleUploadSuccess"
-            :before-upload="beforeUpload">
-              <img v-if="coverUrl" :src="coverUrl" class="cover" />
-              <i v-else class="el-icon-plus image-uploader-icon"></i>
+            :before-upload="beforeUpload"
+          >
+            <img v-if="coverUrl" :src="coverUrl" class="cover">
+            <i v-else class="el-icon-plus image-uploader-icon" />
           </el-upload>
-           <el-button
+          <el-button
             v-if="coverUrl"
             icon="el-icon-close"
             class="icon"
             circle
             size="mini"
-            @click="imageUrl = ''"></el-button>
+            @click="imageUrl = ''"
+          />
         </div>
       </el-form-item>
       <el-form-item label="标题" prop="title">
