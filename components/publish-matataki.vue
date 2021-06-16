@@ -10,6 +10,31 @@
       :model="publishMatatakiForm"
       :rules="publishMatatakiFormRules"
     >
+      <el-form-item label="封面">
+        <br>
+        <div class="image-container">
+          <el-upload
+            class="image-uploader"
+            :action="uploadImageApi"
+            :headers="{
+              'access-token': accessToken
+            }"
+            :show-file-list="false"
+            accept="image/jpeg, image/png"
+            :on-success="handleUploadSuccess"
+            :before-upload="beforeUpload">
+              <img v-if="coverUrl" :src="coverUrl" class="cover" />
+              <i v-else class="el-icon-plus image-uploader-icon"></i>
+          </el-upload>
+           <el-button
+            v-if="coverUrl"
+            icon="el-icon-close"
+            class="icon"
+            circle
+            size="mini"
+            @click="imageUrl = ''"></el-button>
+        </div>
+      </el-form-item>
       <el-form-item label="标题" prop="title">
         <el-input v-model="publishMatatakiForm.title" placeholder="请输入标题" />
       </el-form-item>
@@ -21,7 +46,7 @@
           placeholder="请输入摘要"
         />
       </el-form-item>
-      <div>
+      <div class="hcaptcha-box">
         <client-only>
           <vue-hcaptcha
             v-if="!doINeedHCaptcha"
@@ -35,7 +60,7 @@
           />
         </client-only>
       </div>
-      <el-form-item>
+      <el-form-item class="publish-btn">
         <el-button v-loading="mtkUploadLoading" :disabled="isCaptchaOK" size="small" type="primary" @click="submitPublishMatatakiForm('publishMatatakiForm')">
           发布
         </el-button>
@@ -55,9 +80,10 @@ import {
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
 import { hCaptchaDataProps, userProps } from '../types/index.d'
 import {
-  getDoINeedHCaptcha, postPublish
+  getDoINeedHCaptcha, postPublish, uploadImage
 } from '../api/index'
 import { generateShortContent, generateTitle } from '../utils/index'
+import { getCookie } from '~/utils/cookie'
 
 @Component({
   components: {
@@ -104,9 +130,30 @@ export default class HeaderIpfs extends Vue {
     error: ''
   }
 
-  doINeedHCaptcha = true
-  mtkUploadLoading = false
+  doINeedHCaptcha: boolean = true
+  mtkUploadLoading: boolean = false
 
+  imageUrl: string = '' // 封面
+
+  // get upload image api url
+  get uploadImageApi () {
+    if (process.client) {
+      return uploadImage
+    } else {
+      return ''
+    }
+  }
+
+  // get token
+  get accessToken () {
+    if (process.client) {
+      return getCookie('access-token')
+    } else {
+      return ''
+    }
+  }
+
+  // get hcaptcha key
   get hCaptchaSiteKey () {
     if (process.client) {
       return process.env.VUE_APP_HCAPTCHA_SITE_KEY
@@ -115,6 +162,7 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
+  // get is captcha is show
   get isCaptchaOK () {
     // 如果是白名单
     if (this.doINeedHCaptcha) { return false }
@@ -123,6 +171,15 @@ export default class HeaderIpfs extends Vue {
       return false
     } else {
       return true
+    }
+  }
+
+  // 获取封面图片
+  get coverUrl () {
+    if (this.imageUrl) {
+      return `${process.env.APP_SSIMG}${this.imageUrl}`
+    } else {
+      return ''
     }
   }
 
@@ -221,7 +278,8 @@ export default class HeaderIpfs extends Vue {
         shortContent: this.publishMatatakiForm.shortContent,
         platform: this.usersData.platform,
         author: this.usersData.username || this.usersData.nickname,
-        hCaptchaData: this.hCaptchaData
+        hCaptchaData: this.hCaptchaData,
+        cover: this.imageUrl
       })
       console.log('res', res)
       if (res.code === 0) {
@@ -240,13 +298,80 @@ export default class HeaderIpfs extends Vue {
       loading.close()
     }
   }
+
+  // 处理图片上传成功
+  handleUploadSuccess (res: any): void {
+    if (res.code === 0) {
+      this.$message.success('上传成功')
+      this.imageUrl = res.data.cover
+    } else {
+      this.$message.error('上传失败')
+    }
+  }
+
+  // 图片上传之前
+  beforeUpload (file: File): boolean {
+    const isType: boolean = file.type === 'image/jpeg' || file.type === 'image/png'
+    const maxSize: number = 8
+    const isLtMB: boolean = file.size / 1024 / 1024 < maxSize
+
+    if (!isType) {
+      this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
+    }
+    if (!isLtMB) {
+      this.$message.error(`上传头像图片大小不能超过 ${maxSize}MB!`)
+    }
+
+    const result: boolean = isType && isLtMB
+    if (result) {
+      this.$message.info('开始上传')
+    }
+    return result
+  }
 }
 </script>
 
 <style lang="less" scoped>
 .publish-matataki_form {
-  text-align: center;
   max-width: 80%;
   margin: 0 auto;
+}
+.publish-btn,
+.hcaptcha-box {
+  text-align: center;
+}
+</style>
+
+<style lang="less" scoped>
+.image-container {
+  display: flex;
+  align-items: center;
+  .icon {
+    margin-left: 10px;
+  }
+}
+.image-uploader /deep/ .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.image-uploader /deep/ .el-upload:hover {
+  border-color: #409EFF;
+}
+.image-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 200px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+}
+.cover {
+  width: 200px;
+  height: 100px;
+  display: block;
+  object-fit: cover;
 }
 </style>

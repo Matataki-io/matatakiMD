@@ -112,6 +112,7 @@ export interface PublishProps {
   platform: string
   author: string
   hCaptchaData: hCaptchaDataProps
+  cover: string
 }
 export interface PostsImportProps {
   url: string

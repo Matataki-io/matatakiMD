@@ -134,3 +134,7 @@ export const draftSave = async (data: DraftSaveProps) : Promise<HttpResponse> =>
 export const preview = async (data: PreviewProps) : Promise<HttpResponse> => {
   return await client.post('/api/preview', data)
 }
+/**
+ * MTK 上传封面图片
+ */
+export const uploadImage = `${process.env.APP_API_URL}/api/post/uploadImage`
