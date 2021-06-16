@@ -132,6 +132,6 @@ export async function base64ToFile (base64: string, fileName: string, type: stri
 
 // 是否还有离线上传的图片
 export const isOfflineUploadImages = (): boolean => {
-  const btnList = document.querySelectorAll<HTMLImageElement>('#previewContent img[data-time]')
-  return !!btnList.length
+  const list = document.querySelectorAll<HTMLImageElement>('#previewContent img[data-time]')
+  return !!list.length
 }
