@@ -31,6 +31,9 @@
               <i class="el-icon-close icon" />
             </div>
           </div>
+          <p v-if="!showClearAllBtn" class="text">
+            没有素材
+          </p>
         </div>
       </div>
     </div>
@@ -71,11 +74,7 @@ export default class HeaderMaterial extends Vue {
   }
 
   get ssimg (): string {
-    if (process.client) {
-      return (process.env.APP_SSIMG) as string
-    } else {
-      return ''
-    }
+    return (process.env.APP_SSIMG) as string
   }
 
   get showClearAllBtn (): boolean {
@@ -244,5 +243,8 @@ export default class HeaderMaterial extends Vue {
     color: #333;
     line-height: 22px;
   }
+}
+.text {
+  font-size: 14px;
 }
 </style>
