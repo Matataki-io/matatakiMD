@@ -5,14 +5,37 @@ const PORT = {
   production: 5068
 }
 
+const metaTitle = 'MatatakiMD - Markdown 编辑器'
+const metaDescription = '用开箱即用的 Markdown 编辑器书写 并发布到 IPFS、GitHub、Matataki 让你快速记录想法、随时发布到永存网络。'
+const metaKeywords = 'Collaborative, Markdown, Notes、GitHub、IPFS、Matataki、瞬MATATAKI、仙女座科技、小岛美奈子、岛娘'
+const metaImage = 'https://ssimg.frontenduse.top/article/2021/06/16/26ba884341efc989364f8ade91099f8f.png'
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'MatatakiMD',
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+
+      { hid: 'robots', name: 'robots', property: 'robots', content: 'index,follow' },
+      { hid: 'copyright', name: 'copyright', property: 'copyright', content: 'Copyright © 2018-2021 ANDOROMEDA TECH.ltd' },
+      { hid: 'description', name: 'description', content: metaDescription },
+      { hid: 'keywords', name: 'keywords', content: metaKeywords },
+      /* <!--  Meta for Twitter Card --> */
+      { hid: 'twitter:card', name: 'twitter:card', property: 'twitter:card', content: 'summary' },
+      { hid: 'twitter:site', name: 'twitter:site', property: 'twitter:site', content: metaTitle },
+      { hid: 'twitter:title', property: 'twitter:title', content: metaTitle },
+      { hid: 'twitter:image', name: 'twitter:image', property: 'twitter:image', content: metaImage },
+      { hid: 'twitter:description', name: 'description', property: 'twitter:description', content: metaDescription },
+      /* <!--  Meta for OpenGraph --> */
+      { hid: 'og:type', name: 'og:type', property: 'og:type', content: 'website' },
+      { hid: 'og:site_name', name: 'og:site_name', property: 'og:site_name', content: metaTitle },
+      { hid: 'og:title', property: 'og:title', content: metaTitle },
+      { hid: 'og:image', name: 'og:image', property: 'og:image', content: metaImage },
+      { hid: 'og:description', name: 'description', property: 'og:description', content: metaDescription },
+      { hid: 'og:type', name: 'og:type', property: 'og:type', content: 'article' }
+      /* end */
+
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
