@@ -57,7 +57,7 @@ import {
   Vue
 } from 'nuxt-property-decorator'
 import { cloneDeep } from 'lodash'
-
+import { allNotesKeys } from '../../utils/index'
 import { Notes } from '../../types'
 
 @Component({})
@@ -73,7 +73,7 @@ export default class HeaderImages extends Vue {
   // 清除所有图片
   async clearAllImages (): Promise<void> {
     try {
-      const keys = await (this as any).$localForage.keys()
+      const keys = await allNotesKeys(this)
       // console.log('keys', keys)
       for (let i = 0; i < keys.length; i++) {
         const ele = keys[i]
@@ -128,7 +128,7 @@ export default class HeaderImages extends Vue {
   // 获取所有笔记
   async getAllNotes ():Promise<void> {
     try {
-      const keys = await (this as any).$localForage.keys()
+      const keys = await allNotesKeys(this)
       // console.log('keys', keys)
       const list: Notes[] = []
       for (let i = 0; i < keys.length; i++) {

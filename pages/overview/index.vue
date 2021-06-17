@@ -804,6 +804,7 @@ import moment from 'moment'
 import { isEmpty, cloneDeep } from 'lodash'
 import { userStats } from '../../api/index'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
+import { allNotesKeys } from '../../utils/index'
 import { setOAuthRedirectUri } from '../../api/developer'
 import { Notes } from '../../types/index.d'
 
@@ -827,24 +828,24 @@ interface MarkdownItemProps extends Notes {
 export default class Home extends Vue {
   usersData: object = {}
   markdownItem: MarkdownItemProps[] = []
-  toggleUserModal = false
-  toggleHelpModal = false
+  toggleUserModal: boolean = false
+  toggleHelpModal: boolean = false
 
-  get isUser () {
+  get isUser (): boolean {
     return !isEmpty(this.usersData)
   }
 
-  get releaseNotes () {
+  get releaseNotes (): string {
     if (process.client) {
-      return process.env.APP_MATATAKI_RELEASE_NOTES
+      return (process.env.APP_MATATAKI_RELEASE_NOTES) as string
     } else {
       return ''
     }
   }
 
-  get tutorial () {
+  get tutorial (): string {
     if (process.client) {
-      return process.env.APP_MATATAKI_TUTORIAL
+      return (process.env.APP_MATATAKI_TUTORIAL) as string
     } else {
       return ''
     }
@@ -880,21 +881,21 @@ export default class Home extends Vue {
   }
 
   // 隐藏所有删除笔记按钮
-  hideRemoteNotes () {
+  hideRemoteNotes (): void {
     this.markdownItem.forEach((i: MarkdownItemProps) => {
       i.more = false
     })
   }
 
   // 删除笔记
-  remoteNotes (e: any, i: number, value: boolean) {
+  remoteNotes (e: any, i: number, value: boolean): void {
     e.stopPropagation()
     this.hideRemoteNotes()
     this.markdownItem[i].more = value
   }
 
   // 用户跳转
-  async jumpToMttkOAuth () {
+  async jumpToMttkOAuth (): Promise<void> {
     try {
       console.log('from', location)
       await setOAuthRedirectUri(location.pathname)
@@ -914,14 +915,14 @@ export default class Home extends Vue {
   }
 
   // time format
-  time (val: number) {
+  time (val: number): string {
     return moment(val).fromNow()
   }
 
   // 获取全部
   async getAll () :Promise<void> {
     try {
-      const keys = await (this as any).$localForage.keys()
+      const keys = await allNotesKeys(this)
       // console.log('keys', keys)
       const list = []
       for (let i = 0; i < keys.length; i++) {
@@ -966,7 +967,7 @@ export default class Home extends Vue {
   }
 
   // 删除笔记
-  async removeNotes (key: string) {
+  async removeNotes (key: string): Promise<void> {
     try {
       await (this as any).$localForage.removeItem(key)
       this.getAll()
@@ -976,7 +977,7 @@ export default class Home extends Vue {
   }
 
   // 切换收藏
-  async toggleBookmark ({ id, idx, value }: { id: string, idx: number, value: boolean }) {
+  async toggleBookmark ({ id, idx, value }: { id: string, idx: number, value: boolean }): Promise<void> {
     try {
       console.log('id', id, idx)
       const res = await (this as any).$localForage.getItem(id)
@@ -990,7 +991,7 @@ export default class Home extends Vue {
   }
 
   // 退出登录
-  signOut () {
+  signOut (): void {
     removeCookie('access-token')
     removeCookie('users-github')
     removeCookie('users')

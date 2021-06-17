@@ -135,3 +135,10 @@ export const isOfflineUploadImages = (): boolean => {
   const list = document.querySelectorAll<HTMLImageElement>('#previewContent img[data-time]')
   return !!list.length
 }
+
+// 所有笔记的 keys
+export const allNotesKeys = async (_this: any): Promise<string[]> => {
+  const key: string[] = await (_this as any).$localForage.keys()
+  const whilteList: string[] = ['images']
+  return key.filter(i => !whilteList.includes(i))
+}

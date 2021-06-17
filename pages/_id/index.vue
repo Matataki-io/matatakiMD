@@ -58,9 +58,9 @@ import {
 } from '../../api/index'
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
+import { allNotesKeys, generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, base64ToFile, isOfflineUploadImages } from '../../utils/index'
 import fileDownload from '../../utils/markdown-download'
 import { Notes, FleekIpfs, userProps, NotesImages, ImagesProps } from '../../types/index.d'
-import { generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, base64ToFile, isOfflineUploadImages } from '../../utils/index'
 
 let mavonEditor: any = {
   mavonEditor: null
@@ -417,7 +417,7 @@ export default class Edidtor extends Vue {
   // 保存用户数据
   async downloadUserData (): Promise<void> {
     try {
-      const keys = await (this as any).$localForage.keys()
+      const keys = await allNotesKeys(this)
       const list = []
       for (let i = 0; i < keys.length; i++) {
         const ele = keys[i]
