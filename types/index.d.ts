@@ -127,3 +127,9 @@ export interface DraftSaveProps {
 export interface PreviewProps {
   id: number
 }
+
+export interface ImagesProps {
+  upload: {
+    url: string
+  }[]
+}

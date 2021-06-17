@@ -5,7 +5,8 @@
         <i class="fa fa-file-text" /><span class="hidden-xs"> MatatakiMD</span>
       </router-link>
       <div class="header-right">
-        <UploadImagesBtn @uploadAll="handleUploadOfflineImages" />
+        <HeaderUploadImagesBtn @uploadAll="handleUploadOfflineImages" />
+        <HeaderMaterial />
         <HeaderImages />
         <HeaderIpfs :ipfs-list="ipfsList" />
         <HeaderMore :is-user="isUser" @handleCommandMore="handleCommandMore" @importMarkdown="val => markdownData = val" />
@@ -46,7 +47,8 @@ import HeaderIpfs from '@/components/id-page/header-ipfs.vue'
 import HeaderMore from '@/components/id-page/header-more.vue'
 import HeaderUser from '@/components/id-page/header-user.vue'
 import HeaderImages from '@/components/id-page/header-images.vue'
-import UploadImagesBtn from '@/components/id-page/header-upload-images-btn.vue'
+import HeaderUploadImagesBtn from '@/components/id-page/header-upload-images-btn.vue'
+import HeaderMaterial from '@/components/id-page/header-material.vue'
 import ImportPosts from '@/components/import-posts.vue'
 import PublishMatataki from '@/components/publish-matataki.vue'
 import AsyncGithub from '@/components/async-github.vue'
@@ -57,7 +59,7 @@ import {
 import '@matataki/editor/dist/css/index.css'
 import { getCookie, setCookie, removeCookie } from '../../utils/cookie'
 import fileDownload from '../../utils/markdown-download'
-import { Notes, FleekIpfs, userProps, NotesImages } from '../../types/index.d'
+import { Notes, FleekIpfs, userProps, NotesImages, ImagesProps } from '../../types/index.d'
 import { generateTitle, ipfsHtmlTemp, generateShortContent, fileToBase64, base64ToFile, isOfflineUploadImages } from '../../utils/index'
 
 let mavonEditor: any = {
@@ -75,7 +77,8 @@ if (process.client) {
     HeaderMore,
     HeaderUser,
     HeaderImages,
-    UploadImagesBtn,
+    HeaderUploadImagesBtn,
+    HeaderMaterial,
     ImportPosts,
     PublishMatataki,
     AsyncGithub
@@ -213,11 +216,40 @@ export default class Edidtor extends Vue {
     }
   }
 
+  // 保存用户上传图片地址
+  async saveUploadImages (url: string): Promise<void> {
+    try {
+      const key = 'images'
+      const keyUpload = 'upload'
+      // images: { upload: { url: string }[] }
+      const res: ImagesProps = await (this as any).$localForage.getItem(key)
+      let data = cloneDeep<ImagesProps>(res)
+
+      if (!isEmpty(res) && !isEmpty(res[keyUpload])) {
+        data[keyUpload].push({ url })
+      } else {
+        data = {
+          [keyUpload]: [
+            {
+              url
+            }
+          ]
+        }
+      }
+
+      await (this as any).$localForage.setItem(key, data)
+    } catch (e) {
+      console.log(e.toString())
+    }
+  }
+
   // 上传图片方法
   async uploadFn (file: File): Promise<string|false> {
     try {
       const res = await upload(file)
       if (res.code === 0) {
+        // no need await
+        this.saveUploadImages(res.data)
         return `${process.env.APP_SSIMG}${res.data}`
       } else {
         console.log(res.message)
