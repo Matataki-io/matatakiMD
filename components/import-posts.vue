@@ -2,6 +2,7 @@
   <el-dialog
     title="导入文章"
     :visible.sync="dialogImportMatataki"
+    :close-on-click-modal="false"
     width="600px"
   >
     <div>

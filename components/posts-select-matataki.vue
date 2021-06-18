@@ -5,6 +5,7 @@
       label="title"
       :filterable="false"
       :options="selectList"
+      placeholder="请选择"
       @open="onOpen"
       @close="onClose"
       @search="query => search = query"
@@ -43,7 +44,7 @@ export default class PostsSelectMatataki extends Vue {
   readonly usersData!: userProps
 
   // select value
-  value: PostsTimeRankingDataListProps = {} as PostsTimeRankingDataListProps
+  value: PostsTimeRankingDataListProps = { } as PostsTimeRankingDataListProps
 
   // posts data
   postsData: PostsTimeRankingDataProps = {
@@ -152,5 +153,9 @@ export default class PostsSelectMatataki extends Vue {
 .select /deep/ .vs__dropdown-toggle{
   border: 1px solid #DCDFE6;
   padding: 6px 0 10px;
+}
+.select /deep/ .vs__search,
+.select /deep/ .vs__search:focus {
+  color: #606266;
 }
 </style>

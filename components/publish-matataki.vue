@@ -2,6 +2,7 @@
   <el-dialog
     title="同步到 Matataki"
     :visible.sync="dialogVisible"
+    :close-on-click-modal="false"
     width="600px"
   >
     <div class="async-dialog">
@@ -184,7 +185,7 @@ export default class HeaderIpfs extends Vue {
   pushLoading: boolean = false
 
   // push radio
-  pushRadio: string = 'update' // create update
+  pushRadio: string = 'create' // create update
 
   // pull form
   pullForm: {
@@ -207,7 +208,7 @@ export default class HeaderIpfs extends Vue {
   pullLoading: boolean = false
 
   // form 模式
-  asyncFormMode: string = 'push' // push pull
+  asyncFormMode: string = '' // push pull
 
   // hcaptcha data
   hCaptchaData: hCaptchaDataProps = {
@@ -482,7 +483,7 @@ export default class HeaderIpfs extends Vue {
   pushSelectChanged (val: PostsTimeRankingDataListProps): void {
     if (val) {
       this.pushForm.article = val.id
-      if (!this.imageUrl) {
+      if (val.cover) {
         this.imageUrl = val.cover
       }
     } else {

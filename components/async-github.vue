@@ -1,6 +1,7 @@
 <template>
   <el-dialog
     title="同步到 GitHub"
+    :close-on-click-modal="false"
     :visible.sync="dialogAsyncGithub"
     width="600px"
     custom-class="async-giithub"
