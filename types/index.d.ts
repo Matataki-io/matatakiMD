@@ -139,6 +139,7 @@ export interface PostsTimeRankingDataListProps {
   id: number
   title: string
   hash: string
+  cover: string
 }
 export interface PostsTimeRankingDataProps {
   count: number

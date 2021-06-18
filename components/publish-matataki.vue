@@ -31,9 +31,8 @@
           :rules="pushFormRules"
         >
           <el-form-item v-if="pushRadio === 'update'" label="文章" prop="article">
-            <el-select v-model="pushForm.article" v-loading="pushSelectLoading" style="width: 100%" placeholder="请选择文章">
-              <el-option v-for="(item, idx) of postsData.list" :key="idx" :value="item.id" :label="`${item.title}`" />
-            </el-select>
+            <br>
+            <PostsSelectMatataki :users-data="usersData" @changedValue="pushSelectChanged" />
           </el-form-item>
           <el-form-item label="封面">
             <br>
@@ -103,9 +102,8 @@
         :rules="pullFormRules"
       >
         <el-form-item label="文章" prop="article">
-          <el-select v-model="pullForm.article" v-loading="pullSelectLoading" style="width: 100%" placeholder="请选择文章">
-            <el-option v-for="(item, idx) of postsData.list" :key="idx" :value="item.id" :label="`${item.title}`" />
-          </el-select>
+          <br>
+          <PostsSelectMatataki :users-data="usersData" @changedValue="pullSelectChanged" />
         </el-form-item>
         <el-form-item class="publish-btn">
           <el-button v-loading="pullLoading" :disabled="!pullForm.article" size="small" type="primary" @click="submitForm('pullForm')">
@@ -126,17 +124,19 @@ import {
   Watch
 } from 'nuxt-property-decorator'
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
-import { hCaptchaDataProps, userProps, PostsTimeRankingDataProps } from '../types/index.d'
+import { hCaptchaDataProps, userProps, PostsTimeRankingDataListProps } from '../types/index.d'
 import {
   getDoINeedHCaptcha, postPublish, uploadImage,
-  getPostsTimeRanking, getPostIpfs, postEdit
+  getPostIpfs, postEdit
 } from '../api/index'
 import { generateShortContent, generateTitle } from '../utils/index'
+import PostsSelectMatataki from './posts-select-matataki.vue'
 import { getCookie } from '~/utils/cookie'
 
 @Component({
   components: {
-    VueHcaptcha
+    VueHcaptcha,
+    PostsSelectMatataki
   }
 })
 export default class HeaderIpfs extends Vue {
@@ -156,7 +156,11 @@ export default class HeaderIpfs extends Vue {
   dialogVisible!: boolean
 
   // publish form
-  pushForm = {
+  pushForm: {
+    article: string|number,
+    title: string,
+    shortContent: string
+  } = {
     article: '',
     title: '',
     shortContent: ''
@@ -180,11 +184,15 @@ export default class HeaderIpfs extends Vue {
   pushLoading: boolean = false
 
   // push radio
-  pushRadio: string = 'create' // create update
+  pushRadio: string = 'update' // create update
 
   // pull form
-  pullForm = {
-    article: ''
+  pullForm: {
+    article: string|number
+    hash: string
+  } = {
+    article: '',
+    hash: ''
   }
 
   // pull form rules
@@ -198,14 +206,8 @@ export default class HeaderIpfs extends Vue {
   pullSelectLoading: boolean = false
   pullLoading: boolean = false
 
-  // posts data
-  postsData: PostsTimeRankingDataProps = {
-    count: 0,
-    list: []
-  }
-
   // form 模式
-  asyncFormMode: string = '' // push pull
+  asyncFormMode: string = 'push' // push pull
 
   // hcaptcha data
   hCaptchaData: hCaptchaDataProps = {
@@ -291,32 +293,9 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  // 获取 MTK 文章列表
-  async postsTimeRanking (): Promise<void> {
-    this.pullSelectLoading = true
-
-    try {
-      const res = await getPostsTimeRanking({
-        author: this.usersData.id,
-        page: 1,
-        pagesize: 20
-      })
-      if (res.code === 0) {
-        this.postsData = (res.data) as PostsTimeRankingDataProps
-      } else {
-        throw new Error(res.message)
-      }
-    } catch (e) {
-      console.log(e.toString())
-    } finally {
-      this.pullSelectLoading = false
-    }
-  }
-
   // 切换模式
   toggleMode (mode: string): void {
     this.asyncFormMode = mode
-    this.postsTimeRanking()
   }
 
   // 获取白名单状态
@@ -367,10 +346,7 @@ export default class HeaderIpfs extends Vue {
             this.postUpdateFn()
           }
         } else if (this.asyncFormMode === 'pull') {
-          const post = this.postsData.list.find(i => String(i.id) === String(this.pullForm.article))
-          if (post) {
-            this.postIpfsFn(post.hash)
-          }
+          this.postIpfsFn(this.pullForm.hash)
         }
       } else {
         console.log('error submit!!')
@@ -488,6 +464,20 @@ export default class HeaderIpfs extends Vue {
     } finally {
       this.pushLoading = false
       loading.close()
+    }
+  }
+
+  // pull select changed
+  pullSelectChanged (val: PostsTimeRankingDataListProps): void {
+    this.pullForm.article = val.id
+    this.pullForm.hash = val.hash
+  }
+
+  // push select chnged
+  pushSelectChanged (val: PostsTimeRankingDataListProps): void {
+    this.pushForm.article = val.id
+    if (!this.imageUrl) {
+      this.imageUrl = val.cover
     }
   }
 
