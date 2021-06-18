@@ -114,6 +114,9 @@ export interface PublishProps {
   hCaptchaData: hCaptchaDataProps
   cover: string
 }
+export interface EditProps extends PublishProps {
+  signId: number
+}
 export interface PostsImportProps {
   url: string
 }

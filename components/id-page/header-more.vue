@@ -15,7 +15,7 @@
           推送到 IPFS
         </el-dropdown-item>
         <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="async-matataki">
-          推送到 Matataki
+          同步到 Matataki
         </el-dropdown-item>
         <el-dropdown-item v-if="isUser" icon="el-icon-upload" command="preview-matataki">
           预览 (Matataki 功能)

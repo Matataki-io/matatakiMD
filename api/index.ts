@@ -1,7 +1,7 @@
 import {
   HttpResponse,
   IpfsUploadProps,
-  PublishProps, PushProps, PullProps,
+  PublishProps, PushProps, PullProps, EditProps,
   UsersReposProps, ReposBranchesProps, ReposContentsListProps,
   PostsImportProps, DraftSaveProps, PreviewProps, PostsTimeRankingProps
 } from '../types/index.d'
@@ -98,6 +98,15 @@ export const userStats = async () : Promise<HttpResponse> => {
  */
 export const postPublish = async (data: PublishProps) : Promise<HttpResponse> => {
   return await client.post('/api/post/publish', data)
+}
+
+/**
+ * MTK 编辑文章
+ * @param data
+ * @returns
+ */
+export const postEdit = async (data: EditProps) : Promise<HttpResponse> => {
+  return await client.post('/api/post/edit', data)
 }
 
 /**

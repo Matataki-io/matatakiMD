@@ -14,71 +14,87 @@
         </el-button>
         <a class="more" href="https://matataki.io/" target="_blank">了解更多</a>
       </div>
-      <el-form
-        v-if="asyncFormMode === 'push'"
-        ref="pushForm"
-        class="dialog_form"
-        :model="pushForm"
-        :rules="pushFormRules"
-      >
-        <el-form-item label="封面">
-          <br>
-          <div class="image-container">
-            <el-upload
-              class="image-uploader"
-              :action="uploadImageApi"
-              :headers="{
-                'access-token': accessToken
-              }"
-              :show-file-list="false"
-              accept="image/jpeg, image/png"
-              :on-success="handleUploadSuccess"
-              :before-upload="beforeUpload"
-            >
-              <img v-if="coverUrl" :src="coverUrl" class="cover">
-              <i v-else class="el-icon-plus image-uploader-icon" />
-            </el-upload>
-            <el-button
-              v-if="coverUrl"
-              icon="el-icon-close"
-              class="icon"
-              circle
-              size="mini"
-              @click="imageUrl = ''"
+      <div v-if="asyncFormMode === 'push'">
+        <el-radio-group v-model="pushRadio" class="push-raido">
+          <el-radio label="create">
+            创建文章
+          </el-radio>
+          <el-radio label="update">
+            更新文章
+          </el-radio>
+        </el-radio-group>
+        <el-form
+
+          ref="pushForm"
+          class="dialog_form"
+          :model="pushForm"
+          :rules="pushFormRules"
+        >
+          <el-form-item v-if="pushRadio === 'update'" label="文章" prop="article">
+            <el-select v-model="pushForm.article" v-loading="pushSelectLoading" style="width: 100%" placeholder="请选择文章">
+              <el-option v-for="(item, idx) of postsData.list" :key="idx" :value="item.id" :label="`${item.title}`" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="封面">
+            <br>
+            <div class="image-container">
+              <el-upload
+                class="image-uploader"
+                :action="uploadImageApi"
+                :headers="{
+                  'access-token': accessToken
+                }"
+                :show-file-list="false"
+                accept="image/jpeg, image/png"
+                :on-success="handleUploadSuccess"
+                :before-upload="beforeUpload"
+              >
+                <img v-if="coverUrl" :src="coverUrl" class="cover">
+                <i v-else class="el-icon-plus image-uploader-icon" />
+              </el-upload>
+              <el-button
+                v-if="coverUrl"
+                icon="el-icon-close"
+                class="icon"
+                circle
+                size="mini"
+                @click="imageUrl = ''"
+              />
+            </div>
+          </el-form-item>
+          <el-form-item label="标题" prop="title">
+            <el-input v-model="pushForm.title" placeholder="请输入标题" />
+          </el-form-item>
+          <el-form-item label="摘要" prop="shortContent">
+            <el-input
+              v-model="pushForm.shortContent"
+              type="textarea"
+              :rows="6"
+              placeholder="请输入摘要"
             />
+          </el-form-item>
+          <div class="hcaptcha-box">
+            <client-only>
+              <vue-hcaptcha
+                v-if="!doINeedHCaptcha"
+                ref="hcaptchaRef"
+                :sitekey="hCaptchaSiteKey"
+                language="zh"
+                @verify="onCaptchaVerify"
+                @expired="onExpire"
+                @error="onError"
+                @reset="onCaptchaReset"
+              />
+            </client-only>
           </div>
-        </el-form-item>
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="pushForm.title" placeholder="请输入标题" />
-        </el-form-item>
-        <el-form-item label="摘要" prop="shortContent">
-          <el-input
-            v-model="pushForm.shortContent"
-            type="textarea"
-            :rows="6"
-            placeholder="请输入摘要"
-          />
-        </el-form-item>
-        <div class="hcaptcha-box">
-          <client-only>
-            <vue-hcaptcha
-              v-if="!doINeedHCaptcha"
-              ref="hcaptchaRef"
-              :sitekey="hCaptchaSiteKey"
-              language="zh"
-              @verify="onCaptchaVerify"
-              @expired="onExpire"
-              @error="onError"
-              @reset="onCaptchaReset"
-            />
-          </client-only>
-        </div>
-        <el-form-item class="publish-btn">
-          <el-button v-loading="mtkUploadLoading" :disabled="isCaptchaOK" size="small" type="primary" @click="submitForm('pushForm')">
-            发布
-          </el-button>
-        </el-form-item>
-      </el-form>
+          <el-form-item class="publish-btn">
+            <el-button v-loading="pushLoading" :disabled="isCaptchaOK" size="small" type="primary" @click="submitForm('pushForm')">
+              {{ pushRadio === 'create' ? '发布' : pushRadio === 'update' ? '更新' : '' }}
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
       <el-form
         v-else-if="asyncFormMode === 'pull'"
         ref="pullForm"
@@ -86,7 +102,7 @@
         :model="pullForm"
         :rules="pullFormRules"
       >
-        <el-form-item label="创作" prop="article">
+        <el-form-item label="文章" prop="article">
           <el-select v-model="pullForm.article" v-loading="pullSelectLoading" style="width: 100%" placeholder="请选择文章">
             <el-option v-for="(item, idx) of postsData.list" :key="idx" :value="item.id" :label="`${item.title}`" />
           </el-select>
@@ -113,7 +129,7 @@ import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
 import { hCaptchaDataProps, userProps, PostsTimeRankingDataProps } from '../types/index.d'
 import {
   getDoINeedHCaptcha, postPublish, uploadImage,
-  getPostsTimeRanking, getPostIpfs
+  getPostsTimeRanking, getPostIpfs, postEdit
 } from '../api/index'
 import { generateShortContent, generateTitle } from '../utils/index'
 import { getCookie } from '~/utils/cookie'
@@ -141,12 +157,16 @@ export default class HeaderIpfs extends Vue {
 
   // publish form
   pushForm = {
+    article: '',
     title: '',
     shortContent: ''
   }
 
   // publish form rules
   pushFormRules = {
+    article: [
+      { required: true, message: '请选择文章', trigger: 'change' }
+    ],
     title: [
       { required: true, message: '请输入标题', trigger: 'blur' }
     ],
@@ -154,6 +174,13 @@ export default class HeaderIpfs extends Vue {
       { required: true, message: '请输入摘要', trigger: 'blur' }
     ]
   }
+
+  // push loading
+  pushSelectLoading: boolean = false
+  pushLoading: boolean = false
+
+  // push radio
+  pushRadio: string = 'create' // create update
 
   // pull form
   pullForm = {
@@ -189,7 +216,6 @@ export default class HeaderIpfs extends Vue {
   }
 
   doINeedHCaptcha: boolean = true
-  mtkUploadLoading: boolean = false
 
   imageUrl: string = '' // 封面
 
@@ -335,7 +361,11 @@ export default class HeaderIpfs extends Vue {
     (this as any).$refs[formName].validate((valid: boolean) => {
       if (valid) {
         if (this.asyncFormMode === 'push') {
-          this.postPublishFn()
+          if (this.pushRadio === 'create') {
+            this.postPublishFn()
+          } else if (this.pushRadio === 'update') {
+            this.postUpdateFn()
+          }
         } else if (this.asyncFormMode === 'pull') {
           const post = this.postsData.list.find(i => String(i.id) === String(this.pullForm.article))
           if (post) {
@@ -368,8 +398,7 @@ export default class HeaderIpfs extends Vue {
       const res = await getPostIpfs(hash)
       if (res.code === 0) {
         this.$message.success('拉取成功')
-        // TODO: 处理标题
-        const content = this.processContent({
+        const content: string = this.processContent({
           title: res.data.title,
           content: res.data.content
         })
@@ -387,11 +416,6 @@ export default class HeaderIpfs extends Vue {
 
   // 发布到 Matataki
   async postPublishFn (): Promise<void> {
-    if (!this.pushForm.title || !this.pushForm.shortContent) {
-      this.$message.warning('标题和摘要不能为空！')
-      return
-    }
-
     const loading = this.$notify({
       title: '提示',
       message: '正在发布...',
@@ -399,12 +423,12 @@ export default class HeaderIpfs extends Vue {
     })
 
     try {
-      this.mtkUploadLoading = true
+      this.pushLoading = true
 
       const res = await postPublish({
-        title: this.pushForm.title,
-        content: this.markdownData,
-        shortContent: this.pushForm.shortContent,
+        title: this.pushForm.title.trim(),
+        content: this.markdownData.trim(),
+        shortContent: this.pushForm.shortContent.trim(),
         platform: this.usersData.platform,
         author: this.usersData.username || this.usersData.nickname,
         hCaptchaData: this.hCaptchaData,
@@ -423,7 +447,46 @@ export default class HeaderIpfs extends Vue {
     } catch (e) {
       this.$message.error(e.toString())
     } finally {
-      this.mtkUploadLoading = false
+      this.pushLoading = false
+      loading.close()
+    }
+  }
+
+  // 更新到 Matataki
+  async postUpdateFn (): Promise<void> {
+    const loading = this.$notify({
+      title: '提示',
+      message: '正在更新...',
+      duration: 0
+    })
+
+    try {
+      this.pushLoading = true
+
+      const res = await postEdit({
+        signId: Number(this.pushForm.article),
+        title: this.pushForm.title.trim(),
+        content: this.markdownData.trim(),
+        shortContent: this.pushForm.shortContent.trim(),
+        platform: this.usersData.platform,
+        author: this.usersData.username || this.usersData.nickname,
+        hCaptchaData: this.hCaptchaData,
+        cover: this.imageUrl
+      })
+      console.log('res', res)
+      if (res.code === 0) {
+        this.$notify({
+          title: '提示',
+          message: `View:${process.env.APP_MATATAKI_URL}/p/${res.data}`
+        })
+        this.dialogVisible = false
+      } else {
+        throw new Error(res.message)
+      }
+    } catch (e) {
+      this.$message.error(e.toString())
+    } finally {
+      this.pushLoading = false
       loading.close()
     }
   }
@@ -474,7 +537,9 @@ export default class HeaderIpfs extends Vue {
   font-size: 14px;
   text-decoration: none;
 }
-
+.push-raido {
+  margin: 20px 0 0 0;
+}
 .publish-btn,
 .hcaptcha-box {
   text-align: center;
