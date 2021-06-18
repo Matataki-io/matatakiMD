@@ -469,15 +469,25 @@ export default class HeaderIpfs extends Vue {
 
   // pull select changed
   pullSelectChanged (val: PostsTimeRankingDataListProps): void {
-    this.pullForm.article = val.id
-    this.pullForm.hash = val.hash
+    if (val) {
+      this.pullForm.article = val.id
+      this.pullForm.hash = val.hash
+    } else {
+      this.pullForm.article = ''
+      this.pullForm.hash = ''
+    }
   }
 
   // push select chnged
   pushSelectChanged (val: PostsTimeRankingDataListProps): void {
-    this.pushForm.article = val.id
-    if (!this.imageUrl) {
-      this.imageUrl = val.cover
+    if (val) {
+      this.pushForm.article = val.id
+      if (!this.imageUrl) {
+        this.imageUrl = val.cover
+      }
+    } else {
+      this.pushForm.article = ''
+      this.imageUrl = ''
     }
   }
 

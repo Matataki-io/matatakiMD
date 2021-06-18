@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="select">
     <v-select
       v-model="value"
       label="title"
@@ -148,5 +148,9 @@ export default class PostsSelectMatataki extends Vue {
 .loader {
   text-align: center;
   color: #bbbbbb;
+}
+.select /deep/ .vs__dropdown-toggle{
+  border: 1px solid #DCDFE6;
+  padding: 6px 0 10px;
 }
 </style>
