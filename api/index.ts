@@ -3,7 +3,7 @@ import {
   IpfsUploadProps,
   PublishProps, PushProps, PullProps,
   UsersReposProps, ReposBranchesProps, ReposContentsListProps,
-  PostsImportProps, DraftSaveProps, PreviewProps
+  PostsImportProps, DraftSaveProps, PreviewProps, PostsTimeRankingProps
 } from '../types/index.d'
 import client from './client'
 
@@ -138,3 +138,19 @@ export const preview = async (data: PreviewProps) : Promise<HttpResponse> => {
  * MTK 上传封面图片
  */
 export const uploadImage = `${process.env.APP_API_URL}/api/post/uploadImage`
+
+/**
+ * MTK 获取文章列表
+ * @returns
+ */
+export const getPostsTimeRanking = async (params: PostsTimeRankingProps) : Promise<HttpResponse> => {
+  return await client.get('/api/posts/timeRanking', { params, cache: true })
+}
+/**
+ * MTK 获取文章信息
+ * @param hash string ipfs hash
+ * @returns
+ */
+export const getPostIpfs = async (hash: string) : Promise<HttpResponse> => {
+  return await client.get(`/api/post/ipfs/${hash}`, { cache: true })
+}

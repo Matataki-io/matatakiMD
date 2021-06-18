@@ -127,9 +127,24 @@ export interface DraftSaveProps {
 export interface PreviewProps {
   id: number
 }
+export interface PostsTimeRankingProps {
+  author: number
+  page: number
+  pagesize: number
+}
+export interface PostsTimeRankingDataListProps {
+  id: number
+  title: string
+  hash: string
+}
+export interface PostsTimeRankingDataProps {
+  count: number
+  list: PostsTimeRankingDataListProps[]
+}
 
+export interface ImagesUploadProps {
+  url: string
+}
 export interface ImagesProps {
-  upload: {
-    url: string
-  }[]
+  upload: ImagesUploadProps[]
 }

@@ -15,7 +15,7 @@
     </div>
 
     <AsyncGithub :visible.sync="dialogAsyncGithub" :markdown-data="markdownData" @pull="val => markdownData = val" />
-    <PublishMatataki :visible.sync="dialogPublishMatataki" :markdown-data="markdownData" :users-data="usersData" />
+    <PublishMatataki :visible.sync="dialogPublishMatataki" :markdown-data="markdownData" :users-data="usersData" @pull="val => markdownData = val" />
     <ImportPosts :visible.sync="dialogImportMatataki" @import="val => markdownData = val" />
 
     <client-only>
