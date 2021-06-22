@@ -105,7 +105,7 @@ import {
   Watch
 } from 'nuxt-property-decorator'
 import { isEmpty } from 'lodash'
-import { reposBranchesFnProps, reposContentsListProps } from '../types/index.d'
+import { reposBranchesFnProps, reposContentsListProps, Notes, NoteGithubPullProps, NoteGithubPushProps, NoteGithubProps } from '../types/index.d'
 import { isOfflineUploadImages } from '../utils/index'
 import {
   push, pull, users,
@@ -352,6 +352,8 @@ export default class HeaderIpfs extends Vue {
         commit: this.asyncGithubFormPush.commit
       })
       if (res.code === 0) {
+        // 不需要同步
+        this.writePushHistory()
         this.$message.success('推送成功')
       } else {
         throw new Error(res.message)
@@ -405,6 +407,8 @@ export default class HeaderIpfs extends Vue {
       })
       if (res.code === 0) {
         this.$message.success('拉取成功')
+        // 不需要同步
+        this.writePullHistory()
         this.$emit('pull', res.data.content)
       } else {
         throw new Error(res.message)
@@ -415,6 +419,64 @@ export default class HeaderIpfs extends Vue {
       this.githubUploadLoading = false
       loading.close()
     }
+  }
+
+  // 写入 pull 数据
+  async writePullHistory () : Promise<void> {
+    const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+    const keyGithub: 'github' = 'github'
+    const keyPull: 'pull' = 'pull'
+
+    const data: NoteGithubPullProps = {
+      repo: this.asyncGithubFormPull.repos,
+      branch: this.asyncGithubFormPull.branches,
+      path: this.asyncGithubFormPull.path
+    }
+
+    if (res[keyGithub]) {
+      if (res[keyGithub][keyPull]) {
+        //
+      } else {
+        res[keyGithub][keyPull] = {} as NoteGithubPullProps
+      }
+
+      res[keyGithub][keyPull] = data
+    } else {
+      res[keyGithub] = {
+        [keyPull]: data
+      } as NoteGithubProps
+    }
+
+    await (this as any).$localForage.setItem(this.$route.params.id, res)
+  }
+
+  // 写入 push 数据
+  async writePushHistory () : Promise<void> {
+    const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+    const keyGithub = 'github'
+    const keyPull: 'push' = 'push'
+
+    const data: NoteGithubPushProps = {
+      repo: this.asyncGithubFormPush.repos,
+      branch: this.asyncGithubFormPush.branches,
+      path: this.asyncGithubFormPush.path
+    }
+
+    if (res[keyGithub]) {
+      if (res[keyGithub][keyPull]) {
+        //
+      } else {
+        res[keyGithub][keyPull] = {} as NoteGithubPushProps
+      }
+
+      res[keyGithub][keyPull] = data
+    } else {
+      res[keyGithub] = {
+        [keyPull]: data
+      } as NoteGithubProps
+    }
+
+    await (this as any).$localForage.setItem(this.$route.params.id, res)
   }
 
   // 提交 GitHub form

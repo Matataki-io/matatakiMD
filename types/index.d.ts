@@ -25,6 +25,21 @@ export interface FleekIpfs {
   publicUrl: string
 }
 
+export interface NoteGithubPullProps {
+  repo: string
+  branch: string
+  path: string
+}
+export interface NoteGithubPushProps {
+  repo: string
+  branch: string
+  path: string
+}
+export interface NoteGithubProps {
+  pull: NoteGithubPullProps
+  push: NoteGithubPushProps
+}
+
 export interface NotesImages {
   name: string
   type: string
@@ -42,6 +57,7 @@ export interface Notes {
   'create_time': number
   'update_time': number
   images?: Array<NotesImages>
+  github: NoteGithubProps
 }
 
 export interface IpfsUploadProps {
