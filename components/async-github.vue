@@ -255,6 +255,11 @@ export default class HeaderIpfs extends Vue {
   async setRepoInfoUseStore ({ repo, branch, path }: NoteGithubPullProps|NoteGithubPushProps): Promise<void> {
     const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
 
+    if (isEmpty(res.github)) {
+      await this.setRepoInfo({ repo, branch, path })
+      return
+    }
+
     if (this.asyncGithubFormMode === 'push') {
       if (res.github.push) {
         const { repo, branch, path } = res.github.push

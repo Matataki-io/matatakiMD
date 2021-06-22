@@ -125,6 +125,7 @@ import {
   Watch
 } from 'nuxt-property-decorator'
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
+import { isEmpty } from 'lodash'
 import {
   hCaptchaDataProps, userProps,
   Notes, PostsTimeRankingDataListProps, NotesMatatakiProps
@@ -598,6 +599,10 @@ export default class HeaderIpfs extends Vue {
   // 设置 文章 信息 使用缓存
   async setPostInfoUseStore (): Promise<void> {
     const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+
+    if (isEmpty(res.matataki)) {
+      return
+    }
 
     if (this.asyncFormMode === 'push') {
       if (res.matataki.push && res.matataki.push.id && res.matataki.push.title) {

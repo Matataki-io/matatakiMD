@@ -167,10 +167,12 @@ export default class PostsSelectMatataki extends Vue {
   // 设置 value
   setValueFn () {
     if (!isEmpty(this.form)) {
+      if (this.form && this.form.id && this.form.title) {
       // 处理 alias
-      this.value = {
-        ...this.form,
-        label: this.form.title
+        this.value = {
+          ...this.form,
+          label: this.form.title
+        }
       }
     }
   }
