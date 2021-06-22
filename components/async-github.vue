@@ -234,6 +234,56 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
+  // 设置 Repo 信息 使用缓存
+  async setRepoInfoUseStore ({ repo, branch, path }: NoteGithubPullProps|NoteGithubPushProps): Promise<void> {
+    const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+
+    if (this.asyncGithubFormMode === 'push') {
+      if (res.github.push) {
+        const { repo, branch, path } = res.github.push
+        await this.setRepoInfo({ repo, branch, path })
+      } else {
+        await this.setRepoInfo({ repo, branch, path })
+      }
+    } else if (this.asyncGithubFormMode === 'pull') {
+      if (res.github.pull) {
+        const { repo, branch, path } = res.github.pull
+        await this.setRepoInfo({ repo, branch, path })
+      } else {
+        await this.setRepoInfo({ repo, branch, path })
+      }
+    }
+  }
+
+  // 设置 Repo 信息
+  setRepoInfo ({ repo, branch, path }: NoteGithubPullProps|NoteGithubPushProps): void {
+    if (this.asyncGithubFormMode === 'push') {
+      if (repo) {
+        this.asyncGithubFormPush.repos = repo
+      }
+
+      if (branch) {
+        this.asyncGithubFormPush.branches = branch
+      }
+
+      if (path) {
+        this.asyncGithubFormPush.path = path
+      }
+    } else if (this.asyncGithubFormMode === 'pull') {
+      if (repo) {
+        this.asyncGithubFormPull.repos = repo
+      }
+
+      if (branch) {
+        this.asyncGithubFormPull.branches = branch
+      }
+
+      if (path) {
+        this.asyncGithubFormPull.path = path
+      }
+    }
+  }
+
   // 获取 Repo 信息
   async usersReposFn (): Promise<void> {
     this.githubLoading = true
@@ -243,8 +293,12 @@ export default class HeaderIpfs extends Vue {
       })
       if (res.code === 0) {
         this.repos = res.data
-        this.asyncGithubFormPush.repos = res.data[0].full_name
-        this.asyncGithubFormPull.repos = res.data[0].full_name
+
+        await this.setRepoInfoUseStore({
+          repo: res.data[0].full_name,
+          branch: '',
+          path: ''
+        })
 
         const [owner, repo] = (res.data[0].full_name).split('/')
         this.reposBranchesFn({
@@ -270,8 +324,12 @@ export default class HeaderIpfs extends Vue {
       })
       if (res.code === 0) {
         this.branches = res.data
-        this.asyncGithubFormPush.branches = res.data[0].name
-        this.asyncGithubFormPull.branches = res.data[0].name
+
+        await this.setRepoInfoUseStore({
+          repo: '',
+          branch: res.data[0].name,
+          path: ''
+        })
 
         this.reposContentsListFn({
           owner,
@@ -298,8 +356,12 @@ export default class HeaderIpfs extends Vue {
       })
       if (res.code === 0) {
         this.path = res.data
-        this.asyncGithubFormPush.path = res.data[0].name
-        this.asyncGithubFormPull.path = res.data[0].name
+
+        await this.setRepoInfoUseStore({
+          repo: '',
+          branch: '',
+          path: res.data[0].name
+        })
       }
     } catch (e) {
       console.warn(e.toString())
@@ -453,7 +515,7 @@ export default class HeaderIpfs extends Vue {
   // 写入 push 数据
   async writePushHistory () : Promise<void> {
     const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
-    const keyGithub = 'github'
+    const keyGithub: 'github' = 'github'
     const keyPull: 'push' = 'push'
 
     const data: NoteGithubPushProps = {
