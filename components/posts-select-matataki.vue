@@ -20,6 +20,7 @@
 </template>
 
 <script lang="ts">
+import { isEmpty } from 'lodash'
 import {
   Component,
   Vue,
@@ -42,6 +43,12 @@ export default class PostsSelectMatataki extends Vue {
     required: true
   })
   readonly usersData!: userProps
+
+  @Prop({
+    type: Object,
+    required: true
+  })
+  readonly form!: PostsTimeRankingDataListProps
 
   // select value
   value: PostsTimeRankingDataListProps = { } as PostsTimeRankingDataListProps
@@ -69,6 +76,8 @@ export default class PostsSelectMatataki extends Vue {
      * in that environment, so we need to do it in mounted() instead.
      */
       this.observer = new IntersectionObserver(this.infiniteScroll)
+
+      this.setValue()
     }
   }
 
@@ -142,6 +151,13 @@ export default class PostsSelectMatataki extends Vue {
       await this.postsTimeRanking()
       await this.$nextTick()
       ul.scrollTop = scrollTop
+    }
+  }
+
+  // 设置 value
+  setValue () {
+    if (!isEmpty(this.form)) {
+      this.value = this.form
     }
   }
 }

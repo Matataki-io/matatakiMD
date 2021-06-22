@@ -25,30 +25,7 @@ export interface FleekIpfs {
   publicUrl: string
 }
 
-export interface NoteGithubPullProps {
-  repo: string
-  branch: string
-  path: string
-}
-export interface NoteGithubPushProps {
-  repo: string
-  branch: string
-  path: string
-}
-export interface NoteGithubProps {
-  pull: NoteGithubPullProps
-  push: NoteGithubPushProps
-}
-
-export interface NotesImages {
-  name: string
-  type: string
-  size: number
-  base64: unknown
-  time: number
-}
-
-export interface MatatakiPullOrPushProps {
+export interface PostsTimeRankingDataListProps {
   author: string
   avatar: string
   cover: string
@@ -80,9 +57,37 @@ export interface MatatakiPullOrPushProps {
   'user_is_recommend': number
   'user_is_token': number
 }
+export interface PostsTimeRankingDataProps {
+  count: number
+  list: PostsTimeRankingDataListProps[]
+}
+
+export interface NoteGithubPullProps {
+  repo: string
+  branch: string
+  path: string
+}
+export interface NoteGithubPushProps {
+  repo: string
+  branch: string
+  path: string
+}
+export interface NoteGithubProps {
+  pull: NoteGithubPullProps
+  push: NoteGithubPushProps
+}
+
+export interface NotesImages {
+  name: string
+  type: string
+  size: number
+  base64: unknown
+  time: number
+}
+
 export interface NotesMatatakiProps {
-  pull: MatatakiPullOrPushProps
-  push: MatatakiPullOrPushProps
+  pull: PostsTimeRankingDataListProps
+  push: PostsTimeRankingDataListProps
 }
 
 export interface Notes {
@@ -222,16 +227,6 @@ export interface PostsTimeRankingProps {
   author: number
   page: number
   pagesize: number
-}
-export interface PostsTimeRankingDataListProps {
-  id: number
-  title: string
-  hash: string
-  cover: string
-}
-export interface PostsTimeRankingDataProps {
-  count: number
-  list: PostsTimeRankingDataListProps[]
 }
 
 export interface ImagesUploadProps {
