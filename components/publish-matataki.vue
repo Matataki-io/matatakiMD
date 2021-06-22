@@ -404,7 +404,7 @@ export default class HeaderIpfs extends Vue {
 
       const res = await postPublish({
         title: this.pushForm.title.trim(),
-        content: this.markdownData.trim(),
+        content: this.markdownData.trim(), // 在 mtk 会有两个标题，问题好像不大 暂不处理
         shortContent: this.pushForm.shortContent.trim(),
         platform: this.usersData.platform,
         author: this.usersData.username || this.usersData.nickname,
@@ -443,7 +443,7 @@ export default class HeaderIpfs extends Vue {
       const res = await postEdit({
         signId: Number(this.pushForm.article),
         title: this.pushForm.title.trim(),
-        content: this.markdownData.trim(),
+        content: this.markdownData.trim(), // 在 mtk 会有两个标题，问题好像不大 暂不处理
         shortContent: this.pushForm.shortContent.trim(),
         platform: this.usersData.platform,
         author: this.usersData.username || this.usersData.nickname,

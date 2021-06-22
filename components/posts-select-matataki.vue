@@ -120,6 +120,7 @@ export default class PostsSelectMatataki extends Vue {
     }
   }
 
+  // select open
   async onOpen (): Promise<void> {
     if (this.hasNextPage) {
       await this.$nextTick()
@@ -127,6 +128,7 @@ export default class PostsSelectMatataki extends Vue {
     }
   }
 
+  // select close
   onClose (): void {
     this.observer.disconnect()
   }
