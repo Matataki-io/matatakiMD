@@ -125,7 +125,6 @@ import {
   Watch
 } from 'nuxt-property-decorator'
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
-import { assign } from 'lodash'
 import {
   hCaptchaDataProps, userProps,
   Notes, PostsTimeRankingDataListProps, NotesMatatakiProps
@@ -431,7 +430,7 @@ export default class HeaderIpfs extends Vue {
         })
 
         // 不需要同步
-        this.writePushHistory({ id: Number(res.data), title: this.pushForm.title.trim() })
+        this.writePushHistory({ id: Number(res.data), title: this.pushForm.title.trim() } as PostsTimeRankingDataListProps)
 
         this.dialogVisible = false
       } else {
@@ -473,6 +472,8 @@ export default class HeaderIpfs extends Vue {
           message: `View:${process.env.APP_MATATAKI_URL}/p/${res.data}`
         })
 
+        // 不需要同步
+        this.writePushHistory({ id: Number(this.pushForm.id), title: this.pushForm.title.trim() } as PostsTimeRankingDataListProps)
         this.dialogVisible = false
       } else {
         throw new Error(res.message)
@@ -486,13 +487,13 @@ export default class HeaderIpfs extends Vue {
   }
 
   // pull select changed
-  pullSelectChanged (val: PostsTimeRankingDataListProps): void {
-    if (val) {
+  pullSelectChanged (val: PostsTimeRankingDataListProps|null): void {
+    if (val && val.id && val.hash) {
       this.pullForm.id = val.id
       this.pullForm.hash = val.hash
 
       // 不需要同步
-      this.writePullHistory({ id: Number(val.id), title: val.title } as PostsTimeRankingDataListProps)
+      this.writePullHistory({ id: Number(val.id), title: val.title, hash: val.hash } as PostsTimeRankingDataListProps)
     } else {
       this.pullForm.id = ''
       this.pullForm.hash = ''
@@ -500,15 +501,15 @@ export default class HeaderIpfs extends Vue {
   }
 
   // push select chnged
-  pushSelectChanged (val: PostsTimeRankingDataListProps): void {
-    if (val) {
+  pushSelectChanged (val: PostsTimeRankingDataListProps|null): void {
+    if (val && val.id) {
       this.pushForm.id = val.id
       if (val.cover) {
         this.imageUrl = val.cover
       }
 
       // 不需要同步
-      this.writePushHistory({ id: Number(val.id), title: val.title } as PostsTimeRankingDataListProps)
+      this.writePushHistory({ id: Number(val.id), title: val.title, hash: val.hash } as PostsTimeRankingDataListProps)
     } else {
       this.pushForm.id = ''
       this.imageUrl = ''
@@ -599,13 +600,14 @@ export default class HeaderIpfs extends Vue {
     const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
 
     if (this.asyncFormMode === 'push') {
-      if (res.matataki.push) {
+      if (res.matataki.push && res.matataki.push.id && res.matataki.push.title) {
         this.pushForm.id = res.matataki.push.id
         this.pushForm.title = res.matataki.push.title
       }
     } else if (this.asyncFormMode === 'pull') {
-      if (res.matataki.pull) {
+      if (res.matataki.pull && res.matataki.pull.id && res.matataki.pull.hash && res.matataki.pull.title) {
         this.pullForm.id = res.matataki.pull.id
+        this.pullForm.hash = res.matataki.pull.hash
         this.pullForm.title = res.matataki.pull.title
       }
     }

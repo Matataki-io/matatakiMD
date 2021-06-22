@@ -1,8 +1,8 @@
 <template>
-  <div class="select">
+  <div v-loading="selectLoading" class="select">
     <v-select
       v-model="value"
-      label="title"
+      label="label"
       :filterable="false"
       :options="selectList"
       placeholder="请选择"
@@ -32,6 +32,10 @@ import 'vue-select/dist/vue-select.css'
 import { getPostsTimeRanking } from '../api/index'
 import { PostsTimeRankingDataProps, PostsTimeRankingDataListProps, userProps } from '../types/index.d'
 
+interface valueProps extends PostsTimeRankingDataListProps {
+  label: string
+}
+
 @Component({
   components: {
     'v-select': vSelect
@@ -51,7 +55,7 @@ export default class PostsSelectMatataki extends Vue {
   readonly form!: PostsTimeRankingDataListProps
 
   // select value
-  value: PostsTimeRankingDataListProps = { } as PostsTimeRankingDataListProps
+  value: valueProps = { } as valueProps
 
   // posts data
   postsData: PostsTimeRankingDataProps = {
@@ -68,16 +72,7 @@ export default class PostsSelectMatataki extends Vue {
 
   mounted () {
     if (process.client) {
-      this.postsTimeRanking()
-
-      /**
-     * You could do this directly in data(), but since these docs
-     * are server side rendered, IntersectionObserver doesn't exist
-     * in that environment, so we need to do it in mounted() instead.
-     */
-      this.observer = new IntersectionObserver(this.infiniteScroll)
-
-      this.setValue()
+      this.init()
     }
   }
 
@@ -105,6 +100,19 @@ export default class PostsSelectMatataki extends Vue {
     }
   }
 
+  async init () :Promise<void> {
+    await this.postsTimeRanking()
+
+    /**
+     * You could do this directly in data(), but since these docs
+     * are server side rendered, IntersectionObserver doesn't exist
+     * in that environment, so we need to do it in mounted() instead.
+     */
+    this.observer = new IntersectionObserver(this.infiniteScroll)
+
+    await this.setValueFn()
+  }
+
   // 获取 MTK 文章列表
   async postsTimeRanking (): Promise<void> {
     this.selectLoading = true
@@ -118,7 +126,9 @@ export default class PostsSelectMatataki extends Vue {
       if (res.code === 0) {
         const data: PostsTimeRankingDataProps = res.data
         this.postsData.count = data.count
-        this.postsData.list = this.postsData.list.concat(data.list)
+        // copy title, 因为 title key 和 父组件 title 离奇冲突，所以拷贝一个 label 使用
+        const list = data.list.map(i => ({ ...i, label: i.title }))
+        this.postsData.list = this.postsData.list.concat(list)
       } else {
         throw new Error(res.message)
       }
@@ -155,9 +165,13 @@ export default class PostsSelectMatataki extends Vue {
   }
 
   // 设置 value
-  setValue () {
+  setValueFn () {
     if (!isEmpty(this.form)) {
-      this.value = this.form
+      // 处理 alias
+      this.value = {
+        ...this.form,
+        label: this.form.title
+      }
     }
   }
 }
