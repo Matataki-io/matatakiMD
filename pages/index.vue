@@ -1149,21 +1149,21 @@ import { userStats } from '../api/index'
 export default class Home extends Vue {
   usersData: object = {}
 
-  get isLogin () {
+  get isLogin (): boolean {
     return !isEmpty(this.usersData)
   }
 
-  get releaseNotes () {
+  get releaseNotes (): string {
     if (process.client) {
-      return process.env.APP_MATATAKI_RELEASE_NOTES
+      return (process.env.APP_MATATAKI_RELEASE_NOTES) as string
     } else {
       return ''
     }
   }
 
-  get tutorial () {
+  get tutorial (): string {
     if (process.client) {
-      return process.env.APP_MATATAKI_TUTORIAL
+      return (process.env.APP_MATATAKI_TUTORIAL) as string
     } else {
       return ''
     }
@@ -1195,7 +1195,7 @@ export default class Home extends Vue {
   }
 
   // 跳转登录
-  async jumpToMttkOAuth () {
+  async jumpToMttkOAuth (): Promise<void> {
     try {
       console.log('from', location)
       await setOAuthRedirectUri(location.pathname)
@@ -1205,7 +1205,7 @@ export default class Home extends Vue {
     (window as any).location = process.env.REACT_APP_OAuthUrl
   };
 
-  openMtk () {
+  openMtk (): void {
     if (process.browser) {
       window.open(process.env.APP_MATATAKI_URL, '_blank')
     }

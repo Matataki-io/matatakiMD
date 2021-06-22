@@ -85,7 +85,7 @@ if (process.client) {
   }
 })
 export default class Edidtor extends Vue {
-  resizeEvent: any = null
+  resizeEvent: ReturnType<typeof throttle> = null as any
   editorStyle: object = {}
   notes: Notes = {} as Notes
   usersData: userProps = {} as userProps
@@ -94,18 +94,18 @@ export default class Edidtor extends Vue {
   dialogPublishMatataki: boolean = false
   dialogImportMatataki: boolean = false
   token: string = ''
-  placeholder= '# 在此输入标题\n\n请在笔记标题前方输入 #，空格后输入笔记标题\n\n现在就开始编辑笔记吧！'
+  placeholder: string = '# 在此输入标题\n\n请在笔记标题前方输入 #，空格后输入笔记标题\n\n现在就开始编辑笔记吧！'
   // 加密语法
-  encryption= '\n\n[read hold="SYMBOL amount"]\n\n隐藏内容\n\n暂仅在Matataki上使用\n\n> [📔使用说明](https://www.yuque.com/matataki/matataki/giw9u4)\n\n[else]\n\n预览内容\n\n[/read]\n'
-  ipfsUploadLoading = false
-  offlineUploadLoading = false
-  saveOfflineUploadImagesChecked = false
+  encryption: string = '\n\n[read hold="SYMBOL amount"]\n\n隐藏内容\n\n暂仅在Matataki上使用\n\n> [📔使用说明](https://www.yuque.com/matataki/matataki/giw9u4)\n\n[else]\n\n预览内容\n\n[/read]\n'
+  ipfsUploadLoading: boolean = false
+  offlineUploadLoading: boolean = false
+  saveOfflineUploadImagesChecked: boolean = false
 
-  get isUser () {
+  get isUser (): boolean {
     return !isEmpty(this.usersData)
   }
 
-  get ipfsList () {
+  get ipfsList (): FleekIpfs[] {
     if (isEmpty(this.notes.ipfs)) {
       return []
     } else {

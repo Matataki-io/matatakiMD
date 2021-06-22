@@ -111,8 +111,8 @@ export default class HeaderIpfs extends Vue {
   })
   readonly isUser!: boolean
 
-  files = [] // import user data file
-  filesMarkdown = [] // import markdown file
+  files: File[] = [] // import user data file
+  filesMarkdown: File[] = [] // import markdown file
 
   @Watch('files')
   onFilesChanged () {

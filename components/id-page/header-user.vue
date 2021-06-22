@@ -44,9 +44,9 @@ export default class HeaderIpfs extends Vue {
   })
   readonly isUser!: boolean
 
-  get matatakiUrl () {
+  get matatakiUrl (): string {
     if (process.client) {
-      return process.env.APP_MATATAKI_URL
+      return (process.env.APP_MATATAKI_URL) as string
     } else {
       return ''
     }
