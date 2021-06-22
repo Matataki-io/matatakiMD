@@ -31,7 +31,7 @@
           :model="pushForm"
           :rules="pushFormRules"
         >
-          <el-form-item v-if="pushRadio === 'update'" label="文章" prop="article">
+          <el-form-item v-if="pushRadio === 'update'" label="文章" prop="id">
             <br>
             <PostsSelectMatataki :users-data="usersData" @changedValue="pushSelectChanged" />
           </el-form-item>
@@ -102,12 +102,12 @@
         :model="pullForm"
         :rules="pullFormRules"
       >
-        <el-form-item label="文章" prop="article">
+        <el-form-item label="文章" prop="id">
           <br>
           <PostsSelectMatataki :users-data="usersData" @changedValue="pullSelectChanged" />
         </el-form-item>
         <el-form-item class="publish-btn">
-          <el-button v-loading="pullLoading" :disabled="!pullForm.article" size="small" type="primary" @click="submitForm('pullForm')">
+          <el-button v-loading="pullLoading" :disabled="!pullForm.id" size="small" type="primary" @click="submitForm('pullForm')">
             拉取
           </el-button>
         </el-form-item>
@@ -125,7 +125,10 @@ import {
   Watch
 } from 'nuxt-property-decorator'
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha'
-import { hCaptchaDataProps, userProps, PostsTimeRankingDataListProps } from '../types/index.d'
+import {
+  hCaptchaDataProps, userProps, PostsTimeRankingDataListProps,
+  Notes, MatatakiPullOrPushProps, NotesMatatakiProps
+} from '../types/index.d'
 import {
   getDoINeedHCaptcha, postPublish, uploadImage,
   getPostIpfs, postEdit
@@ -158,18 +161,18 @@ export default class HeaderIpfs extends Vue {
 
   // publish form
   pushForm: {
-    article: string|number,
+    id: string|number,
     title: string,
     shortContent: string
   } = {
-    article: '',
+    id: '',
     title: '',
     shortContent: ''
   }
 
   // publish form rules
   pushFormRules = {
-    article: [
+    id: [
       { required: true, message: '请选择文章', trigger: 'change' }
     ],
     title: [
@@ -189,16 +192,16 @@ export default class HeaderIpfs extends Vue {
 
   // pull form
   pullForm: {
-    article: string|number
+    id: string|number
     hash: string
   } = {
-    article: '',
+    id: '',
     hash: ''
   }
 
   // pull form rules
   pullFormRules = {
-    article: [
+    id: [
       { required: true, message: '请选择文章', trigger: 'change' }
     ]
   }
@@ -379,6 +382,9 @@ export default class HeaderIpfs extends Vue {
           title: res.data.title,
           content: res.data.content
         })
+
+        // 不需要同步
+        this.writePullHistory({ id: Number(this.pullForm.id) })
         this.$emit('pull', content)
         this.dialogVisible = false
       } else {
@@ -417,6 +423,10 @@ export default class HeaderIpfs extends Vue {
           title: '提示',
           message: `View:${process.env.APP_MATATAKI_URL}/p/${res.data}`
         })
+
+        // 不需要同步
+        this.writePushHistory({ id: Number(res.data) })
+
         this.dialogVisible = false
       } else {
         throw new Error(res.message)
@@ -441,7 +451,7 @@ export default class HeaderIpfs extends Vue {
       this.pushLoading = true
 
       const res = await postEdit({
-        signId: Number(this.pushForm.article),
+        signId: Number(this.pushForm.id),
         title: this.pushForm.title.trim(),
         content: this.markdownData.trim(), // 在 mtk 会有两个标题，问题好像不大 暂不处理
         shortContent: this.pushForm.shortContent.trim(),
@@ -456,6 +466,9 @@ export default class HeaderIpfs extends Vue {
           title: '提示',
           message: `View:${process.env.APP_MATATAKI_URL}/p/${res.data}`
         })
+
+        // 不需要同步
+        this.writePushHistory({ id: Number(this.pushForm.id) })
         this.dialogVisible = false
       } else {
         throw new Error(res.message)
@@ -471,10 +484,10 @@ export default class HeaderIpfs extends Vue {
   // pull select changed
   pullSelectChanged (val: PostsTimeRankingDataListProps): void {
     if (val) {
-      this.pullForm.article = val.id
+      this.pullForm.id = val.id
       this.pullForm.hash = val.hash
     } else {
-      this.pullForm.article = ''
+      this.pullForm.id = ''
       this.pullForm.hash = ''
     }
   }
@@ -482,12 +495,12 @@ export default class HeaderIpfs extends Vue {
   // push select chnged
   pushSelectChanged (val: PostsTimeRankingDataListProps): void {
     if (val) {
-      this.pushForm.article = val.id
+      this.pushForm.id = val.id
       if (val.cover) {
         this.imageUrl = val.cover
       }
     } else {
-      this.pushForm.article = ''
+      this.pushForm.id = ''
       this.imageUrl = ''
     }
   }
@@ -520,6 +533,59 @@ export default class HeaderIpfs extends Vue {
       this.$message.info('开始上传')
     }
     return result
+  }
+
+  // 写入 pull 数据
+  async writePullHistory ({ id }: { id: number }) : Promise<void> {
+    // 没有影响 暂不拷贝
+    const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+    const key: 'matataki' = 'matataki'
+    const keyPull: 'pull' = 'pull'
+
+    const data = { id } as MatatakiPullOrPushProps
+
+    if (res[key]) {
+      if (res[key][keyPull]) {
+        //
+      } else {
+        res[key][keyPull] = {} as MatatakiPullOrPushProps
+      }
+
+      res[key][keyPull] = data
+    } else {
+      res[key] = {
+        [keyPull]: data
+      } as NotesMatatakiProps
+    }
+
+    await (this as any).$localForage.setItem(this.$route.params.id, res)
+  }
+
+  // 写入 push 数据
+  async writePushHistory ({ id }: { id: number }) : Promise<void> {
+    // 没有影响 暂不拷贝
+
+    const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
+    const key: 'matataki' = 'matataki'
+    const keyPull: 'push' = 'push'
+
+    const data = { id } as MatatakiPullOrPushProps
+
+    if (res[key]) {
+      if (res[key][keyPull]) {
+        //
+      } else {
+        res[key][keyPull] = {} as MatatakiPullOrPushProps
+      }
+
+      res[key][keyPull] = data
+    } else {
+      res[key] = {
+        [keyPull]: data
+      } as NotesMatatakiProps
+    }
+
+    await (this as any).$localForage.setItem(this.$route.params.id, res)
   }
 }
 </script>

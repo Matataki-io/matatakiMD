@@ -47,6 +47,44 @@ export interface NotesImages {
   base64: unknown
   time: number
 }
+
+export interface MatatakiPullOrPushProps {
+  author: string
+  avatar: string
+  cover: string
+  'create_time':string
+  hash: string
+  id: number
+  'is_ownpost': true
+  'is_recommend': number
+  likes: number
+  nickname: string
+  'pay_decimals': null
+  'pay_platform': null
+  'pay_price': null
+  'pay_stock_quantity': null
+  'pay_symbol': null
+  read: number
+  'require_buy': number
+  'require_holdtokens': number
+  'short_content': string
+  status: number
+  tags: []
+  title: string
+  'token_amount': null
+  'token_decimals': null
+  'token_id': null
+  'token_name': null
+  'token_symbol': null
+  uid: number
+  'user_is_recommend': number
+  'user_is_token': number
+}
+export interface NotesMatatakiProps {
+  pull: MatatakiPullOrPushProps
+  push: MatatakiPullOrPushProps
+}
+
 export interface Notes {
   id: number
   'id_str': string
@@ -58,6 +96,7 @@ export interface Notes {
   'update_time': number
   images?: Array<NotesImages>
   github: NoteGithubProps
+  matataki: NotesMatatakiProps
 }
 
 export interface IpfsUploadProps {

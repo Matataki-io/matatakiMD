@@ -502,6 +502,8 @@ export default class HeaderIpfs extends Vue {
 
   // 写入 pull 数据
   async writePullHistory () : Promise<void> {
+    // 没有影响 暂不拷贝
+
     const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
     const keyGithub: 'github' = 'github'
     const keyPull: 'pull' = 'pull'
@@ -531,6 +533,8 @@ export default class HeaderIpfs extends Vue {
 
   // 写入 push 数据
   async writePushHistory () : Promise<void> {
+    // 没有影响 暂不拷贝
+
     const res: Notes = await (this as any).$localForage.getItem(this.$route.params.id)
     const keyGithub: 'github' = 'github'
     const keyPull: 'push' = 'push'
