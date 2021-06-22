@@ -66,6 +66,39 @@ export interface IpfsUploadProps {
 }
 
 // Github
+
+export interface ReposProps {
+  'full_name': string
+  name: string
+  owner: {login: string}
+  private: boolean
+}
+
+export interface BranchesProps {
+  commit: {
+    sha: string
+    url: string
+  }
+  name: string
+  protected: boolean
+  protection: {
+    enabled: boolean,
+    'required_status_checks': {
+      'enforcement_level': string, contexts: []
+    }
+  }
+  'protection_url': string
+}
+
+export interface pathProps {
+  'html_url': string
+  name: string
+  path: string
+  sha: string
+  type: string
+  url: string
+}
+
 export interface userProps {
   avatar: string
   id: number

@@ -105,7 +105,11 @@ import {
   Watch
 } from 'nuxt-property-decorator'
 import { isEmpty } from 'lodash'
-import { reposBranchesFnProps, reposContentsListProps, Notes, NoteGithubPullProps, NoteGithubPushProps, NoteGithubProps } from '../types/index.d'
+import {
+  reposBranchesFnProps, reposContentsListProps, Notes,
+  NoteGithubPullProps, NoteGithubPushProps, NoteGithubProps,
+  ReposProps, BranchesProps, pathProps
+} from '../types/index.d'
 import { isOfflineUploadImages } from '../utils/index'
 import {
   push, pull, users,
@@ -113,6 +117,19 @@ import {
   reposBranches, reposContentsList
 } from '../api/index'
 import { getCookie, setCookie } from '../utils/cookie'
+
+interface pushFormProps {
+  repos: string,
+  branches: string,
+  path: string,
+  commit: string
+}
+
+interface pullFormProps {
+  repos: string,
+  branches: string,
+  path: string,
+}
 
 @Component({})
 export default class HeaderIpfs extends Vue {
@@ -128,25 +145,25 @@ export default class HeaderIpfs extends Vue {
   dialogImportMatatakiInput: string = ''
   dialogImportMatatakiLoading: boolean = false
   usersGithubData: object = {}
-  repos: Array<object> = []
-  branches= []
-  path= []
+  repos: Array<ReposProps> = []
+  branches: Array<BranchesProps> = []
+  path: Array<pathProps> = []
   asyncGithubFormMode: string = '' // push pull
-    asyncGithubFormPush = {
+    asyncGithubFormPush: pushFormProps = {
       repos: '',
       branches: '',
       path: '',
       commit: ''
     }
 
-  asyncGithubFormPull = {
+  asyncGithubFormPull: pullFormProps = {
     repos: '',
     branches: '',
     path: ''
   }
 
-  githubUploadLoading = false
-  githubLoading = false
+  githubUploadLoading: boolean = false
+  githubLoading: boolean = false
 
   get asyncGithubFormRules () {
     if (this.asyncGithubFormMode === 'push') {
@@ -178,13 +195,13 @@ export default class HeaderIpfs extends Vue {
     }
   }
 
-  get isUserGithub () {
+  get isUserGithub (): boolean {
     return !isEmpty(this.usersGithubData)
   }
 
-  get matatakiUrl () {
+  get matatakiUrl (): string {
     if (process.client) {
-      return process.env.APP_MATATAKI_URL
+      return (process.env.APP_MATATAKI_URL) as string
     } else {
       return ''
     }
