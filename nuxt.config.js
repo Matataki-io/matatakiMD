@@ -24,16 +24,15 @@ export default {
       /* <!--  Meta for Twitter Card --> */
       { hid: 'twitter:card', name: 'twitter:card', property: 'twitter:card', content: 'summary' },
       { hid: 'twitter:site', name: 'twitter:site', property: 'twitter:site', content: metaTitle },
-      { hid: 'twitter:title', property: 'twitter:title', content: metaTitle },
+      { hid: 'twitter:title', name: 'twitter:title', property: 'twitter:title', content: metaTitle },
       { hid: 'twitter:image', name: 'twitter:image', property: 'twitter:image', content: metaImage },
-      { hid: 'twitter:description', name: 'description', property: 'twitter:description', content: metaDescription },
+      { hid: 'twitter:description', name: 'twitter:description', property: 'twitter:description', content: metaDescription },
       /* <!--  Meta for OpenGraph --> */
       { hid: 'og:type', name: 'og:type', property: 'og:type', content: 'website' },
       { hid: 'og:site_name', name: 'og:site_name', property: 'og:site_name', content: metaTitle },
-      { hid: 'og:title', property: 'og:title', content: metaTitle },
+      { hid: 'og:title', name: 'og:title', property: 'og:title', content: metaTitle },
       { hid: 'og:image', name: 'og:image', property: 'og:image', content: metaImage },
-      { hid: 'og:description', name: 'description', property: 'og:description', content: metaDescription },
-      { hid: 'og:type', name: 'og:type', property: 'og:type', content: 'article' }
+      { hid: 'og:description', name: 'og:description', property: 'og:description', content: metaDescription }
       /* end */
 
     ],
