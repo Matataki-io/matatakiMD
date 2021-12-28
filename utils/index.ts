@@ -43,9 +43,9 @@ export const ipfsHtmlTemp = ({ title, content }: { title: string, content: strin
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://ssimg.frontenduse.top/material/matataki_logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/material/matataki_logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/material/matataki_logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/material/matataki_logo.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="msapplication-TileColor" content="#da532c">
@@ -58,13 +58,13 @@ export const ipfsHtmlTemp = ({ title, content }: { title: string, content: strin
   <meta name="twitter:card" property="twitter:card" content="summary">
   <meta name="twitter:site" property="twitter:site" content="Matataki Editor">
   <meta name="twitter:title" property="twitter:title" content="Matataki Editor">
-  <meta name="twitter:image" property="twitter:image" content="https://ssimg.frontenduse.top/material/matataki_logo.png">
+  <meta name="twitter:image" property="twitter:image" content="https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/material/matataki_logo.png">
   <meta name="twitter:description" property="twitter:description" content="Matataki Editor">
 
   <meta name="og:type" property="og:type" content="website">
   <meta name="og:site_name" property="og:site_name" content="Matataki Editor">
   <meta name="og:title" property="og:title" content="Matataki Editor">
-  <meta name="og:image" property="og:image" content="https://ssimg.frontenduse.top/material/matataki_logo.png">
+  <meta name="og:image" property="og:image" content="https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/material/matataki_logo.png">
   <meta name="og:site_name" property="og:site_name" content="Matataki Editor">
   <meta name="og:description" property="og:description" content="Matataki Editor">
 

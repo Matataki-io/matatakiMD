@@ -5,7 +5,7 @@
     </div>
     <el-dropdown v-else-if="isUser" trigger="click" class="user-tooltip" @command="val => $emit('handleCommand', val)">
       <el-tooltip effect="dark" :content="usersData.nickname || usersData.username" placement="bottom">
-        <el-avatar :src="`https://ssimg.frontenduse.top/${usersData.avatar}`" :size="30" />
+        <el-avatar :src="`https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/${usersData.avatar}`" :size="30" />
       </el-tooltip>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item icon="el-icon-user" command="user">

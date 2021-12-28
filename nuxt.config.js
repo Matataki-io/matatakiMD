@@ -8,7 +8,7 @@ const PORT = {
 const metaTitle = 'MatatakiMD - Markdown 编辑器'
 const metaDescription = '用开箱即用的 Markdown 编辑器书写 并发布到 IPFS、GitHub、Matataki 让你快速记录想法、随时发布到永存网络。'
 const metaKeywords = 'Collaborative, Markdown, Notes、GitHub、IPFS、Matataki、瞬MATATAKI、仙女座科技、小岛美奈子、岛娘'
-const metaImage = 'https://ssimg.frontenduse.top/article/2021/06/16/26ba884341efc989364f8ade91099f8f.png'
+const metaImage = 'https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/article/2021/06/16/26ba884341efc989364f8ade91099f8f.png'
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head

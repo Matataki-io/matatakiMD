@@ -95,7 +95,7 @@
                 <div class="sidenav-item-action menu-component" style="position: relative;">
                   <div class="ui-next-sidenav-profile-container">
                     <div class="ui-next-sidenav-profile-label ellipsis-text">
-                      <img class="ui-avatar circle" width="22" height="22" :src="`https://ssimg.frontenduse.top/${usersData.avatar}`"><span class="ui-name">{{ usersData.nickname || usersData.username }}</span>
+                      <img class="ui-avatar circle" width="22" height="22" :src="`https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/${usersData.avatar}`"><span class="ui-name">{{ usersData.nickname || usersData.username }}</span>
                     </div>
                     <div class="ui-next-sidenav-profile-button" @click="toggleUserModal = true">
                       <i class="fa fa-angle-up" />
@@ -817,10 +817,10 @@ interface MarkdownItemProps extends Notes {
   head () {
     return {
       link: [
-        // { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/font-vendor.b86e2bf451b246b1a88e.css' },
-        // { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/common-vendor.b8ecfc406ac0b5f77a26.css' },
-        { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/hackmd-app-vendor.681b42e325538005fa7d.css' }
-        // { rel: 'stylesheet', type: 'text/css', href: 'https://ssimg.frontenduse.top/matataki-md/build/hackmd-app.dd3987cdcf45bbb50f21.css' }
+        // { rel: 'stylesheet', type: 'text/css', href: 'https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/matataki-md/build/font-vendor.b86e2bf451b246b1a88e.css' },
+        // { rel: 'stylesheet', type: 'text/css', href: 'https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/matataki-md/build/common-vendor.b8ecfc406ac0b5f77a26.css' },
+        { rel: 'stylesheet', type: 'text/css', href: 'https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/matataki-md/build/hackmd-app-vendor.681b42e325538005fa7d.css' }
+        // { rel: 'stylesheet', type: 'text/css', href: 'https://smartsignature-img.oss-cn-hongkong.aliyuncs.com/matataki-md/build/hackmd-app.dd3987cdcf45bbb50f21.css' }
       ]
     }
   }

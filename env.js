@@ -8,7 +8,7 @@ export default {
     APP_MATATAKI_URL: 'https://test.matataki.io',
     APP_MATATAKI_RELEASE_NOTES: 'https://www.matataki.io/p/9195',
     APP_MATATAKI_TUTORIAL: 'https://www.matataki.io/p/9196',
-    APP_SSIMG: 'https://ssimg.frontenduse.top',
+    APP_SSIMG: 'https://smartsignature-img.oss-cn-hongkong.aliyuncs.com',
     // # Matataki OAuth Related config
     REACT_APP_OAuthUrl: 'https://developer.matataki.io/app/018d841c87d74dbb/oauth?network=test',
     REACT_APP_OAuthClientId: '788733784487663',
@@ -23,7 +23,7 @@ export default {
     APP_MATATAKI_URL: 'https://matataki.io',
     APP_MATATAKI_RELEASE_NOTES: 'https://www.matataki.io/p/9195',
     APP_MATATAKI_TUTORIAL: 'https://www.matataki.io/p/9196',
-    APP_SSIMG: 'https://ssimg.frontenduse.top',
+    APP_SSIMG: 'https://smartsignature-img.oss-cn-hongkong.aliyuncs.com',
     // # Matataki OAuth Related config
     REACT_APP_OAuthUrl: 'https://developer.matataki.io/app/c94f997ea18a924a/oauth',
     REACT_APP_OAuthClientId: '178876132608254',
